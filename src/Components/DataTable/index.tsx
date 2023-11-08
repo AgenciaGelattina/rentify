@@ -1,0 +1,48 @@
+//** 1.0.1 | www.phoxer.com */
+import { TableContainer, Table, TableBody } from "@mui/material";
+import TableHead from './Header';
+import Rows from './Rows';
+import TableLoading from './Loading';
+import { isNotNil } from "ramda";
+
+type TDataTableCell = {
+    align?: 'center' | 'inherit' | 'justify' | 'left' | 'right';
+    padding?: 'checkbox' | 'none' | 'normal';
+    width?: number | string;
+}
+
+type TDataTableHead = {
+    label: string;
+}
+
+export type TDataTableColumn = {
+    dataKey?: string;
+    head: TDataTableCell & TDataTableHead;
+    cell?: TDataTableCell;
+    component: (dataValue?: any, data?: any) => React.ReactNode;
+}
+
+type IDataTable = {
+    columns: TDataTableColumn[];
+    data: any[];
+    loading: boolean;
+    minHeight?: string | number;
+    showBorders?: boolean;
+    size?: 'small' | 'medium';
+}
+
+const DataTable: React.FC<IDataTable> = ({ columns, loading, data = [], minHeight, size='small' }) => {
+    return (<TableContainer>
+        <Table size={size}>
+            <TableHead columns={columns} />
+            <TableBody sx={{minHeight}}>
+                {loading && <TableLoading colSpan={columns ? columns.length : 1000} />}
+                {!loading && isNotNil(data) && data.map((dt: any, index: number) => {
+                    return <Rows key={`row-${index}`} columns={columns} data={dt} />
+                })}
+            </TableBody>
+        </Table>
+    </TableContainer>)
+}
+
+export default DataTable;

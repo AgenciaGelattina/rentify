@@ -1,0 +1,5 @@
+[07-Nov-2023 21:11:05 America/Mexico_City] PHP Warning:  Creating default object from empty value in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/api/files/upload.php on line 9
+[07-Nov-2023 21:11:05 America/Mexico_City] PHP Warning:  Creating default object from empty value in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/api/files/upload.php on line 12
+[07-Nov-2023 21:11:05 America/Mexico_City] PHP Notice:  Undefined variable: upload_path in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/api/files/upload.php on line 13
+[07-Nov-2023 21:11:05 America/Mexico_City] PHP Warning:  Creating default object from empty value in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/api/files/upload.php on line 15
+[07-Nov-2023 21:11:05 America/Mexico_City] PHP Warning:  mkdir(): Permission denied in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/api/files/upload.php on line 21
