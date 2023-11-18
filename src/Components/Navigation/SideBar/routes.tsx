@@ -1,5 +1,5 @@
 import { IListItem } from '@phoxer/react-components';
-import { Insights, Group, ManageAccounts } from '@mui/icons-material';
+import { Insights, Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage, DomainDisabled } from '@mui/icons-material';
 
 export const createListItems = (role: number): IListItem[] =>  {
 
@@ -7,7 +7,7 @@ export const createListItems = (role: number): IListItem[] =>  {
         {
             label: "Propiedades",
             value: "/properties",
-            icon: <Insights />
+            icon: <HomeWork />
         },
         {
             label: "Mi Cuenta",
@@ -21,33 +21,44 @@ export const createListItems = (role: number): IListItem[] =>  {
                 {
                     label: "Propiedades",
                     value: "/admin/properties",
-                    icon: <Insights />
+                    icon: <AddHomeWork />
+                },
+                {
+                    label: "- Tipos",
+                    value: "/admin/properties/types",
+                    icon: <DomainDisabled />
+                },
+                {
+                    label: "- Estados",
+                    value: "/admin/properties/statuses",
+                    icon: <Apartment />
                 },
                 {
                     label: "Grupos",
                     value: "/admin/properties/groups",
-                    icon: <Group />
+                    icon: <HolidayVillage />
                 },
                 {
-                    label: "Tipo de propiedades",
-                    value: "/admin/properties/types",
-                    icon: <Group />
+                    label: "- Tipos",
+                    value: "/admin/properties/groups/types",
+                    icon: <DomainDisabled />
                 },
                 {
-                    label: "Estados",
-                    value: "/admin/properties/status",
-                    icon: <Group />
-                },
-                {
-                    label: "Cuestas de usuarios",
-                    value: "admin/accounts",
-                    icon: <Group />
-                },
-                {
-                    label: "Roles",
-                    value: "/accounts/roles",
-                    icon: <Group />
-                },
+                    label: "CUENTAS",
+                    expanded: false,
+                    listItems: [
+                        {
+                            label: "Cuestas de usuarios",
+                            value: "/admin/accounts",
+                            icon: <Group />
+                        },
+                        {
+                            label: "Roles",
+                            value: "/admin/accounts/roles",
+                            icon: <Group />
+                        },
+                    ]
+                }
             ]
         },
     ]

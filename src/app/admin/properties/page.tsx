@@ -1,8 +1,9 @@
 'use client';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import RoleVerification from '@src/Components/RoleVerification';
 import { Header, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button, Stack } from '@mui/material';
@@ -21,7 +22,7 @@ const PropertiesManagement: FC = () => {
     const filterFormData = useForm({ defaultValues: initialQueryParams });
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
-
+    const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
         console.log('FILTER-DATA', data);
@@ -100,7 +101,7 @@ const PropertiesManagement: FC = () => {
                     if (fieldData.id > 0) {
                         return (<Button variant='text' sx={{ textAlign: 'left'}} onClick={() => {
                             filterFormData.setValue('group', fieldData.id);
-                            filterFormData.handleSubmit((data) => console.log(data));
+                            getProperties(filterFormData.getValues());
                         }}>
                             {fieldData.title}
                         </Button>);
@@ -135,7 +136,7 @@ const PropertiesManagement: FC = () => {
         <CardBox>
             <CardContent>
                 <DataFilters filters={buildDataFilters()} formData={filterFormData} loading={loading} onFilter={getProperties} expanded={false} />
-                <DataTable columns={buildDataContent()} data={result} loading={loading} />
+                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
             </CardContent>
         </CardBox>
         <PropertyData {...propertyData} setOpen={setPropertyData} getProperties={getProperties} />

@@ -7,13 +7,13 @@ import { isNil, isNotNil } from 'ramda';
 import { getUIKey } from '@src/Utils';
 import DummyTextField from '../DummyTextField';
 
-export interface IPropertiesTypeSelector {
+export interface IGroupsTypeSelector {
     id: number;
     label: string;
 }
 
-const PropertiesTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((props, ref) => {
-    const types = useFetchExpress(`${process.env.NEXT_PUBLIC_API_URL!}/properties/types/list.php`);
+const GroupsTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((props, ref) => {
+    const types = useFetchExpress(`${process.env.NEXT_PUBLIC_API_URL!}/properties/groups/types/list.php`);
     const { validateResult } = useDataResponse();
 
     const data = useMemo(() => {
@@ -25,12 +25,12 @@ const PropertiesTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<
     }, [types.result, validateResult]);
 
     if (data && !types.loading) {
-        return (<TextField id="type" label="Tipo de Propiedad" {...props} disabled={isNil(types.result)} select fullWidth>
-            {data.map((type: IPropertiesTypeSelector) => <MenuItem key={getUIKey()} value={type.id}>{type.label}</MenuItem>)}
+        return (<TextField id="type" label="Tipo de Grupo" {...props} disabled={isNil(types.result)} select fullWidth>
+            {data.map((type: IGroupsTypeSelector) => <MenuItem key={getUIKey()} value={type.id}>{type.label}</MenuItem>)}
         </TextField>);
     }
     return <DummyTextField />
 });
 
-PropertiesTypeSelector.displayName = 'PropertiesTypeSelector';
-export default PropertiesTypeSelector;
+GroupsTypeSelector.displayName = 'GroupsTypeSelector';
+export default GroupsTypeSelector;

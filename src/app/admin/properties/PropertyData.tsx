@@ -4,13 +4,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
-import { TCallBack, useFetchData, useSnackMessages } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import { DialogContent, DialogActions, TextField, Button, Divider} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { fieldError } from '@src/Utils';
 import PropertiesStatusSelector from '@src/Components/Forms/PropertiesStatus';
 import PropertiesTypeSelector from '@src/Components/Forms/PropertiesType';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
+import { isNotNil } from 'ramda';
 
 export interface IPropertyData {
     id: number;
@@ -54,22 +56,16 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { handleSubmit, control, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
-    const { showSnackMessage } = useSnackMessages();
+    const { validateResult } = useDataResponse();
 
     useEffect(() => {
         if (open && id > 0) {
             fetchData.get('/properties/property.php', { id }, (response: TCallBack) => {
-                if(response.result) {
-                    console.log('PROPERTY', response.result)
-                    reset(response.result);
-                    return;
-                }
-                if (response.error) {
-                    showSnackMessage({ message: response.error.message, severity: "error" });
-                    return;
+                const data = validateResult(response.result);
+                if (isNotNil(data)) {
+                    reset(data);
                 }
             });
-            
         }
         return () => {
             reset(defaultValues);
@@ -79,14 +75,9 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
 
     const onFormSubmit = (data: FieldValues) => {
         fetchData.post('/properties/property.php', data, (response: TCallBack) => {
-            console.log(response)
-            if (response.error || response.result.error) {
-                const error = response.error || response.result.error;
-                console.log(error);
-                showSnackMessage({ message: error.message, severity: "error" });
-                return;
-            }
-            if (response.result && response.result.success === 1) {
+            const saved = validateResult(response.result);
+            console.log('SAVED', saved);
+            if (saved) {
                 setOpen({ open: false, id: 0 });
                 getProperties();
             }

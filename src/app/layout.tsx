@@ -26,7 +26,7 @@ const RootLayout: React.FC<TRootLayout> = ({ children }) => {
         <DataProviders>
           <StyledEngineProvider injectFirst>
             <SnackMessages>
-              <Dialogs>                
+              <Dialogs>         
                   <AuthVerification>
                     {children}
                   </AuthVerification>

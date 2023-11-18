@@ -2,6 +2,7 @@
 import { FC, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { Header, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button, Stack } from '@mui/material';
@@ -18,6 +19,7 @@ const Properties: FC = () => {
     const [propertyView, setPropertyView] = useState<IPropertyView>({ open: false });
     const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const filterFormData = useForm({ defaultValues: initialQueryParams });
+    const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
         console.log('FILTER-DATA', data);
@@ -124,7 +126,7 @@ const Properties: FC = () => {
         <CardBox>
             <CardContent>
                 <DataFilters filters={buildDataFilters()} formData={filterFormData} loading={loading} onFilter={getProperties} expanded={false} />
-                <DataTable columns={buildDataContent()} data={result} loading={loading} />
+                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
             </CardContent>
         </CardBox>
         <PropertyView {...propertyView} setOpen={setPropertyView} />

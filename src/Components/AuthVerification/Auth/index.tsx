@@ -5,6 +5,7 @@ import { StoreContext } from '@src/DataProvider';
 import PageWrapper from '@src/Components/Wrappers/Page';
 import { CardContent, CardActions, TextField, Divider, Button, Box, Alert, Typography } from '@mui/material';
 import { LoadingDialog, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import { SLogBox, SLogo } from './styles';
 import { fieldError } from '@src/Utils';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -30,14 +31,16 @@ const AuthUser: FC = () => {
     const { setMainState } = useContext(StoreContext);
     const { handleSubmit, control, formState: { errors } } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const auth = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { validateResult } = useDataResponse();
 
     const onFormSubmit = (data: TAuthValues) => {
         auth.fetchData.post('/auth/login.php', data);
     }
 
     useEffect(() => {
-        if (auth.result && auth.result.id > 0) {
-            const userData = { ...auth.result };
+        const result = validateResult(auth.result);
+        if (result && result.id > 0) {
+            const userData = { ...result };
             if (userData.token) {
                 console.log(userData.token)
                 delete(userData.token);

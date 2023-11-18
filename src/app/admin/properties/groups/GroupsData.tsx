@@ -4,11 +4,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
-import { TCallBack, useFetchData, useSnackMessages } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import { DialogContent, DialogActions, TextField, Button, Divider, Typography} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { fieldError } from '@src/Utils';
 import { isNotNil } from 'ramda';
+import GroupsTypeSelector from '@src/Components/Forms/GroupsType';
 
 export interface IGroupData {
     group: TGroupData;
@@ -23,6 +25,7 @@ interface IGroupDataProps extends IGroupData {
 export type TGroupData = {
     id: number;
     title: string;
+    type: number;
     description?: string;
     address?: string;
     active: number;
@@ -32,6 +35,7 @@ export type TGroupData = {
 const defaultValues: TGroupData = {
     id: 0,
     title: "",
+    type: 0,
     description: "",
     address: "",
     active: 1,
@@ -42,18 +46,17 @@ export const defaultGroupDataState: IGroupData = { open: false, group: defaultVa
 const formValidations = yup.object().shape({
     id: yup.number().required(),
     title: yup.string().required("Escriba el título del grupo."),
+    type: yup.number(),
     description: yup.string(),
     address: yup.string(),
     active: yup.number()
 });
 
-
-
 const GroupData: React.FC<IGroupDataProps> = ({ group, open, setGroupData, getGroups }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
-    const { handleSubmit, control, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, getValues, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
-    const { showSnackMessage } = useSnackMessages();
+    const { validateResult } = useDataResponse();
 
     useEffect(() => {
         if (open && group.id > 0) {
@@ -67,15 +70,8 @@ const GroupData: React.FC<IGroupDataProps> = ({ group, open, setGroupData, getGr
 
     const onFormSubmit = (data: FieldValues) => {
         fetchData.post('/properties/groups/group.php', data, (response: TCallBack) => {
-            console.log(response)
-            if (response.error || response.result.error) {
-                const error = response.error || response.result.error;
-                console.log(error);
-                showSnackMessage({ message: error.message, severity: "error" });
-                return;
-            }
-            if (response.result && response.result.success) {
-                showSnackMessage({ message: response.result.success.message, severity: "success" });
+            const saved = validateResult(response.result);
+            if (saved) {
                 setGroupData(defaultGroupDataState);
                 getGroups();
             }
@@ -91,6 +87,11 @@ const GroupData: React.FC<IGroupDataProps> = ({ group, open, setGroupData, getGr
                         return <TextField id="title" label="Título de la Propiedad" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                     {isNotNil(group.properties) && (<Typography variant="caption">{`Numero de propiedades: ${group.properties}`}</Typography>)}
+                </Grid>
+                <Grid xs={12}>
+                    <Controller name="type" control={control} render={({ field }) => {
+                        return <GroupsTypeSelector {...field} {...fieldError(errors.type)} />
+                    }} />
                 </Grid>
                 <Grid xs={12}>
                     <Controller name="address" control={control} render={({ field }) => {

@@ -40,7 +40,7 @@ const menuTheme = createTheme({
 const SideBar: React.FC<TSideBar> = ({ open, onClose, user }) => {
     const router = useRouter();
     const isDesktop = useMediaQuery('(min-width:600px)');
-    const menuWidth = 190;
+    const menuWidth = 250;
 
     return (<Box component="nav" sx={{ width: menuWidth , flexShrink: { sm: 0 }, display: { xs: 'none', sm: 'block' } }}>
         <SDrawer

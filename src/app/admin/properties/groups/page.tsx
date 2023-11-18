@@ -1,16 +1,28 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
 import { Header, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
 import { CardContent, IconButton, Stack, Typography } from '@mui/material';
 import { AddCircle, Edit } from '@mui/icons-material';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
-import GroupData, { IGroupData, TGroupData, defaultGroupDataState } from './GroupsData';
+import GroupData, { IGroupData, defaultGroupDataState } from './GroupsData';
+
+type TGroupData = {
+    id: number;
+    title: string;
+    type: { id: number, label: string };
+    description?: string;
+    address?: string;
+    active: number;
+    properties?: number;
+}
 
 const GroupManagement: FC = () => {
     const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const [groupData, setGroupData] = useState<IGroupData>(defaultGroupDataState);
+    const { validateResult } = useDataResponse();
 
     const getGroups = () => {
         fetchData.get('/properties/groups/groups.php');
@@ -54,6 +66,15 @@ const GroupManagement: FC = () => {
                 }
             },
             {
+                dataKey: "type",
+                head: {
+                    label: "Tipo de Propiedad"
+                },
+                component: (type: { id: number, label: string }) => {
+                    return <Typography variant='body2'>{type.label}</Typography>;
+                }
+            },
+            {
                 dataKey: "properties",
                 head: {
                     label: "Propiedades",
@@ -70,7 +91,7 @@ const GroupManagement: FC = () => {
                 },
                 component: (group: TGroupData) => {
                     return (<Stack direction="row" alignItems="center" spacing={1}>
-                        <IconButton onClick={() => setGroupData({ open: true, group})}>
+                        <IconButton onClick={() => setGroupData({ open: true, group: { ...group, type: group.type.id }})}>
                             <Edit fontSize="inherit" />
                         </IconButton>
                     </Stack>);
@@ -87,7 +108,7 @@ const GroupManagement: FC = () => {
         </Header>
         <CardBox>
             <CardContent>
-                <DataTable columns={buildDataContent()} data={result} loading={loading} />
+                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
             </CardContent>
         </CardBox>
         <GroupData {...groupData} setGroupData={setGroupData} getGroups={getGroups} />

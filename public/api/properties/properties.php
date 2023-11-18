@@ -30,7 +30,8 @@ if (METHOD === 'GET') {
             unset($row->status_label);
             array_push($rows,$row);
         }
-        echo json_encode($rows, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+        throwSuccess($rows);
+        // echo json_encode($rows, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
     } else {
         throwError(404, "No roles found");
     }

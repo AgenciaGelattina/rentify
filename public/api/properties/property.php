@@ -11,7 +11,8 @@ if (METHOD === 'GET') {
     $property = $DB->query($query);
     
     if ($property->num_rows > 0) {
-        echo json_encode($property->fetch_object(), JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+        throwSuccess($property->fetch_object(), "Esta es una prueba success.");
+        //echo json_encode($property->fetch_object(), JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
     } else {
         throwError(404, "No property found");
     }
@@ -29,20 +30,20 @@ if (METHOD === 'POST') {
         $query ="INSERT INTO properties (`title`, `description`, `type`, `status`, `group`, `active`, `created`) VALUES ('".$title."','".$description."', $type, $status, $group, 1, CURDATE())";
         $property = $DB->query($query);
         if ($DB->affected_rows > 0) {
-            echo json_encode(['success' => 1], JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+            throwSuccess(true, "Se ha creado la propiedad");
         } else {
-            echo json_encode(['error' => ['message'=> "No se pudo crear la propuiedad.".$query, 'staus' => 500]]);
+            throwError(203, "No se pudo crear la propiedad.");
         }
     } else if ($id > 0) {
         $fields = "`title`='".$title."', `description`='".$description."', `type`=".$type.", `status`=".$status.", `group`=".$group;
         $property = $DB->query("UPDATE properties SET ".$fields." WHERE id=".$id);
         if ($DB->affected_rows > 0) {
-            echo json_encode(['success' => 1], JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+            throwSuccess(true, "Los datos de la propiedad se modificaron.");
         } else {
-            echo json_encode(['error' => ['message'=> "No se pudieron guardar los datos", 'staus' => 500]]);
+            throwError(203, "No se pudo moficar la propiedad.");
         }
     } else {
-        throwError(500, "Property ID not valid.");
+        throwError(203, "Property ID not valid.");
     }
 }
 

@@ -17,15 +17,15 @@ if (METHOD === 'POST') {
                 require '../jwt.php';
                 $jwt = new JwtHandler();
                 $account->token = $jwt->jwtEncodeData('LOGIN',['id'=>$account->id,'iat' => 1356999524]);
-                echo json_encode($account, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+                throwSuccess($account);
             } else {
-                throwError(401, "Usuario no autorizado.");
+                throwError(203, "Usuario no autorizado.");
             };
         } else {
-            throwError(401, "Correo o Contraseña incorrectas.");
+            throwError(203, "Correo o Contraseña incorrectas.");
         }
     } else {
-        throwError(404, "No se ha encontrado al usuario.");
+        throwError(203, "No se ha encontrado al usuario.");
     }
 }
 ?>

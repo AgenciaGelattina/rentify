@@ -1,9 +1,11 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 import { useFetchExpress } from '@phoxer/react-components';
+import useDataResponse from "@src/Hooks/useDataResponse";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
-import { isNil } from 'ramda';
+import { isNil, isNotNil } from 'ramda';
 import { getUIKey } from '@src/Utils';
+import DummyTextField from "../DummyTextField";
 
 export interface IPropertiesStatusSelector {
     id: number;
@@ -11,14 +13,23 @@ export interface IPropertiesStatusSelector {
 }
 
 const PropertiesStatusSelector = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((props, ref) => {
-    const status = useFetchExpress(`${process.env.NEXT_PUBLIC_API_URL!}/properties/status/list.php`);
+    const status = useFetchExpress(`${process.env.NEXT_PUBLIC_API_URL!}/properties/statuses/list.php`);
+    const { validateResult } = useDataResponse();
 
-    if (status.result && !status.loading) {
+    const data = useMemo(() => {
+        const statusData = validateResult(status.result);
+        if (isNotNil(statusData)) {
+            return statusData;
+        }
+        return null;
+    }, [status.result, validateResult]);
+
+    if (data && !status.loading) {
         return (<TextField id="status" label="Estado de la Propiedad" {...props} disabled={isNil(status.result)} select fullWidth>
-            {status.result.map((sts: IPropertiesStatusSelector) => <MenuItem key={getUIKey()} value={sts.id}>{sts.label}</MenuItem>)}
+            {data.map((sts: IPropertiesStatusSelector) => <MenuItem key={getUIKey()} value={sts.id}>{sts.label}</MenuItem>)}
         </TextField>);
     }
-    return null;
+    return <DummyTextField />;
 });
 PropertiesStatusSelector.displayName= 'PropertiesStatusSelector';
 export default PropertiesStatusSelector;
