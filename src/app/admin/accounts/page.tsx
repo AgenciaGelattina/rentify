@@ -8,13 +8,21 @@ import { CardContent, IconButton, Typography, Button } from '@mui/material';
 import UserForm, { TUserForm } from './UserForm';
 import { PersonAdd, Edit, CheckCircle, Cancel } from '@mui/icons-material';
 import { IRole } from '@src/Components/Forms/RolesSelector';
+import useDataResponse from '@src/Hooks/useDataResponse';
 
 const AccountsManagement: React.FC = () => {
-    const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const [users, setUsers] = useState<any>([]); 
+    const { validateResult } = useDataResponse();
     const [userForm, setUserForm] = useState<TUserForm>({ open: false, id: 0 });
 
     const getUsers = () => {
-        fetchData.get('/accounts/users.php');
+        fetchData.get('/accounts/users.php', null, (response: TCallBack) => {
+            const users = validateResult(response.result);
+            if (users) {
+                setUsers(users);
+            }
+        });
     }
 
     useEffect(() => {
@@ -23,8 +31,15 @@ const AccountsManagement: React.FC = () => {
     }, []);
 
     const toggleUserActive = ({ id, active }: { id: number; active: number }) => {
-        fetchData.post('/accounts/active.php', { id, active });
+        fetchData.post('/accounts/active.php', { id, active }, (response: TCallBack) => {
+            const users = validateResult(response.result);
+            if (users) {
+                setUsers(users);
+            }
+        });
     }
+
+    console.log('RENDER')
 
     const buildDataContent = (): TDataTableColumn[] => {
         return [
@@ -94,7 +109,7 @@ const AccountsManagement: React.FC = () => {
         </Header>
         <CardBox>
             <CardContent>
-                <DataTable columns={buildDataContent()} data={result} loading={loading} />
+                <DataTable columns={buildDataContent()} data={users} loading={loading} />
             </CardContent>
         </CardBox>
         <UserForm {...userForm} setOpen={setUserForm} getUsers={getUsers} />

@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import RolesSelector from '@src/Components/Forms/RolesSelector';
 import RspDialog from '@src/Components/RspDialog';
 import { fieldError } from '@src/Utils';
+import useDataResponse from '@src/Hooks/useDataResponse';
 
 export type TUserForm = {
     id: number;
@@ -35,7 +36,14 @@ const formValidations = yup.object().shape({
     names: yup.string().required("Por favor escriba los nombres del usuario."),
     surnames: yup.string().required("Por favor escriba los apellidos del usuario."),
     email: yup.string().required("Por favor escriba un Correo").email("El correo debe tener formato válido"),
-    password: yup.string().required("Por favor escriba un Pasword"),
+    password: yup.string().required().when('id', ([id], sch) => {
+        if (id === 0) {
+            return yup.string().required("Por favor, confirme el nuevo password.")
+            .min(8, "El password debe de contener entre 8 a 12 caracteres.")
+            .max(12, "El password no debe pasar de los 12 caracteres.");
+        }
+        return yup.string();
+    }),
     role: yup.number().required()
 });
 
@@ -44,26 +52,22 @@ const defaultValues: IAccountData = {
     names: "",
     surnames: "",
     email: "",
-    password: "12345",
+    password: "12345678",
     role: 1
 }
 
 const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, getUsers }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { validateResult } = useDataResponse();
     const { handleSubmit, control, formState: { errors }, reset, register } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
-    const { showSnackMessage } = useSnackMessages()
 
     useEffect(() => {
         if (open && id > 0) {
-            fetchData.get('/accounts/user.php', { id }, (response: TCallBack) => {
-                if(response.result) {
-                    reset({ ... response.result, password: '-' });
-                    return;
-                }
-                if (response.error) {
-                    showSnackMessage({ message: response.error.message, severity: "error" });
-                    return;
+            fetchData.get('/accounts/account/user.php', { id }, (response: TCallBack) => {
+                const user = validateResult(response.result);
+                if(user) {
+                    reset({ ...user, password: "" });
                 }
             });
         }
@@ -75,11 +79,8 @@ const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, get
 
     const onFormSubmit = (data: IAccountData) => {
         fetchData.post('/accounts/user.php', data, (response: TCallBack) => {
-            if (response.error) {
-                showSnackMessage({ message: response.error.message, severity: "error" });
-                return;
-            }
-            if (response.result && response.result.success === 1) {
+            const saved = validateResult(response.result);
+            if (saved) {
                 setOpen({ open: false, id: 0 });
                 getUsers();
             }
@@ -92,17 +93,17 @@ const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, get
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid xs={12} md={6}>
                     <Controller name="names" control={control} render={({ field }) => {
-                        return <TextField id="names" label="Names" type="text" {...field} {...fieldError(errors.names)} onChange={(e) => field.onChange(e)} fullWidth />
+                        return <TextField id="names" label="Nombres" type="text" {...field} {...fieldError(errors.names)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
                 <Grid xs={12} md={6}>
                     <Controller name="surnames" control={control} render={({ field }) => {
-                        return <TextField id="surnames" label="Surnames" type="text" {...field} {...fieldError(errors.surnames)} onChange={(e) => field.onChange(e)} fullWidth />
+                        return <TextField id="surnames" label="Apellidos" type="text" {...field} {...fieldError(errors.surnames)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
                 <Grid xs={12} md={8}>
                     <Controller name="email" control={control} render={({ field }) => {
-                        return <TextField id="email" label="Email" type="text" {...field} {...fieldError(errors.email)} onChange={(e) => field.onChange(e)} fullWidth />
+                        return <TextField id="email" label="Correo Electrónico" type="text" {...field} {...fieldError(errors.email)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
                 <Grid xs={12} md={4}>

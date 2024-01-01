@@ -17,7 +17,7 @@ if (METHOD === 'GET') {
             unset($row->role_label);
             array_push($rows,$row);
         }
-        echo json_encode($rows, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+        throwSuccess($rows);
     } else {
         throwError(404, "No users found");
     }

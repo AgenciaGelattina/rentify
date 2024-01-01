@@ -13,6 +13,7 @@ import { fieldError } from '@src/Utils';
 import { TPropertyDetails } from '@src/Components/Properties/Details';
 import { isNil } from 'ramda';
 import FileFolders from '@src/Components/Properties/Contracts/FileFolders';
+import useDataResponse from '@src/Hooks/useDataResponse';
 
 
 
@@ -49,6 +50,7 @@ type TContractData = {
 
 const ContractData: FC<TContractData> = ({ property }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { validateResult } = useDataResponse();
     const { handleSubmit, control, getValues, setValue, setError, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
     const { showSnackMessage } = useSnackMessages();
@@ -69,11 +71,9 @@ const ContractData: FC<TContractData> = ({ property }) => {
         if (property && property.id > 0) {
             setValue('property', property.id);
             fetchData.get('/properties/contracts/contract.php', { property_id: property.id }, (response: TCallBack) => {
-                if (response.result) {
-                    formatData(response.result);
-                }
-                if (response.error) {
-                    showSnackMessage({ severity: 'error', message: response.error.message });
+                const contract = validateResult(response.result);
+                if (contract) {
+                    formatData(contract);
                 }
             });
         }
@@ -96,11 +96,9 @@ const ContractData: FC<TContractData> = ({ property }) => {
         }
 
         fetchData.post('/properties/contracts/contract.php', data, (response: TCallBack) => {
-            if (response.result) {
-                formatData(response.result);
-            }
-            if (response.error) {
-                showSnackMessage({ severity: 'error', message: response.error.message });
+            const contract = validateResult(response.result);
+            if (contract) {
+                formatData(contract);
             }
         });
         

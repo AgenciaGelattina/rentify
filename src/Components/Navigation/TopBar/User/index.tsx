@@ -13,6 +13,7 @@ import { IUser } from '@src/DataProvider/interfaces';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import { STATE_ACTIONS } from '@src/Constants';
+import useSessionStorage from '@src/Hooks/useSessionStorage';
 
 type TUser = {
     user: IUser;
@@ -20,6 +21,7 @@ type TUser = {
 
 const User: React.FC<TUser> = ({ user }) => {
     const { setMainState } = useContext(StoreContext);
+    const sessionStorage = useSessionStorage();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const router = useRouter();
     const open = Boolean(anchorEl);
@@ -34,7 +36,8 @@ const User: React.FC<TUser> = ({ user }) => {
     }
 
     const logOut = () => {
-        setMainState(STATE_ACTIONS.LOGIN_OUT, { id: 0 });
+        sessionStorage?.removeItem('token');
+        setMainState(STATE_ACTIONS.LOGIN_OUT);
         closeMenu();
     }
 
@@ -60,11 +63,11 @@ const User: React.FC<TUser> = ({ user }) => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-            <MenuItem onClick={() => goTo('/account/settings')}>
+            <MenuItem onClick={() => goTo('/accounts/account')}>
                 <ListItemIcon>
                     <PersonIcon fontSize="small" />
                 </ListItemIcon>
-                Profile
+                Mi Cuenta
             </MenuItem>
             <Divider />
             <MenuItem onClick={logOut}>

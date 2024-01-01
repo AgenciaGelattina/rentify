@@ -7,7 +7,7 @@ if (METHOD === 'GET') {
     $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
     $query = "SELECT cf.name,cf.title,cf.description,(SELECT COUNT(fl.id) FROM files AS fl WHERE fl.folder = cf.name) as num_files FROM contracts_folders AS cf WHERE cf.contract = ".$contract_id;
     $contract_result = $DB->query($query);
-    echo json_encode(getRowsArray($contract_result), JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+    throwSuccess(getRowsArray($contract_result));
 }
 
 ?>

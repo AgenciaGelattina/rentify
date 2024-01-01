@@ -1,4 +1,5 @@
 RewriteRule ^(api)($|/) - [L]
+RewriteRule ^(dev)($|/) - [L]
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.html$ - [L]

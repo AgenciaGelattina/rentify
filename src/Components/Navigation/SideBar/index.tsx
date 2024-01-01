@@ -1,10 +1,8 @@
-import { useRouter } from 'next/navigation';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import { SDrawer } from './style';
-import { List } from '@phoxer/react-components';
-import { createListItems } from './routes';
+import List from '../List';
 import { IUser } from '@src/DataProvider/interfaces';
  
 type TSideBar = {
@@ -12,7 +10,7 @@ type TSideBar = {
     user: IUser;
     onClose: (open: boolean) => void;
 }
-
+/*
 const menuTheme = createTheme({
     palette: {
       mode: 'dark',
@@ -36,9 +34,8 @@ const menuTheme = createTheme({
         }
     }
 });
-
+*/
 const SideBar: React.FC<TSideBar> = ({ open, onClose, user }) => {
-    const router = useRouter();
     const isDesktop = useMediaQuery('(min-width:600px)');
     const menuWidth = 250;
 
@@ -56,7 +53,7 @@ const SideBar: React.FC<TSideBar> = ({ open, onClose, user }) => {
                 }
             }}
         >
-            <List listItems={createListItems(user.role || 0)} onItemSelected={(value: string) => router.push(value)} />
+            <List />
         </SDrawer>
     </Box>)
 }

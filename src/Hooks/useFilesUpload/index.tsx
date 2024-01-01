@@ -13,12 +13,13 @@ export interface IFileStatus {
     name: string;
     type: string;
     size: number;
-    url: string;
+    url?: string;
+    created?: string;
     isUploading: boolean;
     uploadProgress?: TUploadProgress;
     error: boolean;
     errorMessage?: string;
-    XHR?: XMLHttpRequest;
+    xhr?: XMLHttpRequest;
 }
 
 type TUseFilesUploadOptions = {
@@ -36,13 +37,11 @@ type TUseFilesUpload = {
     cancelUpload: (fileID?: string) => void;
 }
 
-const fileStatusDefault: IFileStatus = { id: "", name: "", type: "", size: 0, url: "", isUploading: false, error: false };
+const fileStatusDefault: IFileStatus = { id: "", name: "", type: "", size: 0, isUploading: false, error: false };
 
 const fileStatusActions: { [key: string]: string } = {
     ADD_FILES: 'ADD_FILES',
-    UPDATE_FILE: 'UPDATE_FILE',
-    ON_PROGRESS: 'ON_PROGRESS',
-    UPLOADED: 'UPLOADED'
+    UPDATE_FILE: 'UPDATE_FILE'
 }
 
 type TFileStatusReducer = {
@@ -98,7 +97,7 @@ const useFilesUpload = (options: TUseFilesUploadOptions): TUseFilesUpload => {
             const { endPoint, acceptedFilesType, deniedFilesType, maxFileSize, data } = options;
             const newFiles: IFileStatus[] = Array.from(fls).map((file: File): IFileStatus => {
                 const flNM = file.name.match(/(.+?)(\.[^.]*$|$)/);
-                const fileStatus: IFileStatus = { ...fileStatusDefault, id: getUIKey({ removeHyphen: true, toUpperCase: true }) }
+                const fileStatus: IFileStatus = { ...fileStatusDefault, id: getUIKey({ removeHyphen: true, toUpperCase: true }), size: file.size }
                 if (flNM && flNM.length >= 2) {
                     fileStatus.name = flNM[1].toLowerCase().replace(/[\W]/gm,'');
                     fileStatus.type = flNM[2].replace('.', '');
@@ -117,7 +116,7 @@ const useFilesUpload = (options: TUseFilesUploadOptions): TUseFilesUpload => {
                         fileStatus.errorMessage = `El archivo supera el peso permitido (${file.size})`;
                         return fileStatus;
                     }
-                    fileStatus.XHR = new XMLHttpRequest();
+                    fileStatus.xhr = new XMLHttpRequest();
                     const formData = new FormData();
                     formData.append('file', file, file.name);
                     formData.append('id', fileStatus.id);
@@ -126,48 +125,43 @@ const useFilesUpload = (options: TUseFilesUploadOptions): TUseFilesUpload => {
                             formData.append(key, value);
                         }
                     }
-                    fileStatus.XHR.open('POST', endPoint);
-                    fileStatus.XHR.upload.onloadstart = (e: ProgressEvent) =>{
-                        fileStatus.uploadProgress = { total: e.total, loaded: e.loaded, percent: 0 };
+                    fileStatus.xhr.open('POST', endPoint, true);
+                    fileStatus.xhr.upload.onloadstart = (ev: ProgressEvent) =>{
+                        console.log('onloadstart', fileStatus);
+                        fileStatus.uploadProgress = { total: ev.total, loaded: ev.loaded, percent: 0 };
                         fileStatus.isUploading = true;
                         setFiles({ type: fileStatusActions.UPDATE_FILE, data: { 
                             ...fileStatus,
-                            uploadProgress: { total: e.total, loaded: e.loaded, percent: 0 },
+                            uploadProgress: { total: ev.total, loaded: ev.loaded, percent: 0 },
                             isUploading: true
                         } });
                     }
-                    fileStatus.XHR.upload.onprogress = (ev: ProgressEvent) => {
+                    fileStatus.xhr.upload.onprogress = (ev: ProgressEvent) => {
+                        console.log('onprogress', fileStatus)
                         const { total, loaded } = ev;
                         const percent = Math.round((loaded/total)*100);
                         setFiles({ type: fileStatusActions.UPDATE_FILE, data: {
                             ...fileStatus,
                             uploadProgress: { total, loaded, percent },
-                            isUploading: true
                         } });
                     }
-                    fileStatus.XHR.upload.onerror = (ev: ProgressEvent) => {
-                        console.log(`ERROR-> ${ev}`)
+                    fileStatus.xhr.upload.onerror = (ev: ProgressEvent) => {
+                        console.log('onerror', ev);
                         setUpError(fileStatus);
                     }
-                    fileStatus.XHR.upload.onloadend = (ev: ProgressEvent) => {
-                        if (fileStatus.XHR?.status === 200) {
+                    fileStatus.xhr.upload.onload = (ev: ProgressEvent) => {
+                        console.log('onload', ev);
+                        const { loaded, total } = ev;
+                        setFiles({ type: fileStatusActions.UPDATE_FILE, data: {
+                            ...fileStatus,
+                            error: false,
+                            size: ev.total,
+                            uploadProgress: { total, loaded, percent: 100 },
+                            isUploading: false
+                        } });
+                    }
 
-                        } else {
-                            setUpError(fileStatus);
-                        }
-                        console.log(`STATUS-> ${fileStatus.XHR?.status}`)
-                        console.log(`STATUSTEXT-> ${fileStatus.XHR?.statusText}`)
-                        console.log(`RESPONSE-> ${fileStatus.XHR?.response}`)
-                    }
-                    fileStatus.XHR.send(formData);
-                    /*
-                    XHR.onload = () => {
-                        if (XHR.status === 200) {
-                            setFiles({ type: fileStatusActions.UPLOADED, data: { id: fileStatus.id }});
-                        }
-                    }
-                    */
-                    
+                    fileStatus.xhr.send(formData);                    
                     return fileStatus;
                 } 
                 return { ...fileStatus, error: true, errorMessage: 'El archivo no se pudo leer.' };

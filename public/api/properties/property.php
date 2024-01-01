@@ -11,8 +11,7 @@ if (METHOD === 'GET') {
     $property = $DB->query($query);
     
     if ($property->num_rows > 0) {
-        throwSuccess($property->fetch_object(), "Esta es una prueba success.");
-        //echo json_encode($property->fetch_object(), JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+        throwSuccess($property->fetch_object());
     } else {
         throwError(404, "No property found");
     }

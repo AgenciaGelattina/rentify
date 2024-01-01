@@ -1,22 +1,62 @@
 import { createTheme } from '@mui/material/styles';
 import { IState, IReducer, IUser } from './interfaces';
-import { STATE_ACTIONS } from '@src/Constants';
+import { STATE_ACTIONS, ROUTES_ACTIONS } from '@src/Constants';
+import { createRoutesItems } from './routes';
+import { IListItem } from '@src/Components/Navigation/List/ListItem/ListItem';
+import { isNotNil } from 'ramda';
+
+// route
+const expandRouter = (listItems: IListItem[], item: IListItem): IListItem[] => {
+    const routes = listItems.map((itm: IListItem) => {
+            itm.active = itm.id === item.id;
+            if (isNotNil(itm.expanded) && itm.active) {
+                itm.expanded = !itm.expanded;
+            };
+            if (itm.listItems) {
+                itm.listItems = expandRouter(itm.listItems, item);
+            }
+            return itm;
+    });
+    return routes;
+}
+
+const activeRouter = (listItems: IListItem[], path: string): IListItem[] => {
+    const routes = listItems.map((itm: IListItem) => {
+            itm.active = false;
+            if (isNotNil(itm.value)) {
+                itm.active = itm.value === path;
+            };
+            if (itm.listItems) {
+                itm.listItems = activeRouter(itm.listItems, path);
+            }
+            return itm;
+    });
+    return routes;
+}
+
+export const mainStateDefault: IState = {
+    user: {
+        id: 0,
+        token: null
+    },
+    routes: []
+}
 
 // Main State
 export const mainStateReducer: IReducer = {
     [STATE_ACTIONS.SET_USER]: (state: IState, user: IUser) => {
-        return { ...state, user };
+        return { ...state, user, routes: createRoutesItems(user.role || 0) };
     },
-    [STATE_ACTIONS.LOGIN_OUT]: (state: IState, user: IUser) => {
-        return { ...state, user };
+    [STATE_ACTIONS.LOGIN_OUT]: () => {
+        return mainStateDefault;
+    },
+    [ROUTES_ACTIONS.UPDATE_ROUTE]: (state: IState, item: IListItem) => {
+        return { ...state, routes: expandRouter(state.routes, item) };
+    },
+    [ROUTES_ACTIONS.ACTIVE_ROUTE]: (state: IState, path: string) => {
+        return { ...state, routes: activeRouter(state.routes, path) };
     }
 };
-
-export const mainStateDefault: IState = {
-    user: {
-        id: 0
-    }
-}
 
 // Theme
 export const theme = createTheme({

@@ -17,7 +17,7 @@ const DataProviders: React.FC<TDataProviders> = ({ children }) => {
     console.log('setMainState', data)
     dispatchState({ type: action, data });
   };
-
+  
   const memoizedTheme = useMemo(()=>{
     return createTheme({
       ...theme

@@ -3,6 +3,7 @@
 # V1.0.6
 - Se modificó la respuesta del servidor para controlar los errores.
 - Se pueden agragar y modificar propiedades.
+- Se agregó método de manejo de errores y snackmessages.
 - Se gregó el administrador para Tipos de Propiedades.
 - Se gregó el administrador para Estados de Propiedades.
 - Se gregó el administrador para Grupos de Propiedades.

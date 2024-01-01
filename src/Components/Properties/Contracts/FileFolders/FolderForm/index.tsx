@@ -2,6 +2,7 @@ import { Controller, FieldValues, useForm, useFormState } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import { Button, DialogActions, DialogContent, Divider, TextField, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import RspDialog from '@src/Components/RspDialog';
@@ -47,6 +48,7 @@ const defaultValues: IFolder = {
 
 const FolderForm: React.FC<IFolderFormProps & TFolderForm> = ({ name, contract_id, open, setOpen, getFolders }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { validateResult } = useDataResponse();
     const { handleSubmit, control, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
 
@@ -55,8 +57,9 @@ const FolderForm: React.FC<IFolderFormProps & TFolderForm> = ({ name, contract_i
             setValue('contract_id', contract_id);
             if (!isEmpty(name)) {
                 fetchData.get('/properties/contracts/folder.php', { name }, (response: TCallBack) => {
-                    if (response.result) {
-                        reset({ ...response.result, action: 'update' });
+                    const folder = validateResult(response.result);
+                    if (folder) {
+                        reset({ ...folder, action: 'update' });
                     }
                 });
             } else {
@@ -75,15 +78,10 @@ const FolderForm: React.FC<IFolderFormProps & TFolderForm> = ({ name, contract_i
 
     const onFormSubmit = (data: FieldValues) => {
         fetchData.post('/properties/contracts/folder.php', data, (response: TCallBack) => {
-            if (response.result) {
-                const { success, error } = response.result;
-                if (success) {
-                    getFolders();
-                    closeFolerForm();
-                }
-            }
-            if (response.error) {
-                console.log(response.error)
+            const saved = validateResult(response.result);
+            if (saved) {
+                getFolders();
+                closeFolerForm();
             }
         });
     }

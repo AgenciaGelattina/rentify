@@ -5,10 +5,11 @@ import * as yup from 'yup';
 import { CardActions, CardContent, TextField, Button, Divider, Box } from '@mui/material';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Header, TCallBack, useFetchData, useSnackMessages } from '@phoxer/react-components';
+import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import { fieldError } from '@src/Utils';
 import { IUser } from '@src/DataProvider/interfaces';
 import { useEffect } from 'react';
+import useDataResponse from '@src/Hooks/useDataResponse';
 
 type TAccountData = {
     id?: number;
@@ -37,18 +38,14 @@ type TUSerData = {
 const UserData: React.FC<TUSerData> = ({ user }) => {
     const { fetchData, loading, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { handleSubmit, control, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
-    const { showSnackMessage } = useSnackMessages();
+    const { validateResult } = useDataResponse();
 
     useEffect(() => {
         if (user.id > 0) {
-            fetchData.get('/accounts/user.php', { id: user.id }, (response: TCallBack) => {
-                if(response.result) {
-                    reset(response.result);
-                    return;
-                }
-                if (response.error) {
-                    showSnackMessage({ message: response.error.message, severity: "error" });
-                    return;
+            fetchData.get('/accounts/account/user.php', { id: user.id }, (response: TCallBack) => {
+                const user = validateResult(response.result);
+                if (user) {
+                    reset(user);
                 }
             });
         }
@@ -56,15 +53,8 @@ const UserData: React.FC<TUSerData> = ({ user }) => {
     }, [user.id]);
 
     const onFormSubmit = (data: TAccountData) => {
-        console.log(data);
-        fetchData.post('/accounts/user.php', data, (response: TCallBack) => {
-            if (response.error) {
-                showSnackMessage({ message: response.error.message, severity: "error" });
-                return;
-            }
-            if (response.result && response.result.success === 1) {
-                showSnackMessage({ message: "Los datos se guardaron correctamente", severity: "success" });
-            }
+        fetchData.post('/accounts/account/user.php', data, (response: TCallBack) => {
+            validateResult(response.result);
         });
     }
 
@@ -93,7 +83,7 @@ const UserData: React.FC<TUSerData> = ({ user }) => {
             <Divider />
             <CardActions sx={{ justifyContent: 'end' }}>
                 <Button disabled={loading} variant="contained" onClick={handleSubmit((data) => onFormSubmit(data))}>
-                    GUARDAR
+                    {loading ? "GUARDANDO..." : "GUARDAR"}
                 </Button>
             </CardActions>
         </CardBox>

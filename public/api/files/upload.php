@@ -2,20 +2,30 @@
 require '../headers.php';
 require '../utils.php';
 
+function clean($str) {
+    $str = pathinfo($str, PATHINFO_FILENAME);
+    $str = preg_replace('/\\s+/','_', $str);
+    $str = preg_replace('/[^A-Za-z0-9_]/', '', $str);
+    return preg_replace('/_+/','_', $str);
+}
+
 if (METHOD === 'POST') {
     require '../database.php';
-    $upload->path = ROOTPATH.'/rentify/assets/folders';
+    $upload = new stdClass();
+    $upload->path = FOLDERSPATH;
     $upload->file = (object) $_FILES['file'];
 
+    $folder = new stdClass();
     $folder->name = $DB->real_escape_string($_POST['folder']);
     $folder->path = $upload->path.'/'.$folder->name;
     
+    $file = new stdClass();
     $file->id = $DB->real_escape_string($_POST['id']);
-    $file->name = $upload->file->name;
+    $file->name = clean($upload->file->name);
     $file->type = pathinfo($upload->file->name, PATHINFO_EXTENSION);
     $file->size = $upload->file->size;
+    $file->created = date('Y-m-d');
     $file->path = $folder->path.'/'.$file->id.'.'.$file->type;
-    $file->url = la URL de descarga
 
     if (!file_exists($folder->path)) {
         mkdir($folder->path, 0777, true);
@@ -23,7 +33,16 @@ if (METHOD === 'POST') {
     
     $uploaded = move_uploaded_file($upload->file->tmp_name, $file->path);
 
-    echo json_encode(['up'=> $upload, 'fd'=>$folder, 'file'=>$file]);
+    if ($uploaded) {
+        $query ="INSERT INTO files (`id`,`folder`,`name`,`type`,`size`) VALUES ('$file->id','$folder->name','$file->name','$file->type',$file->size)";
+        $files = $DB->query($query);
+        if ($DB->affected_rows > 0) {
+            unset($file->path);
+            throwSuccess($file);
+        } else {
+           throwError(203, "No se pudo crear el archivo");
+        }
+    }    
 }
 
 ?>

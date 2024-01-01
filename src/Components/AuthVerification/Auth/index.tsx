@@ -1,7 +1,8 @@
 'use client';
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { StoreContext } from '@src/DataProvider';
+import useSessionStorage from '@src/Hooks/useSessionStorage';
 import PageWrapper from '@src/Components/Wrappers/Page';
 import { CardContent, CardActions, TextField, Divider, Button, Box, Alert, Typography } from '@mui/material';
 import { LoadingDialog, useFetchData } from '@phoxer/react-components';
@@ -28,9 +29,11 @@ const defaultValues: TAuthValues = {
 }
 
 const AuthUser: FC = () => {
-    const { setMainState } = useContext(StoreContext);
+    const { state, setMainState } = useContext(StoreContext);
     const { handleSubmit, control, formState: { errors } } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const auth = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const sessionStorage = useSessionStorage();
+    const [tokenValidation, setTokenValidation] = useState<boolean>(true);
     const { validateResult } = useDataResponse();
 
     const onFormSubmit = (data: TAuthValues) => {
@@ -38,14 +41,25 @@ const AuthUser: FC = () => {
     }
 
     useEffect(() => {
-        const result = validateResult(auth.result);
-        if (result && result.id > 0) {
-            const userData = { ...result };
-            if (userData.token) {
-                console.log(userData.token)
-                delete(userData.token);
+        const token = sessionStorage?.getItem('token');
+        console.log('READ TOKEN', token);
+        if (token && state.user.id === 0) {
+            auth.fetchData.get('/auth/token.php', { token });
+        } else {
+            setTokenValidation(false);
+        }
+    }, [sessionStorage, state.user]);
+
+    useEffect(() => {
+        const user = validateResult(auth.result);
+        if (user && user.id > 0) {
+            const userData = { ...user };
+            if (user.token) {
+                sessionStorage?.setItem('token', user.token);
             }
             setMainState(STATE_ACTIONS.SET_USER, userData);
+        } else {
+            setTokenValidation(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth.result, setMainState]);
@@ -74,7 +88,7 @@ const AuthUser: FC = () => {
                 <Typography variant="caption">{`V${process.env.NEXT_PUBLIC_APP_VERSION!}`}</Typography>
             </Box>
         </SLogBox>
-        <LoadingDialog show={auth.loading} />
+        <LoadingDialog show={auth.loading || tokenValidation} />
     </PageWrapper>);
 }
 

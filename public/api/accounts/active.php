@@ -21,9 +21,11 @@ if (METHOD === 'POST') {
                 unset($row->role_label);
                 array_push($rows,$row);
             }
-        echo json_encode($rows, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
+            $status= $active === 1 ? "AUTORIZADO" : "NO AUTORIZADO";
+            throwSuccess($rows, "El usuario #$id ahora está: $status");
     } else {
         throwError(404, "No users found");
     }
+    $DB->close();
 }
 ?>

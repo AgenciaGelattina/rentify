@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, IconButton, Stack } from '@mui/material';
 import { Header, useFetchData } from '@phoxer/react-components';
+import useDataResponse from '@src/Hooks/useDataResponse';
 import { CreateNewFolder } from '@mui/icons-material';
 import FolderForm, { TFolderForm } from './FolderForm';
 import { TContractDetails } from '../Details';
@@ -14,6 +15,7 @@ type TContractFileFolders = {
 
 const ContractFileFolders: React.FC<TContractFileFolders> = ({ contract }) => {
     const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { validateResult } = useDataResponse();
     const [folderForm, setFolderForm] = useState<TFolderForm>({ name: "", contract_id: contract.id, open: false });
 
     const getFolders = ( ) => {
@@ -25,7 +27,7 @@ const ContractFileFolders: React.FC<TContractFileFolders> = ({ contract }) => {
         getFolders();
     }, []);
 
-    console.log('RESULT----', result)
+    const folders = validateResult(result);
 
     return (<Box sx={{ border: '1px solid #ccc', backgroundColor: '#ebebeb', padding: '1rem' }}>
         <Header title="ARCHIVOS DEL CONTRATO" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
@@ -34,8 +36,8 @@ const ContractFileFolders: React.FC<TContractFileFolders> = ({ contract }) => {
             </IconButton>
         </Header>
         {loading && <LoadingBox />}
-        {result && (<Stack>
-            {result.map((folder: IFolder) => <Folder key={getUIKey()} folder={folder} onEditFolder={(name: string) => setFolderForm({ name, contract_id: contract.id, open: true }) } />)}
+        {folders && (<Stack>
+            {folders.map((folder: IFolder) => <Folder key={getUIKey()} folder={folder} onEditFolder={(name: string) => setFolderForm({ name, contract_id: contract.id, open: true }) } />)}
         </Stack>)}
         <FolderForm {...folderForm} setOpen={setFolderForm} getFolders={getFolders} />
     </Box>)

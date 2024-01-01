@@ -16,7 +16,7 @@ if (METHOD === 'POST') {
                 unset($account->active);
                 require '../jwt.php';
                 $jwt = new JwtHandler();
-                $account->token = $jwt->jwtEncodeData('LOGIN',['id'=>$account->id,'iat' => 1356999524]);
+                $account->token = $jwt->jwtEncodeData('AUTH', ['id'=>$account->id,'role'=>$account->role,'email'=> $account->email, 'iat' => 1356999524]);
                 throwSuccess($account);
             } else {
                 throwError(203, "Usuario no autorizado.");
@@ -27,5 +27,6 @@ if (METHOD === 'POST') {
     } else {
         throwError(203, "No se ha encontrado al usuario.");
     }
+    $DB->close();
 }
 ?>

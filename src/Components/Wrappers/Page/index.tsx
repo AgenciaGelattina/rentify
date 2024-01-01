@@ -9,7 +9,6 @@ type TWrapper = {
 }
 
 const PageWrapper: React.FC<TWrapper> = ({ centerContent = false, padding = '0', navigation = false, children }) => {
-
     if (navigation) {
         return (<SContainer centerContent={false} padding={padding}>
             <Navigation>
