@@ -29,7 +29,7 @@ interface IContract {
 const formValidations = yup.object().shape({
     id: yup.number().required(),
     property: yup.number().required(),
-    value: yup.number().min(1, "Escriba un importe.").required("Escriba un importe."),
+    value: yup.number().min(1, "Escriba un importe mayor a $1.").required("Escriba un importe."),
     due_date: yup.number().required("Agregar el día de corte"),
     init_date: yup.date().nullable(),
     end_date: yup.date().nullable(),
@@ -46,6 +46,19 @@ const defaultValues: IContract = {
 
 type TContractData = {
     property: TPropertyDetails;
+}
+
+const getDueDates = () => {
+    const dueDates = [
+        { value: 1, text: "Día 1 (Inicio de Mes)" },
+        { value: 15, text: "Día 15 (Mitad de Mes)" }
+    ];     
+    for (let i = 1; i <= 29; i++) {
+        if (i !== 1 && i !== 15) {
+            dueDates.push({ value: i, text: `Día ${i}`});
+        }
+    }
+    return dueDates;
 }
 
 const ContractData: FC<TContractData> = ({ property }) => {
@@ -123,8 +136,9 @@ const ContractData: FC<TContractData> = ({ property }) => {
             <Grid xs={12} sm={6}>
                 <Controller name="due_date" control={control} render={({ field }) => {
                     return (<TextField id="due_date" label="Día de vencimiento" {...field} onChange={(e) => field.onChange(e)} select fullWidth>
-                        <MenuItem value={15}>Día 15</MenuItem>
-                        <MenuItem value={30}>Último día del mes</MenuItem>
+                        {getDueDates().map((dd => {
+                            return <MenuItem key={`d${dd.value}`} value={dd.value}>{dd.text}</MenuItem>;
+                        }))}
                     </TextField>);
                 }} />
             </Grid>

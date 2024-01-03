@@ -14,7 +14,7 @@ if (METHOD === 'GET') {
         }
         throwSuccess($rows);
     } else {
-        throwError(404, "No groups found");
+        throwError(203, "No se encontraron grupos de propiedades.");
     }
 }
 ?>

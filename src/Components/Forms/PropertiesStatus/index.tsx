@@ -22,7 +22,7 @@ const PropertiesStatusSelector = forwardRef<TextFieldProps, ControllerRenderProp
             return statusData;
         }
         return null;
-    }, [status.result, validateResult]);
+    }, [status.result]);
 
     if (data && !status.loading) {
         return (<TextField id="status" label="Estado de la Propiedad" {...props} disabled={isNil(status.result)} select fullWidth>

@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import { Header, useFetchData } from '@phoxer/react-components';
+import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
 import { CardContent, IconButton, Stack, Typography } from '@mui/material';
@@ -22,17 +22,19 @@ type TGroupData = {
 const GroupManagement: FC = () => {
     const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const [groupData, setGroupData] = useState<IGroupData>(defaultGroupDataState);
+    const [groups, setGroups] = useState<TGroupData[]>([]);
     const { validateResult } = useDataResponse();
 
     const getGroups = () => {
-        fetchData.get('/properties/groups/groups.php');
+        fetchData.get('/properties/groups/groups.php', null, (response: TCallBack) => {
+            const groups = validateResult(response.result);
+            setGroups(groups || []);
+        });
     }
 
     useEffect(() => {
         getGroups();
     }, []);
-
-    console.log(result)
 
     const buildDataContent = (): TDataTableColumn[] => {
         return [
@@ -108,7 +110,7 @@ const GroupManagement: FC = () => {
         </Header>
         <CardBox>
             <CardContent>
-                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
+                <DataTable columns={buildDataContent()} data={groups} loading={loading} />
             </CardContent>
         </CardBox>
         <GroupData {...groupData} setGroupData={setGroupData} getGroups={getGroups} />

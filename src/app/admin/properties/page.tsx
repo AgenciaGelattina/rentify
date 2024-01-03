@@ -2,7 +2,7 @@
 import { FC, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import RoleVerification from '@src/Components/RoleVerification';
-import { Header, useFetchData } from '@phoxer/react-components';
+import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
@@ -21,12 +21,16 @@ const PropertiesManagement: FC = () => {
     const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const filterFormData = useForm({ defaultValues: initialQueryParams });
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
+    const [properties, setProperties] = useState<IPropertyData[]>([]);
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
         console.log('FILTER-DATA', data);
-        fetchData.get('/properties/properties.php', data);
+        fetchData.get('/properties/properties.php', data, (response: TCallBack) => {
+            const properties = validateResult(result);
+            setProperties(properties || []);
+        });
     }
 
     const buildDataFilters = (): IDataFilter[] => {
@@ -128,7 +132,7 @@ const PropertiesManagement: FC = () => {
     }
 
     return (<RoleVerification role={1}>
-        <Header title="PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+        <Header title="ADMINISTRACIÓN DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
             <IconButton onClick={() => setPropertyData({ open: true, id: 0 })}>
                 <AddCircle fontSize="inherit" color='primary' />
             </IconButton>
@@ -136,7 +140,7 @@ const PropertiesManagement: FC = () => {
         <CardBox>
             <CardContent>
                 <DataFilters filters={buildDataFilters()} formData={filterFormData} loading={loading} onFilter={getProperties} expanded={false} />
-                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
+                <DataTable columns={buildDataContent()} data={properties} loading={loading} />
             </CardContent>
         </CardBox>
         <PropertyData {...propertyData} setOpen={setPropertyData} getProperties={getProperties} />

@@ -84,7 +84,7 @@ const GroupData: React.FC<IGroupDataProps> = ({ group, open, setGroupData, getGr
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid xs={12}>
                     <Controller name="title" control={control} render={({ field }) => {
-                        return <TextField id="title" label="Título de la Propiedad" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
+                        return <TextField id="title" label="Título de la Propiedad (Grupo)" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                     {isNotNil(group.properties) && (<Typography variant="caption">{`Numero de propiedades: ${group.properties}`}</Typography>)}
                 </Grid>

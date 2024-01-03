@@ -50,7 +50,7 @@ const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any
         fullWidth
       />);
     }
-    return <DummyTextField />;
+    return <DummyTextField helperText={options.length === 0 ? "No hay grupos disponibles" : ""} error={true} />;
 });
 
 PropertiesGroupsSelector.displayName = 'PropertiesGroupsSelector';

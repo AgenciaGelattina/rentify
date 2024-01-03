@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import { Header, useFetchData } from '@phoxer/react-components';
+import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
 import { CardContent, IconButton, Stack, Typography } from '@mui/material';
@@ -10,19 +10,21 @@ import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
 import TypeData, { ITypeData, TTypeData, defaultTypeDataState } from './TypesData';
 
 const TypesManagement: FC = () => {
-    const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const [typeData, setTypeData] = useState<ITypeData>(defaultTypeDataState);
+    const [propertiesStatus, setPropertiesStatus] = useState<ITypeData[]>([]);
     const { validateResult } = useDataResponse();
 
     const getTypes = () => {
-        fetchData.get('/properties/statuses/statuses.php');
+        fetchData.get('/properties/statuses/statuses.php', null, (response: TCallBack) => {
+            const status = validateResult(response.result);
+            setPropertiesStatus(status || []);
+        });
     }
 
     useEffect(() => {
         getTypes();
     }, []);
-
-    console.log(result)
 
     const buildDataContent = (): TDataTableColumn[] => {
         return [
@@ -70,7 +72,7 @@ const TypesManagement: FC = () => {
         </Header>
         <CardBox>
             <CardContent>
-                <DataTable columns={buildDataContent()} data={validateResult(result)} loading={loading} />
+                <DataTable columns={buildDataContent()} data={propertiesStatus} loading={loading} />
             </CardContent>
         </CardBox>
         <TypeData {...typeData} setTypeData={setTypeData} getTypes={getTypes} />

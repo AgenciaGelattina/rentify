@@ -28,7 +28,7 @@ type TContract = {
   property: TPropertyDetails;
 }
 
-const Main: FC = () => {
+const Payments: FC = () => {
   const { state } = useContext(StoreContext);
   const [propertyView, setPropertyView] = useState<IPropertyView>({ open: false });
   const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -151,4 +151,4 @@ const Main: FC = () => {
   </PageWrapper>)
 }
 
-export default Main;
+export default Payments;

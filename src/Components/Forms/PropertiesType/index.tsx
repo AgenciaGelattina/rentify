@@ -22,7 +22,7 @@ const PropertiesTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<
             return typesData;
         }
         return null;
-    }, [types.result, validateResult]);
+    }, [types.result]);
 
     if (data && !types.loading) {
         return (<TextField id="type" label="Tipo de Propiedad" {...props} disabled={isNil(types.result)} select fullWidth>

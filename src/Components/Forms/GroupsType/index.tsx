@@ -22,7 +22,7 @@ const GroupsTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<Fiel
             return typesData;
         }
         return null;
-    }, [types.result, validateResult]);
+    }, [types.result]);
 
     if (data && !types.loading) {
         return (<TextField id="type" label="Tipo de Grupo" {...props} disabled={isNil(types.result)} select fullWidth>

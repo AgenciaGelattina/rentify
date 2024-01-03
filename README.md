@@ -1,5 +1,15 @@
 # Properties Administration App
 
+# V1.0.7
+- Ya funciona el sistema de carpetas y archivos para contratos.
+- La autentificación se puede hacer por token, solo en la misma TAB.
+- Ya se puede cambiar contraseñas a las cuentas de usuarios.
+- Se creó el ambiente de Producción - https://github.com/AgenciaGelattina/rentify
+- Se modificó el ambiente de Desarrollo - https://github.com/AgenciaGelattina/rentify/dev
+- El home muestra un resumen de pagos (Se está trabajando en las tablas)
+- Se optimizó los procesos de datos para los formularios.
+- varios fixs de estilos.
+
 # V1.0.6
 - Se modificó la respuesta del servidor para controlar los errores.
 - Se pueden agragar y modificar propiedades.

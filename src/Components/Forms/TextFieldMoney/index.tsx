@@ -31,7 +31,7 @@ const NumericFormatCustom = forwardRef<TextFieldProps, ControllerRenderProps<Fie
 const TextFieldMoney = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((field, ref) => {
 
     return (<TextField
-        label= "Valor a cobrar"
+        label= "Renta Mensual"
         {...field}
         InputProps={{
           inputComponent: NumericFormatCustom as any,

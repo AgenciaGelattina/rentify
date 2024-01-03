@@ -8,7 +8,7 @@ if (METHOD === 'GET') {
     if ($data->num_rows > 0) {
         throwSuccess(getRowsArray($data));
     } else {
-        throwError(404, "No groups found");
+        throwError(303, "No se encontraron grupos.");
     }
 }
 ?>
