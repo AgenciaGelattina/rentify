@@ -38,6 +38,7 @@ const List: FC<TListProps> = ({ menuListProps }) => {
     
     useEffect(() => {
         setMainState(ROUTES_ACTIONS.ACTIVE_ROUTE, pathname);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 
     return (<MenuList component="nav" dense disablePadding {...menuListProps} >

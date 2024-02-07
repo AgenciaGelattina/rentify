@@ -8,6 +8,7 @@ if (METHOD === 'GET') {
     $query = "SELECT cf.name,cf.title,cf.description,(SELECT COUNT(fl.id) FROM files AS fl WHERE fl.folder = cf.name) as num_files FROM contracts_folders AS cf WHERE cf.contract = ".$contract_id;
     $contract_result = $DB->query($query);
     throwSuccess(getRowsArray($contract_result));
+    $DB->close();
 }
 
 ?>

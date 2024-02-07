@@ -2,11 +2,6 @@ import { forwardRef } from "react";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 
-export interface IPropertiesStatusSelector {
-    id: number;
-    label: string;
-}
-
 const PaymentsStatuSelector = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((props, ref) => {
    
     return (<TextField id="status" label="ESTADO DE PAGOS" {...props} select fullWidth>

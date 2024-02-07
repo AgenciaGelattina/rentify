@@ -48,6 +48,7 @@ const AuthUser: FC = () => {
         } else {
             setTokenValidation(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionStorage, state.user]);
 
     useEffect(() => {

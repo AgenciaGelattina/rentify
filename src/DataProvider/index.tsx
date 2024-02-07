@@ -22,6 +22,7 @@ const DataProviders: React.FC<TDataProviders> = ({ children }) => {
     return createTheme({
       ...theme
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (<ThemeProvider theme={memoizedTheme}>

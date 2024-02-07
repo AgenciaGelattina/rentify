@@ -1,5 +1,7 @@
 
-// RANDOM UNIQUE ID V1.0
+/**
+ * RANDOM UNIQUE ID V1.0
+*/
 type TGetUIKey = {
     removeHyphen?: boolean;
     toUpperCase?: boolean;
@@ -16,8 +18,19 @@ export const getUIKey = (config?: TGetUIKey): string => {
     return randomUUID;
 }
 
-// FORMAT MONEY
+/**
+ * FORMAT MONEY
+*/
 export const formatToMoney = (number: number | bigint): string => {
-    console.log(new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MEX' }).format(number))
-    return number.toString();
+    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MEX' }).format(number);
+}
+
+/**
+ * FORMAT MONEY
+*/
+export const capitalize = (str: string, allFirtsChars: boolean = false): string => {
+    if (allFirtsChars) {
+        return str.replace(/(^\w{1})|(\s+\w{1})/g, ch => ch.toUpperCase());
+    }
+    return str.replace(/(^\w{1})/, ch => ch.toUpperCase());
 }

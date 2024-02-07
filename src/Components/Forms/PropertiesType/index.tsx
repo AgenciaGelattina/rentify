@@ -22,6 +22,7 @@ const PropertiesTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<
             return typesData;
         }
         return null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [types.result]);
 
     if (data && !types.loading) {

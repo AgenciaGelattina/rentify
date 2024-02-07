@@ -1,5 +1,8 @@
 import { Accordion, AccordionDetails, AccordionSummary, Chip, Typography } from "@mui/material";
 import { ExpandMore, HomeWork, HolidayVillage } from '@mui/icons-material';
+import Grid from '@mui/material/Unstable_Grid2';
+import LabelTextBox from "@src/Components/LabelTextBox";
+import { ConditionalRender } from "@phoxer/react-components";
 
 export type TPropertyDetails = {
     id: number;
@@ -22,9 +25,17 @@ const PropertyDetails: React.FC<TPropertyDetails> = ({ id, title, description, t
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body1" gutterBottom>{description}</Typography>
-          {group.id > 0 && <Chip icon={<HolidayVillage />} label={group.title} variant="outlined" />}
-          <Chip label={type.label} variant="outlined" />
-          <Chip label={status.label} variant="outlined" />
+          <ConditionalRender condition={(group.id > 0)}>
+            <LabelTextBox title="Grupo:" text={group.title} />
+          </ConditionalRender>
+          <Grid container spacing={1}>
+              <Grid xs={12} sm={6}>
+                <LabelTextBox title="Tipo de Propiedad:" text={type.label} />
+              </Grid>
+              <Grid xs={12} sm={6}>
+                <LabelTextBox title="Estado de la Propiedad:" text={status.label} />
+              </Grid>
+          </Grid>
         </AccordionDetails>
     </Accordion>)
 }

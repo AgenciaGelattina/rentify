@@ -7,8 +7,8 @@ export const createRoutesItems = (roleID: number): IListItem[] =>  {
     return [
         {
             id: getUIKey(),
-            label: "Propiedades",
-            value: "/",
+            label: "Contratos Activos",
+            value: "/summary",
             active: false,
             icon: <HomeWork />
         },

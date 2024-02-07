@@ -17,7 +17,7 @@ export type TFolderForm = {
     open: boolean;
 }
 
-interface IFolderFormProps {
+type TFolderFormProps = {
     setOpen: (fileFolder: TFolderForm) => void;
     getFolders: () => void;
 }
@@ -46,7 +46,7 @@ const defaultValues: IFolder = {
     action: 'create'
 }
 
-const FolderForm: React.FC<IFolderFormProps & TFolderForm> = ({ name, contract_id, open, setOpen, getFolders }) => {
+const FolderForm: React.FC<TFolderFormProps & TFolderForm> = ({ name, contract_id, open, setOpen, getFolders }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const { handleSubmit, control, getValues, setValue, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });

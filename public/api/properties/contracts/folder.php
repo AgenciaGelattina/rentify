@@ -8,6 +8,7 @@ if (METHOD === 'GET') {
     $query = "SELECT `name`,`contract` AS contract_id,`title`,`description` FROM contracts_folders WHERE name = '$name'";
     $folder_result = $DB->query($query);
     throwSuccess($folder_result->fetch_object());
+    $DB->close();
 }
 
 if (METHOD === 'POST') {
@@ -29,8 +30,9 @@ if (METHOD === 'POST') {
     } else {
         $query ="INSERT INTO contracts_folders (`name`,`contract`,`title`,`description`,`created`) VALUES ('$name',$contract_id,'$title','$description',CURDATE())";
         $property_result = $DB->query($query);
-        throwSuccess(null, "La carpeta se creó de forma exitosa");
+        throwSuccess(true, "La carpeta se creó de forma exitosa");
     }
+    $DB->close();
 }
 
 ?>

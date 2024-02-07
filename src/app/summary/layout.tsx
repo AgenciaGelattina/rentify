@@ -1,14 +1,14 @@
 import PageWrapper from "@src/Components/Wrappers/Page";
 
-export type TAccountsLayout = {
+export type TContractsSummaryLayout = {
     children: React.ReactNode;
 }
 
-const TAccountsLayout: React.FC<TAccountsLayout> = ({ children }) => {
+const TContractsSummaryLayout: React.FC<TContractsSummaryLayout> = ({ children }) => {
 
     return (<PageWrapper navigation>
         { children }
     </PageWrapper>)
 }
 
-export default TAccountsLayout;
+export default TContractsSummaryLayout;

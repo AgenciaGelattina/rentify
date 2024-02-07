@@ -22,6 +22,7 @@ const GroupsTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<Fiel
             return typesData;
         }
         return null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [types.result]);
 
     if (data && !types.loading) {
@@ -29,7 +30,7 @@ const GroupsTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<Fiel
             {data.map((type: IGroupsTypeSelector) => <MenuItem key={getUIKey()} value={type.id}>{type.label}</MenuItem>)}
         </TextField>);
     }
-    return <DummyTextField />
+    return <DummyTextField label="Tipo de Grupo" />
 });
 
 GroupsTypeSelector.displayName = 'GroupsTypeSelector';

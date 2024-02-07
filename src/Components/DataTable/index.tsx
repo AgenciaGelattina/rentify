@@ -3,7 +3,8 @@ import { TableContainer, Table, TableBody } from "@mui/material";
 import TableHead from './Header';
 import Rows from './Rows';
 import TableLoading from './Loading';
-import { isNotNil } from "ramda";
+import ConditionalAlert from "../ConditionalAlert";
+import { isEmpty, isNotNil } from "ramda";
 
 type TDataTableCell = {
     align?: 'center' | 'inherit' | 'justify' | 'left' | 'right';
@@ -32,17 +33,20 @@ type IDataTable = {
 }
 
 const DataTable: React.FC<IDataTable> = ({ columns, loading, data = [], minHeight, size='small' }) => {
-    return (<TableContainer>
-        <Table size={size}>
-            <TableHead columns={columns} />
-            <TableBody sx={{minHeight}}>
-                {loading && <TableLoading colSpan={columns ? columns.length : 1000} />}
-                {!loading && isNotNil(data) && data.map((dt: any, index: number) => {
-                    return <Rows key={`row-${index}`} columns={columns} data={dt} />
-                })}
-            </TableBody>
-        </Table>
-    </TableContainer>)
+    return (<>
+        <TableContainer>
+            <Table size={size}>
+                <TableHead columns={columns} />
+                <TableBody sx={{minHeight}}>
+                    {loading && <TableLoading colSpan={columns ? columns.length : 1000} />}
+                    {!loading && isNotNil(data) && data.map((dt: any, index: number) => {
+                        return <Rows key={`row-${index}`} columns={columns} data={dt} />
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
+        <ConditionalAlert condition={!loading && isEmpty(data)} severity="warning" title="No se encontraron registros." />
+    </>)
 }
 
 export default DataTable;

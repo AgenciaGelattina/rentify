@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
@@ -20,7 +20,7 @@ type TGroupData = {
 }
 
 const GroupManagement: FC = () => {
-    const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const [groupData, setGroupData] = useState<IGroupData>(defaultGroupDataState);
     const [groups, setGroups] = useState<TGroupData[]>([]);
     const { validateResult } = useDataResponse();
@@ -30,10 +30,11 @@ const GroupManagement: FC = () => {
             const groups = validateResult(response.result);
             setGroups(groups || []);
         });
-    }
+    };
 
     useEffect(() => {
         getGroups();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const buildDataContent = (): TDataTableColumn[] => {

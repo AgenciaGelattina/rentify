@@ -1,6 +1,6 @@
 import { FieldError } from "react-hook-form";
 
-type TFieldError = {
+export type TFieldError = {
     error: boolean;
     color: 'error' | 'primary';
     helperText: string | undefined;

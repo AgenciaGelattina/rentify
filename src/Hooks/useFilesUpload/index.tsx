@@ -74,6 +74,7 @@ const useFilesUpload = (options: TUseFilesUploadOptions): TUseFilesUpload => {
         input.current.onchange = () => {
             onSelectedFiles(input.current.files);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [input]);
 
     const cancelUpload = (fileID?: string) => {

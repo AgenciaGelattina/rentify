@@ -18,7 +18,7 @@ const initialQueryParams: FieldValues = {
 }
 
 const PropertiesManagement: FC = () => {
-    const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const filterFormData = useForm({ defaultValues: initialQueryParams });
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
     const [properties, setProperties] = useState<IPropertyData[]>([]);
@@ -26,9 +26,8 @@ const PropertiesManagement: FC = () => {
     const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
-        console.log('FILTER-DATA', data);
         fetchData.get('/properties/properties.php', data, (response: TCallBack) => {
-            const properties = validateResult(result);
+            const properties = validateResult(response.result);
             setProperties(properties || []);
         });
     }
@@ -64,9 +63,7 @@ const PropertiesManagement: FC = () => {
                     label: "Propiedad",
                 },
                 component: (title: string, rowData: any) => {
-                    return (<Button variant='text' onClick={() => {}}>
-                        {title}
-                    </Button>);
+                    return <Typography variant='subtitle2'>{`${title}`}</Typography>;
                 }
             },
             {

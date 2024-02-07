@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Avatar, Box, Divider, IconButton, List, Typography } from '@mui/material';
+import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Avatar, Box, Divider, IconButton, List, Stack, Typography } from '@mui/material';
 import { ConditionalRender, useFetchData } from '@phoxer/react-components';
 import useFilesUpload, { IFileStatus } from '@src/Hooks/useFilesUpload';
 import FileStatus from './File';
@@ -50,7 +50,10 @@ const Folder: FC<TFolder> = ({ folder, onEditFolder }) => {
           id={name}
         >
             <Box sx={{ flexGrow: 1, marginLeft: '.7rem ' }}>
-                <Typography variant="h6" sx={{ fontSize: '1rem', lineHeight: 1 }}><FolderIcon sx={{ width: 20, height: 20 }} /> {title}</Typography>
+                <Stack spacing={1} direction="row" alignItems="center">
+                    <FolderIcon sx={{ width: 20, height: 20 }} /> 
+                    <Typography variant="h6" sx={{ fontSize: '1rem', lineHeight: 1 }}>{title}</Typography>
+                </Stack>
                 <Typography variant="caption">{description}</Typography>
             </Box>
             <Avatar sx={{ width: 20, height: 20 }}>{totalFiles}</Avatar>

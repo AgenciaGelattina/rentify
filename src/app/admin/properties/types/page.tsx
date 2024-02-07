@@ -24,6 +24,7 @@ const TypesManagement: FC = () => {
 
     useEffect(() => {
         getTypes();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const buildDataContent = (): TDataTableColumn[] => {

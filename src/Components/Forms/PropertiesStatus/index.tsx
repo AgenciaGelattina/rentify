@@ -22,6 +22,7 @@ const PropertiesStatusSelector = forwardRef<TextFieldProps, ControllerRenderProp
             return statusData;
         }
         return null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status.result]);
 
     if (data && !status.loading) {

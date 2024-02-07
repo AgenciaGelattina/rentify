@@ -33,6 +33,6 @@ if (METHOD === 'GET') {
         throwSuccess($rows);
         // echo json_encode($rows, JSON_NUMERIC_CHECK | JSON_BIGINT_AS_STRING);
     } else {
-        throwError(404, "No roles found");
+        throwError(203, "No se encontraron propiedades.");
     }
 }

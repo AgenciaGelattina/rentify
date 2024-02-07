@@ -3,9 +3,13 @@ import { TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { NumericFormat } from "react-number-format";
 
+type TTextFieldMoney = {
+    label: string;
+}
+
 
 const NumericFormatCustom = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>(
-    function NumericFormatCustom(props, ref) {
+    (props, ref) => {
         const { onChange, ...other } = props;
     
         return (
@@ -25,13 +29,13 @@ const NumericFormatCustom = forwardRef<TextFieldProps, ControllerRenderProps<Fie
                 prefix="$"
             />
         );
-    },
-  );
+    }
+);
+NumericFormatCustom.displayName= 'NumericFormatCustom';
 
-const TextFieldMoney = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((field, ref) => {
+const TextFieldMoney = forwardRef<TextFieldProps, TTextFieldMoney & ControllerRenderProps<FieldValues, string>>((field, ref) => {
 
     return (<TextField
-        label= "Renta Mensual"
         {...field}
         InputProps={{
           inputComponent: NumericFormatCustom as any,

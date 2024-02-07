@@ -1,5 +1,13 @@
 # Properties Administration App
 
+# V1.0.8
+- Actualizacion de los paquetes de Node a ultima versión.
+- Se agregó la seccion de Pagos en los contratos.
+- Se agregó la seccion de Inquilinos en los contratos.
+- El resumen ya muestra los contratos que tienen deduda.
+- Se agregó la visualización de datos de propiedades y contratos en el Resumen.
+- Optimización de la base de datos MySql con Llaves Foraneas.
+
 # V1.0.7
 - Ya funciona el sistema de carpetas y archivos para contratos.
 - La autentificación se puede hacer por token, solo en la misma TAB.

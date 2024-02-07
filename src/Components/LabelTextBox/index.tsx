@@ -2,7 +2,7 @@ import { Box, Typography, TypographyOwnProps, BoxProps } from "@mui/material";
 
 export type TLabelTextBox = {
     title: string;
-    text: string;
+    text?: string | number;
     isHtml?: boolean;
     boxProps?: BoxProps;
     titleTypographyProps?: TypographyOwnProps;
@@ -11,8 +11,8 @@ export type TLabelTextBox = {
 
 const LabelTextBox: React.FC<TLabelTextBox> = ({ title, text, isHtml = false, boxProps, titleTypographyProps, textTypographyProps }) => {
     return (<Box {...boxProps}>
-        <Typography variant="h6" {...titleTypographyProps} gutterBottom>{title}</Typography>
-        <Typography variant="body1" {...textTypographyProps} gutterBottom>{text}</Typography>
+        <Typography variant="subtitle2" {...titleTypographyProps}>{title}</Typography>
+        {text && <Typography variant="body2" {...textTypographyProps} gutterBottom>{text}</Typography>}
     </Box>)
 }
 

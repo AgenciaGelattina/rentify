@@ -17,6 +17,7 @@ const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any
             return groupsData;
         }
         return [];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [groups.result, validateResult]);
 
     const selectedValue = useMemo(() => {
@@ -24,6 +25,7 @@ const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any
         return options.find((grp: FieldValues) => value === grp.id) || null
       }
       return null;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     } , [options, value]);
 
     if (groups.result && !groups.loading) {
@@ -50,7 +52,7 @@ const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any
         fullWidth
       />);
     }
-    return <DummyTextField helperText={options.length === 0 ? "No hay grupos disponibles" : ""} error={true} />;
+    return <DummyTextField name="groups" helperText={options.length === 0 ? "No hay grupos disponibles" : ""} error={true} />;
 });
 
 PropertiesGroupsSelector.displayName = 'PropertiesGroupsSelector';
