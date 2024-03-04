@@ -64,7 +64,7 @@ if (METHOD === 'GET') {
         foreach($months as $month) {
             if ($month->date->year_month === $payment_date->format("Y-m")) {
                 $month->total_amount = $month->total_amount + intval($payment->amount);
-                if($type->id === 1 || $type->id === 2) {
+                if($type->id === 1) {
                     $month->rent_amount = $month->rent_amount + intval($payment->amount);
                 }
                 $month->in_debt = ($month->rent_amount < intval($contract->value)) ? true : false;

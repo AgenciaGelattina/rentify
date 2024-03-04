@@ -9,15 +9,17 @@ import ClarificationsModal,{ TClarificationsModal, descriptionModalDefault } fro
 import { isEmpty } from 'ramda';
 import { NumericFormat } from 'react-number-format';
 import { IPayment } from '../..';
+import { ConditionalRender } from '@phoxer/react-components';
 
 type TPaymentsTable = {
     payments: IPayment[];
     total_amount: number;
+    editMode?: boolean;
     removePayment: (id: number) => void;
     editPayment: (payment: IPayment) => void;
 }
 
-const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment, removePayment }) => {
+const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment, removePayment, editMode = false }) => {
     const [clarification, setClarification] = useState<TClarificationsModal>(descriptionModalDefault);
 
     const buildDataContent = (): TDataTableColumn[] => {
@@ -57,15 +59,19 @@ const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment
                 },
                 component: (payment: IPayment) => {
                     return (<Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
-                        {!isEmpty(payment.clarifications) && <IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
-                            <Description fontSize="inherit" />
-                        </IconButton>}
-                        <IconButton onClick={() => editPayment(payment)}>
-                            <Edit fontSize="inherit" />
-                        </IconButton>
-                        <IconButton onClick={() => removePayment(payment.id)}>
-                            <DeleteForever fontSize="inherit" color="error" />
-                        </IconButton>
+                        <ConditionalRender condition={!isEmpty(payment.clarifications)}>
+                            <IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
+                                <Description fontSize="inherit" />
+                            </IconButton>
+                        </ConditionalRender>
+                        <ConditionalRender condition={editMode}>
+                            <IconButton onClick={() => editPayment(payment)}>
+                                <Edit fontSize="inherit" />
+                            </IconButton>
+                            <IconButton onClick={() => removePayment(payment.id)}>
+                                <DeleteForever fontSize="inherit" color="error" />
+                            </IconButton>
+                        </ConditionalRender>
                     </Stack>);
                 }
             }

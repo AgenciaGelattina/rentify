@@ -75,7 +75,7 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
             </IconButton>}
         </Header>
         {payments && payments.map((payment) => {
-            return <PaymentMonth key={getUIKey()} paymentData={payment} removePayment={removePayment} editPayment={editPayment} />
+            return <PaymentMonth key={getUIKey()} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
         })}
         {editMode && <PaymentForm {...paymentForm} setOpen={setPaymentForm} getPayments={getPayments} />}
     </Box>)

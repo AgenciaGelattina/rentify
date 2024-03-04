@@ -3,7 +3,6 @@ import { Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage
 import { getUIKey } from '@src/Utils';
 
 export const createRoutesItems = (roleID: number): IListItem[] =>  {
-    console.log('createRoutesItems!!!!');
     return [
         {
             id: getUIKey(),

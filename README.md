@@ -1,5 +1,14 @@
 # Properties Administration App
 
+# V1.0.9
+- Se agregó la sección de Historial de Contratos Vencidos en Administracion de Propiedades.
+- Se reparó el Bug del formato de fechas.
+- Optimización del código de Resumen de Contratos.
+- Se agregó el tipo de pago "Otro" para solo tener 2 tipos:
+    - Renta: El pago será contabilizado en el calculo mensual.
+    - Otros: Este pago es para otros gastos que no entran en el calculo mensual.
+- 
+
 # V1.0.8
 - Actualizacion de los paquetes de Node a ultima versión.
 - Se agregó la seccion de Pagos en los contratos.

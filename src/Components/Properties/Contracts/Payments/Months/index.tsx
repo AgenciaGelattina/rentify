@@ -8,11 +8,12 @@ import { IPayment, IPaymentMonth } from '..';
 
 type TPaymentData = {
     paymentData: IPaymentMonth;
+    editMode?: boolean;
     removePayment: (id: number) => void;
     editPayment: (payment: IPayment) => void;
 }
 
-const PaymentMonth: FC<TPaymentData> = ({ paymentData, removePayment, editPayment }) => {
+const PaymentMonth: FC<TPaymentData> = ({ paymentData, removePayment, editPayment, editMode = false }) => {
     const { due_date, in_debt, is_current, total_amount } = paymentData;
     const { year, month, year_month } = paymentData.date;
     
@@ -41,7 +42,7 @@ const PaymentMonth: FC<TPaymentData> = ({ paymentData, removePayment, editPaymen
             </Box>
         </AccordionSummary>
         <AccordionDetails>
-           <PaymentsTable payments={paymentData.payments} total_amount={total_amount} removePayment={removePayment} editPayment={editPayment} />
+           <PaymentsTable payments={paymentData.payments} total_amount={total_amount} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
         </AccordionDetails>
     </Accordion>)
 }

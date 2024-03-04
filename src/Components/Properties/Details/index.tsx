@@ -11,6 +11,10 @@ export type TPropertyDetails = {
     type: { id: number; label: string };
     group: { id: number; title: string };
     status: { id: number; label: string };
+    group_title?: string;
+    created?: string;
+    updated?: string;
+    active?: boolean;
 }
 
 const PropertyDetails: React.FC<TPropertyDetails> = ({ id, title, description, type, group, status }) => {

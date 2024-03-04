@@ -1,7 +1,7 @@
 import { Controller, FieldValues, useForm, useFormState } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TCallBack, useFetchData } from '@phoxer/react-components';
+import { ConditionalRender, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { Button, DialogActions, DialogContent, Divider, TextField, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -86,7 +86,6 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
 
     const onFormSubmit = (data: FieldValues) => {
         const { date } = data;
-        console.log(date)
         if (isNil(date)) {
             setError('date', { type: "error", message: "Seleccione una fecha de pago." });
             return false;
@@ -117,12 +116,12 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
                 </Grid>
                 <Grid xs={12} md={6}>
                     <Controller name="type" control={control} render={({ field }) => {
-                        return <PaymentTypeSelector {...field} onChange={(e) => field.onChange(e)}  />
+                        return <PaymentTypeSelector {...field} onChange={(e) => field.onChange(e)} />
                     }} />
                 </Grid>
                 <Grid xs={12}>
                     <Controller name="clarifications" control={control} render={({ field }) => {
-                        return <TextField id="clarifications" label="Aclaraciones" multiline maxRows={4} type="text" {...field} onChange={(e) => field.onChange(e)} fullWidth />
+                        return <TextField {...field} label="Aclaraciones" multiline maxRows={4} type="text" onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
             </Grid>

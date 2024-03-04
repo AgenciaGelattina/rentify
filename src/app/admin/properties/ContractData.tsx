@@ -20,7 +20,7 @@ import { TPropertyDetails } from '@src/Components/Properties/Details';
 import { isNil } from 'ramda';
 const { getDaysInMonth } = require("date-fns");
 
-interface IContract {
+export interface IContract {
     id: number;
     property: number;
     value: number;

@@ -5,7 +5,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import PropertyDetails, { TPropertyDetails } from '@src/Components/Properties/Details';
 import TabsContent from '@src/Components/TabsContent';
 import ContractData from './ContractData';
-import ContractsList from './ContractsList';
+import ExpiredContracts from './ExpiredContracts';
 
 
 export interface IPropertyContract {
@@ -25,15 +25,15 @@ const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ prop
             {property && <PropertyDetails {...property} />}
             {property && (<TabsContent tabs={[
                 { 
-                    tab: { label: "CONTRATO" },
+                    tab: { label: "CONTRATO VIGENTE" },
                     component: () => {
                         return <ContractData property={property} />
                     }
                 },
                 { 
-                    tab: { label: "LISTA DE CONTRATOS" },
+                    tab: { label: "HISTORIAL DE CONTRATOS" },
                     component: () => {
-                        return <ContractsList />
+                        return <ExpiredContracts property={property} />
                     }
                 }
             ]} />)}

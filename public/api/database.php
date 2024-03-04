@@ -1,5 +1,5 @@
 <?php
-$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_Dev108");
+$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_DevB");
 if($DB->connect_errno){
     printf("Connect failed: %s\n", $DB->connect_error);
     exit();

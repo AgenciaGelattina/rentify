@@ -12,6 +12,7 @@ import PropertyContract, { IPropertyContract } from './PropertyContract';
 import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
 import { AddCircle, Edit, Description } from '@mui/icons-material';
+import { TPropertyDetails } from '@src/Components/Properties/Details';
 
 const initialQueryParams: FieldValues = {
     group: null
@@ -21,13 +22,14 @@ const PropertiesManagement: FC = () => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const filterFormData = useForm({ defaultValues: initialQueryParams });
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
-    const [properties, setProperties] = useState<IPropertyData[]>([]);
+    const [properties, setProperties] = useState<TPropertyDetails[]>([]);
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
         fetchData.get('/properties/properties.php', data, (response: TCallBack) => {
             const properties = validateResult(response.result);
+            console.log('propssss', properties)
             setProperties(properties || []);
         });
     }

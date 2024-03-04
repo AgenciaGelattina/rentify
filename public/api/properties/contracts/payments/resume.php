@@ -26,7 +26,7 @@ if (METHOD === 'GET') {
         $active_contracts=[];
         while($row=$contracts->fetch_object()){
 
-             // Contract
+            // Contract
             $contract = new stdClass();
             $contract->id = $row->id;
             $contract->value = $row->value;

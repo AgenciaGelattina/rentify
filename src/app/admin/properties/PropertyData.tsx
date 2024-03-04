@@ -76,7 +76,6 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
     const onFormSubmit = (data: FieldValues) => {
         fetchData.post('/properties/property.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
-            console.log('SAVED', saved);
             if (saved) {
                 setOpen({ open: false, id: 0 });
                 getProperties();
