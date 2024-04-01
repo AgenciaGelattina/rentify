@@ -58,9 +58,10 @@ if (METHOD === 'GET') {
             $total_amount_pending = $row->value * $current_months;
             $total_amount = $row->total_amount ?: 0;
             
-            $contract->in_debt = ($total_amount < $total_amount_pending);
+            $pending = $total_amount_pending - $contract->value;
+            $contract->in_debt = ($total_amount < $pending || $today_time >= $due_date_time);
             $contract->rent_is_due = ($today_time >= $due_date_time);
-            $contract->debt = $total_amount_pending - $total_amount;
+            $contract->debt = $pending - $total_amount;
 
             // Property
             $property = new stdClass();

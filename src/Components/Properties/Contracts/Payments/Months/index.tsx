@@ -1,10 +1,11 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography } from '@mui/material';
 import { ExpandMore, CheckCircle, Report } from '@mui/icons-material';
 import PaymentsTable from './PaymentsTable';
-import { FC, useMemo  } from 'react';
+import { Dispatch, FC, SetStateAction, useMemo  } from 'react';
 import { DATE_FORMAT } from '@src/Constants';
 import { capitalize, formatDate } from '@src/Utils';
 import { IPayment, IPaymentMonth } from '..';
+import { TPaymentForm } from '../PaymentForm';
 
 type TPaymentData = {
     paymentData: IPaymentMonth;

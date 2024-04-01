@@ -121,7 +121,7 @@ const PropertiesManagement: FC = () => {
                         <IconButton onClick={() => setPropertyData({ open: true, id: rowData.id })}>
                             <Edit fontSize="inherit" />
                         </IconButton>
-                        <IconButton onClick={() => setPropertyContract({ open: true, property: rowData })}>
+                        <IconButton color={ rowData.active_contract ? 'success' : 'default' } onClick={() => setPropertyContract({ open: true, property: rowData })}>
                             <Description fontSize="inherit" />
                         </IconButton>
                     </Stack>);

@@ -14,6 +14,7 @@ export type TPropertyDetails = {
     group_title?: string;
     created?: string;
     updated?: string;
+    active_contract?: number;
     active?: boolean;
 }
 

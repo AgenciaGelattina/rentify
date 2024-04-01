@@ -1,11 +1,12 @@
-import { FC, useEffect, useState } from 'react';
-import { Box, IconButton } from '@mui/material';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, FormControlLabel, IconButton, Switch } from '@mui/material';
 import { LibraryAdd } from '@mui/icons-material';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import PaymentMonth from './Months';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import PaymentForm, { TPaymentForm } from './PaymentForm';
 import { getUIKey } from '@src/Utils';
+import PaymentsTable from './Months/PaymentsTable';
 
 type TContractPayments = {
     contract: { id: number };
@@ -40,6 +41,7 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
     const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [paymentForm, setPaymentForm] = useState<TPaymentForm>({ contract_id: contract.id, open: false });
+    const [showMonths, setMonthsView] = useState<boolean>(true);
     const [payments, setPayments] = useState<IPaymentMonth[]>([]);
 
     const getPayments = ( ) => {
@@ -62,6 +64,16 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
     const editPayment = (payment: IPayment) => {
         setPaymentForm({ payment, contract_id: contract.id, open: true });
     }
+
+    const getPaymentsList = useMemo(() => {
+        let paymentsList: IPayment[] = [];
+        let totalAmount: number = 0;
+        payments.forEach((payment: IPaymentMonth) => {
+            totalAmount += payment.total_amount;
+            paymentsList = [ ...paymentsList, ...payment.payments ];
+        })
+        return { payments: paymentsList, totalAmount };
+    }, [payments]);
     
     useEffect(() => {
         getPayments();
@@ -74,11 +86,26 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
                 <LibraryAdd fontSize="inherit" color='primary' />
             </IconButton>}
         </Header>
-        {payments && payments.map((payment) => {
-            return <PaymentMonth key={getUIKey()} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
-        })}
+        <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+            <FormControlLabel
+            value="end"
+            control={<Switch color="primary" checked={showMonths} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setMonthsView(e.target.checked);
+            }} />}
+            label={ showMonths ? "Meses Activos" : "Lista de Pagos" }
+            labelPlacement="end"
+            />
+        </Box>
+        <ConditionalRender condition={!showMonths}>
+            <PaymentsTable payments={getPaymentsList.payments} total_amount={getPaymentsList.totalAmount} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
+        </ConditionalRender>
+        <ConditionalRender condition={showMonths}>
+            {payments && payments.map((payment) => {
+                return <PaymentMonth key={getUIKey()} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
+            })}
+        </ConditionalRender>
         {editMode && <PaymentForm {...paymentForm} setOpen={setPaymentForm} getPayments={getPayments} />}
     </Box>)
 }
 
-export default ContractPayments;
+export default ContractPayments; 

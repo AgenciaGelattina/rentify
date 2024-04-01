@@ -5,7 +5,7 @@ require '../../../utils.php';
 if (METHOD === 'GET') {
     require_once '../../../database.php';
     $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
-    $query = "SELECT due_date,start_date,end_date,value FROM property_contracts WHERE id = $contract_id";
+    $query = "SELECT due_date,start_date,end_date,value,(SELECT SUM(amount) FROM contracts_payments WHERE contract = $contract_id AND type = 1) AS total_rent FROM property_contracts WHERE id = $contract_id";
     $contract = $DB->query($query)->fetch_object();
     
     $init = new DateTimeImmutable($contract->start_date);
@@ -29,6 +29,7 @@ if (METHOD === 'GET') {
      * 2 = con exceso
     */
     $today = new DateTime();
+    $current_rent = 0;
     for ($i = 0; $i <= $num_of_months; $i++) {
         $month = new stdClass();
         $date = new stdClass();
@@ -41,15 +42,16 @@ if (METHOD === 'GET') {
         $month->payments = [];
         $month->total_amount = 0;
         $month->rent_amount = 0;
-        $month->in_debt = true;
+        $current_rent += $contract->value;
+        $month->in_debt =  $contract->total_rent >= $current_rent ? false : true;
         $month->is_current = $today->format("Y-m") === $start_date_time->format("Y-m")? true : false;
         array_push($months, $month);
         $start_date_time = $start_date_time->modify('+1 month');
     }
 
-    $query = "SELECT cp.id,cp.amount,cp.type AS type_id,pt.label AS type_label,cp.date,cp.clarifications,cp.contract FROM contracts_payments AS cp LEFT JOIN payments_types AS pt ON pt.id = cp.type WHERE cp.contract = $contract_id ORDER BY cp.date;";
-    $contractors = $DB->query($query);
-    while($row=$contractors->fetch_object()){
+    $query = "SELECT cp.id,cp.amount,cp.type AS type_id,pt.label AS type_label,cp.date,cp.clarifications,cp.contract FROM contracts_payments AS cp LEFT JOIN payments_types AS pt ON pt.id = cp.type WHERE cp.contract = $contract_id ORDER BY cp.date";
+    $payments = $DB->query($query);
+    while($row=$payments->fetch_object()){
         $payment = new stdClass();
         $payment->id = $row->id;
         $payment->contract = $row->contract;
@@ -64,10 +66,6 @@ if (METHOD === 'GET') {
         foreach($months as $month) {
             if ($month->date->year_month === $payment_date->format("Y-m")) {
                 $month->total_amount = $month->total_amount + intval($payment->amount);
-                if($type->id === 1) {
-                    $month->rent_amount = $month->rent_amount + intval($payment->amount);
-                }
-                $month->in_debt = ($month->rent_amount < intval($contract->value)) ? true : false;
                 array_push($month->payments,$payment);
             }
         }

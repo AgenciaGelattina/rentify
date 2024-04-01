@@ -28,6 +28,7 @@ export type TPaymentForm = {
     payment?: IPayment;
     contract_id: number;
     open: boolean;
+    payment_date?: Date;
 }
 
 interface IPaymentFormProps {
@@ -44,21 +45,21 @@ const formValidations = yup.object().shape({
     clarifications: yup.string(),
 });
 
-const defaultPaymentData = (contract_id: number): IPaymentData => {
+const defaultPaymentData = (contract_id: number, payment_date: Date = new Date): IPaymentData => {
     return {
         id: 0,
         contract: contract_id,
         type: 1,
         amount: 0,
-        date: new Date(),
+        date: payment_date,
         clarifications: ""
     }
 }
 
-const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, contract_id, open, setOpen, getPayments }) => {
+const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, contract_id, payment_date, open, setOpen, getPayments }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, setError, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultPaymentData(contract_id), resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, setError, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultPaymentData(contract_id, payment_date), resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
 
     useEffect(() => {

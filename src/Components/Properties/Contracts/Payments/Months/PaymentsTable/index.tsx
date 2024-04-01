@@ -25,17 +25,6 @@ const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment
     const buildDataContent = (): TDataTableColumn[] => {
         return [
             {
-                dataKey: "amount",
-                head: {
-                    label: "Pago",
-                },
-                component: (amount: number) => {
-                    return (<Typography variant="body2">
-                        <NumericFormat displayType="text" value={amount} thousandSeparator valueIsNumericString prefix="$" />
-                    </Typography>);
-                }
-            },
-            {
                 dataKey: "date",
                 head: {
                     label: "Fecha de Pago",
@@ -51,6 +40,17 @@ const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment
                 },
                 component: (type: { id: number, label: string }) => {
                     return <Typography variant="body2">{type.label}</Typography>;
+                }
+            },
+            {
+                dataKey: "amount",
+                head: {
+                    label: "Pago"
+                },
+                component: (amount: number) => {
+                    return (<Typography variant="body2">
+                        <NumericFormat displayType="text" value={amount} thousandSeparator valueIsNumericString prefix="$" />
+                    </Typography>);
                 }
             },
             {
@@ -74,7 +74,7 @@ const PaymentsTable: FC<TPaymentsTable> = ({ payments, total_amount, editPayment
                         </ConditionalRender>
                     </Stack>);
                 }
-            }
+            },
         ];
     }
 

@@ -7,14 +7,15 @@ if (METHOD === 'GET') {
 
     $group = isset($_GET['group']) ? intval($DB->real_escape_string($_GET['group'])) : 0;
 
-    $query = "SELECT pr.*,pg.title AS group_title,pt.label AS type_label,st.label AS status_label";
+    $query = "SELECT pr.*,pg.title AS group_title,pt.label AS type_label,st.label AS status_label,pc.id AS active_contract";
     $query .= " FROM properties AS pr";
     $query .= " LEFT JOIN properties_types AS pt ON pt.id = pr.type";
     $query .= " LEFT JOIN properties_status AS st ON st.id = pr.status";
     $query .= " LEFT JOIN properties_groups AS pg ON pg.id = pr.group";
+    $query .= " LEFT JOIN property_contracts AS pc ON pc.property = pr.id AND (pc.start_date <= CURDATE() AND pc.end_date >= CURDATE())";
 
     if ($group > 0) {
-        $query .= " WHERE pr.group =".$group;
+        $query .= " WHERE pr.group = $group";
     }
 
     $properties = $DB->query($query);
