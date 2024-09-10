@@ -6,25 +6,25 @@ import TableLoading from './Loading';
 import ConditionalAlert from "../ConditionalAlert";
 import { isEmpty, isNotNil } from "ramda";
 
-type TDataTableCell = {
+interface IDataTableCell {
     align?: 'center' | 'inherit' | 'justify' | 'left' | 'right';
     padding?: 'checkbox' | 'none' | 'normal';
     width?: number | string;
 }
 
-type TDataTableHead = {
+interface IDataTableHead {
     label: string;
 }
 
-export type TDataTableColumn = {
+export interface IDataTableColumn {
     dataKey?: string;
-    head: TDataTableCell & TDataTableHead;
-    cell?: TDataTableCell;
+    head: IDataTableCell & IDataTableHead;
+    cell?: IDataTableCell;
     component: (dataValue?: any, data?: any) => React.ReactNode;
 }
 
-type IDataTable = {
-    columns: TDataTableColumn[];
+interface IDataTable {
+    columns: IDataTableColumn[];
     data: any[];
     loading: boolean;
     minHeight?: string | number;

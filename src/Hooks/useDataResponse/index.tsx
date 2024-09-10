@@ -26,11 +26,11 @@ const useDataResponse = (): TUseDataResponse => {
                     const { message } = result.error;
                     showSnackMessage({ severity: "error", message });
                 } else {
-                    showSnackMessage({ severity: "error", message: "Ha ocurrido un error en el proceso de datos" });
+                    showSnackMessage({ severity: "error", message: "Ha ocurrido un error en el proceso de datos." });
                 }
                 return null;
             }
-        }
+        };
         return null;
     }
 

@@ -7,5 +7,6 @@ export const LANG = {
 export const DATE_FORMAT = {
     MYSQL: "yyyy-MM-dd",
     MONTH_YEAR: "LLLL yyyy",
-    DATE_LONG: "PPPP"
+    DATE_LONG: "PPPP",
+    DATE: "dd/MM/yyyy"
 }

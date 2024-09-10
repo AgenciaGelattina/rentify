@@ -1,0 +1,5 @@
+[07-Aug-2024 15:02:13 America/Mexico_City] PHP Fatal error:  Uncaught Error: Class 'Key' not found in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/dev/api/jwt.php:58
+Stack trace:
+#0 /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/dev/api/auth/token.php(9): JwtHandler->jwtDecodeData('eyJ0eXAiOiJKV1Q...')
+#1 {main}
+  thrown in /home/ct5q5afuxksm/domains/agenciagelattina.com/html/rentify/dev/api/jwt.php on line 58

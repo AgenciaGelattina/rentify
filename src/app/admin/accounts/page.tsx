@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import RoleVerification from '@src/Components/RoleVerification';
 import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button } from '@mui/material';
 import UserForm, { TUserForm } from './UserForm';
@@ -41,7 +41,7 @@ const AccountsManagement: React.FC = () => {
 
     console.log('RENDER')
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
                 dataKey: "id",

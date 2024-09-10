@@ -4,7 +4,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import LabelTextBox from "@src/Components/LabelTextBox";
 import { ConditionalRender } from "@phoxer/react-components";
 
-export type TPropertyDetails = {
+export interface IProperty {
     id: number;
     title: string;
     description: string;
@@ -18,7 +18,7 @@ export type TPropertyDetails = {
     active?: boolean;
 }
 
-const PropertyDetails: React.FC<TPropertyDetails> = ({ id, title, description, type, group, status }) => {
+const PropertyDetails: React.FC<IProperty> = ({ id, title, description, type, group, status }) => {
 
     return (<Accordion>
         <AccordionSummary

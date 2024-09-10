@@ -19,6 +19,13 @@ export const getUIKey = (config?: TGetUIKey): string => {
 }
 
 /**
+ * MAP KEYS GENERATOR 
+*/
+export const mapKey = (ui: string, ix: number): string => {
+    return `${ui}.${ix}`;
+}
+
+/**
  * FORMAT MONEY
 */
 export const formatToMoney = (number: number | bigint): string => {

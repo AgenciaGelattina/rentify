@@ -1,6 +1,6 @@
 <?php
 require '../headers.php';
-require '../utils.php';
+require '../utils/general.php';
 
 if (METHOD === 'GET') {
     require '../database.php';

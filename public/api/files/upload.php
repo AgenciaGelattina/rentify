@@ -1,6 +1,6 @@
 <?php
 require '../headers.php';
-require '../utils.php';
+require '../utils/general.php';
 
 function clean($str) {
     $str = pathinfo($str, PATHINFO_FILENAME);

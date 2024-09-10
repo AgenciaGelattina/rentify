@@ -38,19 +38,22 @@ const ListItem: FC<IListItemProps> = ({ listItem, onItemSelected }) => {
     const { label, value = null, icon, listItems, expanded, active } = listItem;
     const isHeader = isNil(value) && isNotNil(listItems);
     const showLabel = !isNil(label) || !isNil(icon);
+    const isExpanded = isNil(expanded) ? true : expanded;
 
     if (listItem.visible === false) {
         return null;
     }
 
+    console.log('ListItem', listItem.expanded);
+
     return (<MenuList component="div" dense disablePadding>
         {showLabel && (<ListItemButton onClick ={() => onItemSelected(listItem)} selected={active}>
             {icon && <ListItemIcon sx={{ minWidth: 30 }}>{icon}</ListItemIcon>}
             {label && <ListItemText primary={label} primaryTypographyProps={{ variant: isHeader ? 'h6' : 'subtitle1' }} />}
-            {isHeader && <ExpandList open={expanded || true} />}
+            {isHeader && <ExpandList open={isExpanded} />}
         </ListItemButton>)}
         {isHeader && <Divider />}
-        {isNotNil(listItems) && (<Collapse in={expanded || true} timeout="auto">
+        {isNotNil(listItems) && (<Collapse in={isExpanded} timeout="auto">
             <MenuList component="div" dense disablePadding sx={{ paddingLeft: showLabel ? 2 : 0 }}>
                 {listItems && listItems.map((listItem: IListItem, index: number) => {
                     return <ListItem key={`itm${index}`} listItem={listItem} onItemSelected={onItemSelected} />

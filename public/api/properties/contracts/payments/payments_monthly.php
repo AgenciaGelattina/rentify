@@ -1,0 +1,91 @@
+<?php
+require '../../../headers.php';
+require '../../../utils/general.php';
+require '../../../utils/constants.php';
+require '../../../utils/today.php';
+
+if (METHOD === 'GET') {
+    require_once '../../../database.php';
+    $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
+
+    $query = "SELECT due_date,start_date,end_date FROM property_contracts WHERE id = $contract_id";
+    $contract_data = $DB->query($query)->fetch_object();
+
+    $contract = new stdClass();
+    $contract_start_date_time = new DateTime($contract_data->start_date);
+    $contract_end_date_time = new DateTime($contract_data->end_date);
+    $due_date_day = intval($contract_data->due_date) < 10 ? '0'.$contract_data->due_date : $contract_data->due_date;
+
+    //TOTAL MONTHS
+    $diff = $contract_start_date_time->diff($contract_end_date_time); 
+    $contract_total_months = (($diff->y) * 12) + ($diff->m) + 1;
+
+    $months = [];
+    $month_date_time = $contract_start_date_time;
+    for ($i = 0; $i <= $contract_total_months; $i++) {
+        if ($month_date_time <= $today->time) {
+            $month = new stdClass();
+            $month->due_date = $month_date_time->format("Y-m")."-".$due_date_day."T00:00:00";
+
+            $due_date_time = new DateTime($month->due_date);
+            $overdue_date_limit_date = date('Y-m-d', strtotime($month->due_date. ' + 5 days'));
+            $overdue_date_time = new DateTime($overdue_date_limit_date);
+            
+            $date = new stdClass();
+            $date->year = $month_date_time->format("Y");
+            $date->month = $month_date_time->format("n");
+            $date->year_month = $month_date_time->format("Y-m");
+            $month->date = $date;
+
+            $month->total_amount = 0;
+            $month->is_current = $today->time->format("Y-m") === $month_date_time->format("Y-m")? true : false;
+
+            //RECURRING PAYMENTS
+            $query = "SELECT SUM(crp.value) AS required_amount FROM contracts_recurring_payments AS crp WHERE crp.contract = $contract_id AND ('$date->year_month' BETWEEN DATE_FORMAT(start_date,'%Y-%m') AND DATE_FORMAT(end_date,'%Y-%m'))";
+            $required_amount = $DB->query($query)->fetch_object()->required_amount;
+            $month->required_amount = 0;
+            if ($required_amount =! NULL) {
+                $month->required_amount = $required_amount;
+            }
+            
+            //MONTH PAYMENTS
+            $query = "SELECT cp.id,cp.amount,cp.contract,JSON_OBJECT('id',cp.recurring,'label',crp.label) AS recurring,JSON_OBJECT('id',cp.type,'label',pt.label) AS type,cp.date,cp.clarifications,cp.created FROM contracts_payments AS cp LEFT JOIN contracts_recurring_payments AS crp ON crp.id = cp.recurring LEFT JOIN payments_types AS pt on pt.id = cp.type WHERE MONTH(date) = $date->month AND YEAR(date) = $date->year AND cp.contract = $contract_id";
+            $payments_query = $DB->query($query);
+
+            $month->payments = [];
+            if ($payments_query && $payments_query->num_rows > 0) {
+                while($row = $payments_query->fetch_object()) {
+                    $month->total_amount += $row->amount;
+                    $row->recurring = json_decode($row->recurring, true);
+                    $row->type = json_decode($row->type, true);
+                    array_push($month->payments, $row);
+                };
+            }
+
+            $rent_is_due = ($today->time > $due_date_time) ? true : false;
+            $rent_is_overdue = ($today->time > $overdue_date_time) ? true : false;
+            
+            $month_status = new stdClass();
+            $month_status->label = PAYMENT_STATUS_LABEL[0];
+            $month_status->severity = SEVERITY[0];
+            if ($rent_is_due) {
+                if ($month->total_amount < $month->required_amount) {
+                    $month_status->label = PAYMENT_STATUS_LABEL[1];
+                    if ($rent_is_overdue) {
+                        $month_status->severity = SEVERITY[2];
+                    } else {
+                        $month_status->severity = SEVERITY[1];
+                    };
+                };
+            };
+            $month->status = $month_status;
+            
+            array_push($months, $month);
+            $month_date_time->modify('+1 month');
+        }
+    }
+    
+    throwSuccess($months);
+    $DB->close();
+}
+?>

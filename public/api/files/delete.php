@@ -1,6 +1,6 @@
 <?php
 require '../headers.php';
-require '../utils.php';
+require '../utils/general.php';
 
 if (METHOD === 'POST') {
     require '../database.php';

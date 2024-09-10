@@ -6,7 +6,7 @@ import RoleVerification from '@src/Components/RoleVerification';
 import { CardContent, IconButton, Stack, Typography } from '@mui/material';
 import { AddCircle, Edit } from '@mui/icons-material';
 import CardBox from '@src/Components/Wrappers/CardBox';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import TypeData, { ITypeData, TTypeData, defaultTypeDataState } from './TypesData';
 
 const TypesManagement: FC = () => {
@@ -27,7 +27,7 @@ const TypesManagement: FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
                 dataKey: "id",

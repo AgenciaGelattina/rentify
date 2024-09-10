@@ -11,24 +11,27 @@ import { fieldError, getUIKey } from '@src/Utils';
 import { useEffect } from 'react';
 import { isNil, isNotNil } from 'ramda';
 import TextFieldMoney from '@src/Components/Forms/TextFieldMoney';
-import { DatePicker } from '@mui/x-date-pickers';
 import PaymentTypeSelector from '@src/Components/Forms/PaymentType';
 import { IPayment } from '..';
+import { DatePicker } from '@mui/x-date-pickers';
+import RecurringPaymentsSelector from '@src/Components/Forms/RecurringPayments';
+import { IContract } from '../../Details';
 
 export interface IPaymentData {
     id: number;
     contract: number;
+    recurring: number;
     type: number;
     amount: number;
-    date: Date | null;
+    date: Date;
     clarifications: string;
 }
 
 export type TPaymentForm = {
-    payment?: IPayment;
-    contract_id: number;
+    contract: IContract;
+    payment_date: Date;
     open: boolean;
-    payment_date?: Date;
+    payment?: IPayment;
 }
 
 interface IPaymentFormProps {
@@ -39,16 +42,19 @@ interface IPaymentFormProps {
 const formValidations = yup.object().shape({
     id: yup.number().required(),
     contract: yup.number().required(),
+    recurring: yup.number(),
     type: yup.number().required(),
     amount: yup.number().min(1),
-    date: yup.date().nullable(),
+    date: yup.date(),
     clarifications: yup.string(),
 });
 
-const defaultPaymentData = (contract_id: number, payment_date: Date = new Date): IPaymentData => {
+const defaultPaymentData = (contract: IContract, payment_date: Date = new Date): IPaymentData => {
+    console.log("CONTRACT B", contract);
     return {
         id: 0,
-        contract: contract_id,
+        contract: contract.id,
+        recurring: 0,
         type: 1,
         amount: 0,
         date: payment_date,
@@ -56,33 +62,37 @@ const defaultPaymentData = (contract_id: number, payment_date: Date = new Date):
     }
 }
 
-const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, contract_id, payment_date, open, setOpen, getPayments }) => {
+const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, contract, payment_date, open, setOpen, getPayments }) => {
+    console.log("CONTRACT A", contract);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, setError, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultPaymentData(contract_id, payment_date), resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultPaymentData(contract, payment_date), resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
+    const paymentDate = watch('date');
+    const paymentType = watch('type');
 
     useEffect(() => {
         if (open) {
             if (isNotNil(payment)) {
-                const { type, date, ...rest } = payment;
+                const { type, recurring, date, ...rest } = payment;
                 const paymentData: IPaymentData = {
                     ...rest,
+                    recurring: recurring.id,
                     type: type.id,
                     date: new Date(payment.date || ""),
-                    contract: contract_id
+                    contract: contract.id
                 };
                 reset(paymentData);
             }
         }
         return () => {
-            reset(defaultPaymentData(contract_id));
+            reset(defaultPaymentData(contract));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, contract_id, payment, setValue, reset]);
+    }, [open, contract, payment, setValue, reset]);
 
     const closePaymentForm = () => {
-        setOpen({ open: false, contract_id })
+        setOpen({ open: false, contract, payment_date: new Date })
     }
 
     const onFormSubmit = (data: FieldValues) => {
@@ -101,7 +111,7 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
     }
     
     return (<RspDialog open={open} maxWidth="sm" onClose={closePaymentForm} >
-        <RspDialogTitle title={isNil(payment) ?  'NUEVO PAGO' :  'EDITAR PAGO'} onClose={closePaymentForm} />
+        <RspDialogTitle title={isNil(payment) ?  'REGISTRIAR PAGO' :  'EDITAR PAGO'} onClose={closePaymentForm} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid xs={12} md={6}>
@@ -109,17 +119,36 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
                         return <TextFieldMoney {...field} label="Pago" {...fieldError(errors.amount)} onChange={(e) => field.onChange(e)} />
                     }} />
                 </Grid>
-                
                 <Grid xs={12} md={6}>
                     <Controller name="date" control={control} render={({ field }) => {
-                        return <DatePicker label="Fecha de pago" {...field} format="dd/MM/yyyy" onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} />
+                        return <DatePicker
+                            label="Fecha de pago" {...field}
+                            format="dd/MM/yyyy"
+                            minDate={new Date(contract.start_date || "")}
+                            maxDate={new Date(contract.end_date || "")}
+                            onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
+                        />
                     }} />
                 </Grid>
                 <Grid xs={12} md={6}>
                     <Controller name="type" control={control} render={({ field }) => {
-                        return <PaymentTypeSelector {...field} onChange={(e) => field.onChange(e)} />
+                        return <PaymentTypeSelector {...field} onChange={(e) => {
+                            field.onChange(e);
+                            const { target } = e;
+                            if(target.value > 1) {
+                                setValue('recurring', 0);
+                            }
+                            
+                        }} />
                     }} />
                 </Grid>
+                <ConditionalRender condition={paymentType === 1}>
+                    <Grid xs={12} md={6}>
+                        <Controller name="recurring" control={control} render={({ field }) => {
+                            return <RecurringPaymentsSelector {...field} paymentDate={paymentDate || new Date} setValue={(defaultValue: number) => setValue('recurring', defaultValue)} contract={contract.id} onChange={(e) => field.onChange(e)} />
+                        }} />
+                    </Grid>
+                </ConditionalRender>
                 <Grid xs={12}>
                     <Controller name="clarifications" control={control} render={({ field }) => {
                         return <TextField {...field} label="Aclaraciones" multiline maxRows={4} type="text" onChange={(e) => field.onChange(e)} fullWidth />

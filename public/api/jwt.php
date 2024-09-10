@@ -1,9 +1,18 @@
 <?php
+require_once 'php/jwt/JWT.php';
+require_once 'php/jwt/SignatureInvalidException.php';
+require_once 'php/jwt/BeforeValidException.php';
+require_once 'php/jwt/ExpiredException.php';
+require_once 'php/jwt/JWK.php';
+require_once 'php/jwt/Key.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+/*
 require 'php/jwt/JWT.php';
 use Firebase\JWT\JWT;
 require 'php/jwt/Key.php';
 use Firebase\JWT\Key;
-
+*/
 class JwtHandler
 {
     protected $jwt_secrect;

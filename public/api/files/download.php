@@ -1,5 +1,5 @@
 <?php
-require '../utils.php';
+require '../utils/general.php';
 
 if (METHOD === 'GET' && isset($_GET['file'])) {
     require '../database.php';

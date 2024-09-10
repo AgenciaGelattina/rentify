@@ -14,7 +14,7 @@ const DataProviders: React.FC<TDataProviders> = ({ children }) => {
   const [state, dispatchState] = useReducer(storeReducer, mainStateDefault);
 
   const setMainState = (action: string, data: any) => {
-    console.log('setMainState', data)
+    console.log('setMainState', action, data)
     dispatchState({ type: action, data });
   };
   

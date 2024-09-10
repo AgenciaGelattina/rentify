@@ -1,22 +1,22 @@
 import { FC, useEffect, useState } from 'react';
-import { TPropertyDetails } from '@src/Components/Properties/Details';
+import { IProperty } from '@src/Components/Properties/Details';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import { IconButton, Stack, Typography } from '@mui/material';
 import { formatDate } from '@src/Utils';
 import { DATE_FORMAT } from '@src/Constants';
 import { Description } from '@mui/icons-material';
-import { TContractDetails } from '@src/Components/Properties/Contracts/Details';
+import { IContract } from '@src/Components/Properties/Contracts/Details';
 import ExpiredContractDetails, { TExpiredContractSummary } from './ExpiredContractDetails';
 
 type TExpiredContracts = {
-    property: TPropertyDetails;
+    property: IProperty;
 }
 
 const ExpiredContracts: FC<TExpiredContracts> = ({ property }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
-    const [expiredContracts, setExpiredContracts] = useState<TContractDetails[]>([]);
+    const [expiredContracts, setExpiredContracts] = useState<IContract[]>([]);
     const [expiredContract, setExpiredContract] = useState<TExpiredContractSummary>({ open: false });
     const { validateResult } = useDataResponse();
 
@@ -32,7 +32,7 @@ const ExpiredContracts: FC<TExpiredContracts> = ({ property }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [property]);
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
                 dataKey: "id",

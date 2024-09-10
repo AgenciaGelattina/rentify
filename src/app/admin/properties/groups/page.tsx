@@ -1,12 +1,12 @@
 'use client';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
-import { CardContent, IconButton, Stack, Typography } from '@mui/material';
-import { AddCircle, Edit } from '@mui/icons-material';
+import { Button, CardContent, IconButton, Stack, Typography } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import CardBox from '@src/Components/Wrappers/CardBox';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import GroupData, { IGroupData, defaultGroupDataState } from './GroupsData';
 
 type TGroupData = {
@@ -37,7 +37,7 @@ const GroupManagement: FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
                 dataKey: "id",
@@ -105,9 +105,7 @@ const GroupManagement: FC = () => {
 
     return (<RoleVerification role={1}>
         <Header title="GRUPOS DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
-            <IconButton onClick={() => setGroupData({ ...defaultGroupDataState, open: true })}>
-                <AddCircle fontSize="inherit" color='primary' />
-            </IconButton>
+            <Button size='small' disabled={loading} onClick={() => setGroupData({ ...defaultGroupDataState, open: true })}>+ NUEVO GRUPO</Button>
         </Header>
         <CardBox>
             <CardContent>

@@ -8,8 +8,7 @@ import { isNotNil } from 'ramda';
 // route
 const expandRouter = (listItems: IListItem[], item: IListItem): IListItem[] => {
     const routes = listItems.map((itm: IListItem) => {
-            itm.active = itm.id === item.id;
-            if (isNotNil(itm.expanded) && itm.active) {
+            if (isNotNil(itm.expanded) && (itm.id === item.id)) {
                 itm.expanded = !itm.expanded;
             };
             if (itm.listItems) {
@@ -60,6 +59,8 @@ export const mainStateReducer: IReducer = {
 
 // Theme
 export const theme = createTheme({
+    palette: {
+    },
     components: {
         MuiTextField: {
             defaultProps: {
@@ -93,6 +94,6 @@ export const theme = createTheme({
                     }
                 }
             }
-          },
+        }
     },
 });

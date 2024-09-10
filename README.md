@@ -1,5 +1,16 @@
 # Properties Administration App
 
+# V1.1.2
+- Se agregaron los Pagos Recurrentes en los contratos.
+- Cambio de Inquilinos a Contactos.
+- Creacion de carpetas automaticas de PDFs y Fotos al crear contrato.
+- Optimización de la vista de Pagos totales.
+- Ordenar el resumen por fecha de corte.
+
+# V1.1.1
+- Menú muestra el link activo y items expandidos.
+- Optimización del código Grupos y Estados de propiedades.
+
 # V1.1.0
 - Optimización del código Propiedades, se modificó el algoritmo para calcular los pagos.
 - Nueva forma de visualizar los pagos en forma de lista

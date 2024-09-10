@@ -2,7 +2,7 @@
 import { FC, useEffect } from 'react';
 import RoleVerification from '@src/Components/RoleVerification';
 import { Header, useFetchData } from '@phoxer/react-components';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button } from '@mui/material';
 import { PersonAdd, Edit, CheckCircle, Cancel } from '@mui/icons-material';
@@ -20,7 +20,7 @@ const AccountsRoles: FC = () => {
     }, []);
 
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
                 dataKey: "id",

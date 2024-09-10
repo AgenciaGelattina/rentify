@@ -1,6 +1,6 @@
 <?php
 require '../../headers.php';
-require '../../utils.php';
+require '../../utils/general.php';
 
 if (METHOD === 'GET') {
     require '../../database.php';
@@ -9,36 +9,38 @@ if (METHOD === 'GET') {
     $contracts_result = $DB->query($query);
     
     $contracts = [];
-    while($row=$contracts_result->fetch_object()){
-        // Contract
-        $contract = new stdClass();
-        $contract->id = $row->id;
-        $contract->value = $row->value;
-        $contract->start_date = $row->start_date."T00:00:00";
-        $contract->end_date = $row->end_date."T00:00:00";
-        $contract->due_date = $row->end_date;
+    if($contracts_result && $contracts_result->num_rows > 0) {
+        while($row=$contracts_result->fetch_object()){
+            // Contract
+            $contract = new stdClass();
+            $contract->id = $row->id;
+            $contract->value = $row->value;
+            $contract->start_date = $row->start_date."T00:00:00";
+            $contract->end_date = $row->end_date."T00:00:00";
+            $contract->due_date = $row->end_date;
 
-        $init = new DateTimeImmutable($row->start_date);
-        $start_date_time = new DateTime($init->format("Y-m"));
-        $end = new DateTimeImmutable($row->end_date);
-        $end_date_time = new DateTime($end->format("Y-m")); 
-        $today_time = new DateTime(date("Y-m-d"));
-        $due_date_time = new DateTime($due_date);                               
+            $init = new DateTimeImmutable($row->start_date);
+            $start_date_time = new DateTime($init->format("Y-m"));
+            $end = new DateTimeImmutable($row->end_date);
+            $end_date_time = new DateTime($end->format("Y-m")); 
+            $today_time = new DateTime(date("Y-m-d"));
+            $due_date_time = new DateTime($due_date);                               
 
-        $diff = $end_date_time->diff($start_date_time); 
-        $total_months = (($diff->y) * 12) + ($diff->m);
-        $contract->total_months = $total_months;
-        $contract->current_months = $total_months;
-        $contract->pending_months = 0;
+            $diff = $end_date_time->diff($start_date_time); 
+            $total_months = (($diff->y) * 12) + ($diff->m);
+            $contract->total_months = $total_months;
+            $contract->current_months = $total_months;
+            $contract->pending_months = 0;
 
-        $total_amount_pending = $row->value * $current_months;
-        $total_amount = $row->total_amount ?: 0;
-        
-        $contract->in_debt = ($total_amount < $total_amount_pending);
-        $contract->rent_is_due = ($today_time >= $due_date_time);
-        $contract->debt = $total_amount_pending - $total_amount;
+            $total_amount_pending = $row->value * $current_months;
+            $total_amount = $row->total_amount ?: 0;
+            
+            $contract->in_debt = ($total_amount < $total_amount_pending);
+            $contract->rent_is_due = ($today_time >= $due_date_time);
+            $contract->debt = $total_amount_pending - $total_amount;
 
-        array_push($contracts, $contract);
+            array_push($contracts, $contract);
+        }
     }
     throwSuccess($contracts);
     $DB->close();

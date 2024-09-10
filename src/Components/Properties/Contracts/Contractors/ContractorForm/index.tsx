@@ -80,7 +80,7 @@ const ContractorForm: FC<TContractorFormProps & TContractorForm> = ({ contractor
     }
     
     return (<RspDialog open={open} maxWidth="sm" onClose={closeContractorForm} >
-        <RspDialogTitle title={isNil(contractor) ?  'NUEVO INQUILINO' :  'EDITAR INQUILINO'} onClose={closeContractorForm} />
+        <RspDialogTitle title={isNil(contractor) ?  'NUEVO CONTACTO' :  'EDITAR CONTACTO'} onClose={closeContractorForm} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid xs={12} md={6}>

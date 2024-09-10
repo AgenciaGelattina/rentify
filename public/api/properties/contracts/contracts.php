@@ -1,9 +1,10 @@
 <?php
 require '../../headers.php';
-require '../../utils.php';
+require '../../utils/general.php';
 
+// No se usa
 if (METHOD === 'GET') {
-    $contractField = "id,value,property,due_date,start_date,end_date";
+    $contractField = "id,property,due_date,start_date,end_date";
     require_once '../../database.php';
     $query = "SELECT $propertyFields FROM property_contracts WHERE property = ".$id;
     $constract_result = $DB->query($query);

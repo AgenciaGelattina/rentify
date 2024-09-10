@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, FormControlLabel, IconButton, Switch } from '@mui/material';
+import { FC, useEffect, useState } from 'react';
+import { Box, Button, FormControlLabel, IconButton, Switch } from '@mui/material';
 import { LibraryAdd } from '@mui/icons-material';
 import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import PaymentMonth from './Months';
@@ -7,9 +7,11 @@ import useDataResponse from '@src/Hooks/useDataResponse';
 import PaymentForm, { TPaymentForm } from './PaymentForm';
 import { getUIKey } from '@src/Utils';
 import PaymentsTable from './Months/PaymentsTable';
+import { ILabelStatus } from '@src/Components/LabelStatus';
+import { IContract } from '../Details';
 
 type TContractPayments = {
-    contract: { id: number };
+    contract: IContract;
     editMode: boolean;
 }
 
@@ -22,10 +24,13 @@ export interface IPaymentDate {
 export interface IPayment {
     id: number;
     contract: number;
+    recurring: { id: number, label: string };
     type: { id: number, label: string };
     amount: number;
-    date: Date | null;
+    date: Date;
     clarifications: string;
+    created?: Date | null;
+    updated?: Date | null;
 }
 
 export interface IPaymentMonth {
@@ -33,19 +38,20 @@ export interface IPaymentMonth {
     due_date: string;
     payments: IPayment[];
     total_amount: number;
-    in_debt: boolean;
+    required_amount: number;
+    status: ILabelStatus;
     is_current: boolean;
 }
 
 const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false }) => {
     const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const [paymentForm, setPaymentForm] = useState<TPaymentForm>({ contract_id: contract.id, open: false });
+    const [paymentForm, setPaymentForm] = useState<TPaymentForm>({ contract, payment_date: new Date, open: false });
     const [showMonths, setMonthsView] = useState<boolean>(true);
     const [payments, setPayments] = useState<IPaymentMonth[]>([]);
 
-    const getPayments = ( ) => {
-        fetchData.get('/properties/contracts/payments/payments.php', { contract_id: contract.id }, (response: TCallBack) => {
+    const getPayments = () => {
+        fetchData.get('/properties/contracts/payments/payments_monthly.php', { contract_id: contract.id }, (response: TCallBack) => {
             const payments = validateResult(response.result);
             if (payments) {
                 setPayments(payments);
@@ -61,19 +67,10 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
             }
         });
     }
-    const editPayment = (payment: IPayment) => {
-        setPaymentForm({ payment, contract_id: contract.id, open: true });
-    }
 
-    const getPaymentsList = useMemo(() => {
-        let paymentsList: IPayment[] = [];
-        let totalAmount: number = 0;
-        payments.forEach((payment: IPaymentMonth) => {
-            totalAmount += payment.total_amount;
-            paymentsList = [ ...paymentsList, ...payment.payments ];
-        })
-        return { payments: paymentsList, totalAmount };
-    }, [payments]);
+    const editPayment = (payment: IPayment) => {
+        setPaymentForm({ payment, contract, payment_date: new Date, open: true });
+    }
     
     useEffect(() => {
         getPayments();
@@ -82,9 +79,9 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
 
     return (<Box sx={{ border: '1px solid #ccc', padding: '1rem' }}>
         <Header title="PAGOS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            {editMode && <IconButton onClick={() => setPaymentForm({ contract_id: contract.id, open: true })}>
-                <LibraryAdd fontSize="inherit" color='primary' />
-            </IconButton>}
+            {editMode && <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ contract, payment_date: new Date, open: true })}>
+                REGISTRAR PAGO
+            </Button>}
         </Header>
         <Box sx={{ display: 'flex', justifyContent: 'end' }}>
             <FormControlLabel
@@ -97,11 +94,11 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
             />
         </Box>
         <ConditionalRender condition={!showMonths}>
-            <PaymentsTable payments={getPaymentsList.payments} total_amount={getPaymentsList.totalAmount} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
+            <PaymentsTable contract={contract} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
         </ConditionalRender>
         <ConditionalRender condition={showMonths}>
             {payments && payments.map((payment) => {
-                return <PaymentMonth key={getUIKey()} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
+                return <PaymentMonth key={getUIKey()} contract={contract} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
             })}
         </ConditionalRender>
         {editMode && <PaymentForm {...paymentForm} setOpen={setPaymentForm} getPayments={getPayments} />}

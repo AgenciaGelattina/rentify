@@ -4,15 +4,15 @@ import { FieldValues, useForm } from 'react-hook-form';
 import RoleVerification from '@src/Components/RoleVerification';
 import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
-import DataTable, { TDataTableColumn } from '@src/Components/DataTable';
+import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button, Stack } from '@mui/material';
 import PropertyData, { IPropertyData } from './PropertyData';
 import PropertyContract, { IPropertyContract } from './PropertyContract';
 import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
-import { AddCircle, Edit, Description } from '@mui/icons-material';
-import { TPropertyDetails } from '@src/Components/Properties/Details';
+import { Edit, Description } from '@mui/icons-material';
+import { IProperty } from '@src/Components/Properties/Details';
 
 const initialQueryParams: FieldValues = {
     group: null
@@ -22,14 +22,13 @@ const PropertiesManagement: FC = () => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const filterFormData = useForm({ defaultValues: initialQueryParams });
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
-    const [properties, setProperties] = useState<TPropertyDetails[]>([]);
+    const [properties, setProperties] = useState<IProperty[]>([]);
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getProperties = (data?: FieldValues) => {
         fetchData.get('/properties/properties.php', data, (response: TCallBack) => {
             const properties = validateResult(response.result);
-            console.log('propssss', properties)
             setProperties(properties || []);
         });
     }
@@ -46,25 +45,14 @@ const PropertiesManagement: FC = () => {
         ]
     }
 
-    const buildDataContent = (): TDataTableColumn[] => {
+    const buildDataContent = (): IDataTableColumn[] => {
         return [
-            {
-                dataKey: "id",
-                head: {
-                    label: "#",
-                    width: '20px',
-                    align: 'center'
-                },
-                component: (id: number) => {
-                    return <Typography variant="subtitle2">{`#${id}`}</Typography>;
-                }
-            },
             {
                 dataKey: "title",
                 head: {
                     label: "Propiedad",
                 },
-                component: (title: string, rowData: any) => {
+                component: (title: string) => {
                     return <Typography variant='subtitle2'>{`${title}`}</Typography>;
                 }
             },
@@ -132,9 +120,7 @@ const PropertiesManagement: FC = () => {
 
     return (<RoleVerification role={1}>
         <Header title="ADMINISTRACIÓN DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
-            <IconButton onClick={() => setPropertyData({ open: true, id: 0 })}>
-                <AddCircle fontSize="inherit" color='primary' />
-            </IconButton>
+            <Button size='small' disabled={loading} onClick={() => setPropertyData({ open: true, id: 0 })}>+ NUEVA PROPIEDAD</Button>
         </Header>
         <CardBox>
             <CardContent>

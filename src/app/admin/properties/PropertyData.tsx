@@ -37,7 +37,7 @@ export type TPropertyData = {
 const formValidations = yup.object().shape({
     id: yup.number().required(),
     title: yup.string().required("Escriba el título de la propiedad."),
-    description: yup.string().required("Escriba una descriptión de la propiedad."),
+    description: yup.string(),
     type: yup.number().min(1,"Selecciona una opción"),
     group: yup.number(),
     status: yup.number().min(1,"Selecciona una opción")

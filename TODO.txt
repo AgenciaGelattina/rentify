@@ -1,0 +1,14 @@
+- la fecha de inicio y finalización de contrato es el primero de cada mes?
+- FEcha de ingreso y salida devolucion de inmuble.
+
+- Se puede editar un cotrato? si es asi que es lo que se debería de poder editar?
+- Que sucede con los pagos atrasados, los van a agregar por meses? o se pagan en un solo registro.
+
+PROXIMOS BUGS a AGREGAR
+- Renovación de contrato.
+- Agregar boton para pago rápido.
+
+- Agregar resumen de pago en la cabecera de los meses en la lista de pagos.
+- Agregar selección de tipo de moneda (Pesos y Dolares) al contrato.
+- Seleccionar los pagos recurrentes dentro de las fechas correspondientes.
+- Pasar los pagos recurrentes a una TAB al lado de Pagos.

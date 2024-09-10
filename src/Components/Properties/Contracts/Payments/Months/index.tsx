@@ -5,18 +5,18 @@ import { Dispatch, FC, SetStateAction, useMemo  } from 'react';
 import { DATE_FORMAT } from '@src/Constants';
 import { capitalize, formatDate } from '@src/Utils';
 import { IPayment, IPaymentMonth } from '..';
-import { TPaymentForm } from '../PaymentForm';
 
-type TPaymentData = {
+interface IPaymentDataProps {
+    contract: { id: number };
     paymentData: IPaymentMonth;
     editMode?: boolean;
     removePayment: (id: number) => void;
     editPayment: (payment: IPayment) => void;
 }
 
-const PaymentMonth: FC<TPaymentData> = ({ paymentData, removePayment, editPayment, editMode = false }) => {
-    const { due_date, in_debt, is_current, total_amount } = paymentData;
-    const { year, month, year_month } = paymentData.date;
+const PaymentMonth: FC<IPaymentDataProps> = ({ contract, paymentData, removePayment, editPayment, editMode = false }) => {
+    const { due_date, status, is_current, payments, total_amount } = paymentData;
+    const { year_month } = paymentData.date;
     
     const monthDate: String = useMemo(() => {
         return capitalize(formatDate(due_date, DATE_FORMAT.MONTH_YEAR));
@@ -36,14 +36,14 @@ const PaymentMonth: FC<TPaymentData> = ({ paymentData, removePayment, editPaymen
         >
             <Box>
                 <Stack spacing={1} direction="row" alignItems="center">
-                    {in_debt ? <Report color='error' sx={{ width: 20, height: 20 }} /> : <CheckCircle color='success' sx={{ width: 20, height: 20 }} /> }
+                    <CheckCircle color={status.severity} sx={{ width: 20, height: 20 }} />
                     <Typography variant="h6" sx={{ fontSize: '1rem', lineHeight: 1 }}>{monthDate}</Typography>
                 </Stack>
-                <Typography color={in_debt ? "error" : "success"} variant="caption">{`Corte: ${dueDate}`}</Typography>
+                <Typography color={status.severity} variant="caption">{`Corte: ${dueDate}`}</Typography>
             </Box>
         </AccordionSummary>
         <AccordionDetails>
-           <PaymentsTable payments={paymentData.payments} total_amount={total_amount} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
+           <PaymentsTable contract={contract} paymentsDataDefault={{ payments, total_amount }} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
         </AccordionDetails>
     </Accordion>)
 }

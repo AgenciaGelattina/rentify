@@ -1,6 +1,6 @@
 <?php
 require '../../headers.php';
-require '../../utils.php';
+require '../../utils/general.php';
 
 if (METHOD === 'POST' && isset($_GET['token'])) {
     require '../../jwt.php';
