@@ -95,15 +95,12 @@ const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDa
                 { name: getUIKey({ removeHyphen: true, toUpperCase: true }), title: "Fotos de la Propiedad" }
             ];
         }
-        console.log('SAVE CONTRACT', data);
-        /*
         fetchData.post('/properties/contracts/contract.php', data, (response: TCallBack) => {
             const success = validateResult(response.result);
             if (success) {
                 onContractDataSaved();
             }
         });
-        */
     }
 
     const dueDatesList = useMemo(() => {

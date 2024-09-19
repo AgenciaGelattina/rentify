@@ -30,4 +30,16 @@ if (METHOD === 'POST') {
     }
     $DB->close();
 }
+
+if (METHOD === 'DELETE') {
+    require_once '../../../database.php';
+    $id = intval($DB->real_escape_string(POST['id']));
+    $payment = $DB->query("DELETE FROM contracts_payments WHERE id = $id");
+    if ($DB->affected_rows >= 0) {
+        throwSuccess(true);
+    } else {
+        throwError(203, "No se pudo borrar el pago #$id");
+    }
+    $DB->close();
+}
 ?>

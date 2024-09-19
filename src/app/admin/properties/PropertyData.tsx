@@ -48,7 +48,7 @@ const defaultValues: TPropertyData = {
     title: "",
     description: "",
     type: 0,
-    group: 0,
+    group: 1,
     status: 0
 }
 
