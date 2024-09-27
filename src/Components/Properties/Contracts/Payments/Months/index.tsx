@@ -4,18 +4,21 @@ import PaymentsTable from './PaymentsTable';
 import { Dispatch, FC, SetStateAction, useMemo  } from 'react';
 import { DATE_FORMAT } from '@src/Constants';
 import { capitalize, formatDate } from '@src/Utils';
-import { IPayment, IPaymentMonth } from '..';
+import { IPayment, IPaymentMonth, IRecurringPayment } from '..';
+import { ConditionalRender } from '@phoxer/react-components';
+import QuickPayments from './QuickPayment';
 
-interface IPaymentDataProps {
+interface IPaymentMonthProps {
     contract: { id: number };
     paymentData: IPaymentMonth;
     editMode?: boolean;
     removePayment: (id: number) => void;
     editPayment: (payment: IPayment) => void;
+    setQuickPayment: (payment: IRecurringPayment, due_date: Date) => void;
 }
 
-const PaymentMonth: FC<IPaymentDataProps> = ({ contract, paymentData, removePayment, editPayment, editMode = false }) => {
-    const { due_date, status, is_current, payments, total_amount } = paymentData;
+const PaymentMonth: FC<IPaymentMonthProps> = ({ contract, paymentData, setQuickPayment, removePayment, editPayment, editMode = false }) => {
+    const { due_date, status, is_current, payments, total_amount, recurring_payments } = paymentData;
     const { year_month } = paymentData.date;
     
     const monthDate: String = useMemo(() => {
@@ -43,7 +46,10 @@ const PaymentMonth: FC<IPaymentDataProps> = ({ contract, paymentData, removePaym
             </Box>
         </AccordionSummary>
         <AccordionDetails>
-           <PaymentsTable contract={contract} paymentsDataDefault={{ payments, total_amount }} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
+            <PaymentsTable contract={contract} paymentsDataDefault={{ payments, total_amount }} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
+            <ConditionalRender condition={editMode}>
+                <QuickPayments recurring_payments={recurring_payments} setQuickPayment={setQuickPayment} due_date={due_date} />
+            </ConditionalRender>
         </AccordionDetails>
     </Accordion>)
 }

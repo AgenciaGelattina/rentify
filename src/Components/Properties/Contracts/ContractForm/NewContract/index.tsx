@@ -9,14 +9,14 @@ import * as yup from 'yup';
 import ErrorHelperText from '@src/Components/Forms/ErrorHelperText';
 import { fieldError, getUIKey } from '@src/Utils';
 import TextFieldMoney from '@src/Components/Forms/TextFieldMoney';
-import { Box, Button, DialogActions, MenuItem, TextField } from '@mui/material';
+import { Button, DialogActions, MenuItem, TextField } from '@mui/material';
 import { isNil, clone, isNotNil } from 'ramda';
 import { add, getDaysInMonth } from 'date-fns';
 import ConditionalAlert from '@src/Components/ConditionalAlert';
 import { IProperty } from '@src/Components/Properties/Details';
 import { DATE_FORMAT } from '@src/Constants';
 
-export interface IContractData {
+interface INewContractData {
     id: number;
     property: number;
     value: number;
@@ -25,7 +25,7 @@ export interface IContractData {
     end_date: Date | null;
 }
 
-export const formatContractData = (contract: IContractData) => {
+export const formatContractData = (contract: INewContractData) => {
     const contractData = clone(contract);
     contractData.start_date = contract.start_date ? new Date(contract.start_date) : null;
     contractData.end_date = contract.end_date ? new Date(contract.end_date) : null;
@@ -45,7 +45,7 @@ const formValidations = yup.object().shape({
     end_date: yup.date().nullable()
 });
 
-export const defaultContractValues: IContractData = {
+const defaultContractValues: INewContractData = {
     id: 0,
     property: 0,
     value: 0,
@@ -54,16 +54,16 @@ export const defaultContractValues: IContractData = {
     end_date: null
 }
 
-interface IContractFormProps {
+interface INewContractProps {
     property: IProperty;
-    contract: IContractData | null;
+    contract: INewContractData | null;
     onContractDataSaved: () => void;
 }
 
-const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDataSaved }) => {
+const NewContract: FC<INewContractProps> = ({ property, contract, onContractDataSaved }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, watch, setValue, setError, formState: { errors }, reset } = useForm<IContractData>({ defaultValues: defaultContractValues, resolver: yupResolver(formValidations) as Resolver<IContractData> });
+    const { handleSubmit, control, watch, setValue, setError, formState: { errors }, reset } = useForm<INewContractData>({ defaultValues: defaultContractValues, resolver: yupResolver(formValidations) as Resolver<INewContractData> });
     const { isDirty } = useFormState({ control });
     const isNewContract = watch('id', 0) === 0;
     const startDate = watch('start_date', null);
@@ -88,13 +88,12 @@ const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDa
             return false;
         }
 
-        if (data.id === 0) {
-            // default folders files
-            data.folders = [
-                { name: getUIKey({ removeHyphen: true, toUpperCase: true }), title: "Archivos Del Contrato" },
-                { name: getUIKey({ removeHyphen: true, toUpperCase: true }), title: "Fotos de la Propiedad" }
-            ];
-        }
+        // default folders
+        data.folders = [
+            { name: getUIKey({ removeHyphen: true, toUpperCase: true }), title: "Archivos Del Contrato" },
+            { name: getUIKey({ removeHyphen: true, toUpperCase: true }), title: "Fotos de la Propiedad" }
+        ];
+        
         fetchData.post('/properties/contracts/contract.php', data, (response: TCallBack) => {
             const success = validateResult(response.result);
             if (success) {
@@ -119,11 +118,9 @@ const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDa
         return dueDates;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startDate]);
-
-    console.log('startDate', startDate)
     
     return (<>
-        <ConditionalAlert condition={isNewContract} severity="warning" title="No hay un contrato vigente." message="Inicie un contrato nuevo." />
+        <ConditionalAlert condition={true} severity="warning" title="No hay un contrato vigente." message="Inicie un contrato nuevo." />
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
             <Grid xs={12} sm={6}>
                 <Controller name="start_date" control={control} render={({ field }) => {
@@ -140,7 +137,7 @@ const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDa
                     return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Vencimiento" {...field}
                         format={DATE_FORMAT.DATE}
                         disabled={isNil(startDate)}
-                        minDate={isNotNil(startDate) ? add(new Date(startDate), { months: 1 }) : undefined}
+                        minDate={isNotNil(startDate) ? add(new Date(startDate), { days: 1 }) : undefined}
                         onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
                     />
                 }} />
@@ -174,4 +171,4 @@ const ContractForm: FC<IContractFormProps> = ({ property, contract, onContractDa
     </>)
 };
 
-export default ContractForm;
+export default NewContract;

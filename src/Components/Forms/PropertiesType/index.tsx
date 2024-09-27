@@ -4,7 +4,6 @@ import useDataResponse from '@src/Hooks/useDataResponse';
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { isNil, isNotNil } from 'ramda';
-import { getUIKey } from '@src/Utils';
 import DummyTextField from '../DummyTextField';
 
 export interface IPropertiesTypeSelector {
@@ -27,7 +26,7 @@ const PropertiesTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<
 
     if (data && !types.loading) {
         return (<TextField id="type" label="Tipo de Propiedad" {...props} disabled={isNil(types.result)} select fullWidth>
-            {data.map((type: IPropertiesTypeSelector) => <MenuItem key={getUIKey()} value={type.id}>{type.label}</MenuItem>)}
+            {data.map((type: IPropertiesTypeSelector) => <MenuItem key={`pt${type.id}`} value={type.id}>{type.label}</MenuItem>)}
         </TextField>);
     }
     return <DummyTextField />

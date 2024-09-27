@@ -4,7 +4,6 @@ import useDataResponse from "@src/Hooks/useDataResponse";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { isNil, isNotNil } from 'ramda';
-import { getUIKey } from '@src/Utils';
 import DummyTextField from "../DummyTextField";
 
 export interface IPropertiesStatusSelector {
@@ -27,7 +26,7 @@ const PropertiesStatusSelector = forwardRef<TextFieldProps, ControllerRenderProp
 
     if (data && !status.loading) {
         return (<TextField id="status" label="Estado de la Propiedad" {...props} disabled={isNil(status.result)} select fullWidth>
-            {data.map((sts: IPropertiesStatusSelector) => <MenuItem key={getUIKey()} value={sts.id}>{sts.label}</MenuItem>)}
+            {data.map((sts: IPropertiesStatusSelector) => <MenuItem key={`ps${sts.id}`} value={sts.id}>{sts.label}</MenuItem>)}
         </TextField>);
     }
     return <DummyTextField />;

@@ -1,7 +1,12 @@
-- la fecha de inicio y finalización de contrato es el primero de cada mes?
-- FEcha de ingreso y salida devolucion de inmuble.
+- Fecha de ingreso y salida devolucion de inmuble.
 
-- Se puede editar un cotrato? si es asi que es lo que se debería de poder editar?
+- Dividir el cotrol de un contrato entre Activo e Finalizado.
+Activo cuando sigue activo, pero puede estar finalizado (entra dentro del calculo de resumen)
+Finalizado es cuando ya se da por finalizado y cerrado completamente.
+
+- Editar un cotrato? si es asi que es lo que se debería de poder editar?
+
+
 - Que sucede con los pagos atrasados, los van a agregar por meses? o se pagan en un solo registro.
 
 PROXIMOS BUGS a AGREGAR

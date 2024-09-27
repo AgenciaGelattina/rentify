@@ -1,5 +1,12 @@
 # Properties Administration App
 
+# V1.1.4
+- Se puede finalizar un contrato.
+- Se puede editar un contrato.
+- Se agregaron los pagos recurrentes Rápidos.
+- Se agregó la lista de contratos expirados y/o finalizados.
+- Se repararon algunos bugs en el calculo de renta mensual.
+
 # V1.1.2
 - Se agregaron los Pagos Recurrentes en los contratos.
 - Cambio de Inquilinos a Contactos.

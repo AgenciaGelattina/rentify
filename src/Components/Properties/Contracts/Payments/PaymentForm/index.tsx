@@ -50,7 +50,6 @@ const formValidations = yup.object().shape({
 });
 
 const defaultPaymentData = (contract: IContract, payment_date: Date = new Date): IPaymentData => {
-    console.log("CONTRACT B", contract);
     return {
         id: 0,
         contract: contract.id,
@@ -63,11 +62,10 @@ const defaultPaymentData = (contract: IContract, payment_date: Date = new Date):
 }
 
 const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, contract, payment_date, open, setOpen, getPayments }) => {
-    console.log("CONTRACT A", contract);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultPaymentData(contract, payment_date), resolver: yupResolver(formValidations) });
-    const { isDirty } = useFormState({ control });
+    //const { isDirty } = useFormState({ control });
     const paymentDate = watch('date');
     const paymentType = watch('type');
 
@@ -158,7 +156,7 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
             <Divider />
         </DialogContent>
         <DialogActions>
-          <Button disabled={!isDirty || loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR</Button>
+          <Button disabled={loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR</Button>
         </DialogActions>
     </RspDialog>) 
 

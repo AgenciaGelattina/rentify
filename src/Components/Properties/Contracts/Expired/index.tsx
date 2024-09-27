@@ -8,7 +8,7 @@ import { formatDate } from '@src/Utils';
 import { DATE_FORMAT } from '@src/Constants';
 import { Description } from '@mui/icons-material';
 import { IContract } from '@src/Components/Properties/Contracts/Details';
-import ExpiredContractDetails, { TExpiredContractSummary } from './ExpiredContractDetails';
+import ExpiredContractDetails, { TExpiredContractSummary } from './Details';
 
 type TExpiredContracts = {
     property: IProperty;

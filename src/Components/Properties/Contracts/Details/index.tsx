@@ -36,10 +36,9 @@ export interface IContractPaymentStatus {
 
 interface IContractDetailsPros {
     contract: IContract;
-    showRecurringPayments?: boolean;
 };
 
-const ContractDetails: FC<IContractDetailsPros> = ({ contract, showRecurringPayments = true }) => {
+const ContractDetails: FC<IContractDetailsPros> = ({ contract }) => {
     const { id, start_date, end_date, due_date, payment_status } = contract;
 
     return (<Accordion>

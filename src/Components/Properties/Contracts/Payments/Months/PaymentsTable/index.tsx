@@ -8,9 +8,10 @@ import { DATE_FORMAT } from '@src/Constants';
 import ClarificationsModal,{ TClarificationsModal, descriptionModalDefault } from './Clarifications';
 import { isEmpty, isNotNil } from 'ramda';
 import { NumericFormat } from 'react-number-format';
-import { IPayment } from '../..';
+import { IPayment, IRecurringPayment } from '../..';
 import { ConditionalRender, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
+import QuickPayments from '../QuickPayment';
 
 interface IPaymentsData {
     payments: IPayment[];
@@ -48,7 +49,7 @@ const PaymentsTable: FC<IPaymentsTableProps> = ({ contract, paymentsDataDefault,
             getPayments();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [paymentsDataDefault?.payments]);
 
     const buildDataContent = (): IDataTableColumn[] => {
         return [

@@ -5,8 +5,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import PropertyDetails, { IProperty } from '@src/Components/Properties/Details';
 import TabsContent from '@src/Components/TabsContent';
 import ContractData from './ContractData';
-import ExpiredContracts from './ExpiredContracts';
-
+import ExpiredContracts from '@src/Components/Properties/Contracts/Expired';
 
 export interface IPropertyContract {
     open: boolean;

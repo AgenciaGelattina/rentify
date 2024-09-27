@@ -23,7 +23,7 @@ if (METHOD === 'POST') {
         $property_result = $DB->query($query);
         $newID = $DB->insert_id;
         if ($newID > 0) {
-            throwSuccess($query);
+            throwSuccess(true);
         } else {
             throwError(203, "No se pudo guardar el pago.");
         }

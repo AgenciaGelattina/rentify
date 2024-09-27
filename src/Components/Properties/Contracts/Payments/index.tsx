@@ -30,7 +30,14 @@ export interface IPayment {
     date: Date;
     clarifications: string;
     created?: Date | null;
-    updated?: Date | null;
+}
+
+export interface IRecurringPayment {
+    id: number;
+    label: string;
+    value: number;
+    start_date: Date;
+    end_date: Date;
 }
 
 export interface IPaymentMonth {
@@ -39,6 +46,7 @@ export interface IPaymentMonth {
     payments: IPayment[];
     total_amount: number;
     required_amount: number;
+    recurring_payments: IRecurringPayment[];
     status: ILabelStatus;
     is_current: boolean;
 }
@@ -51,8 +59,10 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
     const [payments, setPayments] = useState<IPaymentMonth[]>([]);
 
     const getPayments = () => {
+        setPayments([]);
         fetchData.get('/properties/contracts/payments/payments_monthly.php', { contract_id: contract.id }, (response: TCallBack) => {
             const payments = validateResult(response.result);
+            console.log('payments', payments);
             if (payments) {
                 setPayments(payments);
             }
@@ -70,6 +80,21 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
 
     const editPayment = (payment: IPayment) => {
         setPaymentForm({ payment, contract, payment_date: new Date, open: true });
+    }
+
+    const setQuickPayment = (rp: IRecurringPayment, payment_date: Date = new Date) => {
+        console.log('setQuickPayment', rp);
+        const { id, value, label } = rp;
+        const payment: IPayment = {
+            id: 0,
+            contract: contract.id,
+            recurring: { id, label },
+            type: { id: 1, label: "recurring" },
+            amount: value,
+            date: payment_date,
+            clarifications: ''
+        }
+        setPaymentForm({ payment, contract, payment_date, open: true });
     }
     
     useEffect(() => {
@@ -97,8 +122,8 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
             <PaymentsTable contract={contract} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
         </ConditionalRender>
         <ConditionalRender condition={showMonths}>
-            {payments && payments.map((payment) => {
-                return <PaymentMonth key={getUIKey()} contract={contract} paymentData={payment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
+            {payments.map((payment: IPaymentMonth, ix:number) => {
+                return <PaymentMonth key={`pm${ix}`} contract={contract} paymentData={payment} setQuickPayment={setQuickPayment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
             })}
         </ConditionalRender>
         {editMode && <PaymentForm {...paymentForm} setOpen={setPaymentForm} getPayments={getPayments} />}

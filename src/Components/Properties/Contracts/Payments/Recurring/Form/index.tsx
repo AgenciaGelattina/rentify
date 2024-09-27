@@ -69,8 +69,6 @@ const RecurringPaymentForm: FC<IRecurringPaymentFormProps> = ({ open, contract, 
     const endDate = watch('end_date') || undefined;
     const isEditing = watch('id') > 0;
 
-    console.log('startDate', startDate);
-
     useEffect(() => {
         if (recurringPayment) {
             const dataToEdit = { ...recurringPayment };

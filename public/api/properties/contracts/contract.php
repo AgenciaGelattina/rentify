@@ -7,7 +7,7 @@ require '../../database.php';
 
 if (METHOD === 'GET') {
     $property = intval($DB->real_escape_string($_GET['property_id']));
-    $query = "SELECT id,property,due_date,start_date,end_date FROM property_contracts WHERE property = $property AND active = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()";
+    $query = "SELECT id,property,due_date,start_date,end_date FROM property_contracts WHERE property = $property AND active = 1 AND end_date >= CURDATE()";
     $contract_result = $DB->query($query);
     
     if ($contract_result->num_rows > 0) {
@@ -174,20 +174,21 @@ if (METHOD === 'GET') {
 if (METHOD === 'POST') {
     $id = intval($DB->real_escape_string(POST['id']));
     $property = intval($DB->real_escape_string(POST['property']));
-    $value = $DB->real_escape_string(POST['value']);
     $due_date = intval($DB->real_escape_string(POST['due_date']));
     $start_date = $DB->real_escape_string(POST['start_date']);
     $end_date = $DB->real_escape_string(POST['end_date']);
 
     if ($id > 0) { 
-        $fields = "value='$value',due_date=$due_date,start_date='$start_date',end_date='$end_date'";
+        $fields = "due_date=$due_date,start_date='$start_date',end_date='$end_date'";
         $account = $DB->query("UPDATE property_contracts SET $fields WHERE id=".$id); 
         if ($DB->affected_rows >= 0) {
             throwSuccess(true, "El contrato fue modificado.");
         } else {
-            throwError(203, "Error al guardar contrato $id");
+            throwError(203, "Error al modificar contrato $id");
         }
     } else {
+        $value = $DB->real_escape_string(POST['value']);
+
         $query_contract ="INSERT INTO property_contracts (`property`,`due_date`,`start_date`,`end_date`,`created`) VALUES ($property,$due_date,'$start_date','$end_date',CURDATE())";
         $property_result = $DB->query($query_contract);
         $newID = $DB->insert_id;
