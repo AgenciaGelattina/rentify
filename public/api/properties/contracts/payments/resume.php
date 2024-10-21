@@ -7,13 +7,13 @@ if (METHOD === 'GET') {
     require '../../../database.php';
     require '../../../utils/today.php';
 
-    $query = "SELECT pc.id,pc.due_date,pc.start_date,pc.end_date,pr.id AS property_id,pr.title,pr.description,pr.group,pg.title AS group_title,pr.type,pt.label AS type_label,pr.status,st.label AS status_label ";
+    $query = "SELECT pc.id,pc.due_date,pc.start_date,pc.end_date,pc.canceled,pr.id AS property_id,pr.title,pr.description,pr.group,pg.title AS group_title,pr.type,pt.label AS type_label,pr.status,st.label AS status_label ";
     $query .= "FROM property_contracts AS pc ";
     $query .= "LEFT JOIN properties AS pr ON pr.id = pc.property ";
     $query .= "LEFT JOIN properties_types AS pt ON pt.id = pr.type ";
     $query .= "LEFT JOIN properties_status AS st ON st.id = pr.status ";
     $query .= "LEFT JOIN properties_groups AS pg ON pg.id = pr.group ";
-    $query .= "WHERE pc.active = 1 AND pr.active = 1 ORDER BY pc.end_date ASC";
+    $query .= "WHERE pc.finalized = 0 AND pr.active = 1 ORDER BY pc.end_date ASC";
 
     $group = isset($_GET['group']) ? intval($DB->real_escape_string($_GET['group'])) : 0;
     if ($group > 0) {
@@ -33,7 +33,8 @@ if (METHOD === 'GET') {
             $contract_start_date_time = new DateTime($contract->start_date);
             $contract->end_date = $row->end_date."T00:00:00";
             $contract_end_date_time = new DateTime($contract->end_date);
-            $contract->active = true;
+            $contract->canceled = $row->canceled == 0 ? false : true;
+            $contract->finalized = false;
 
             //OVERDUE
             $contract_is_overdue = ($today->time > $contract_end_date_time)? true : false;

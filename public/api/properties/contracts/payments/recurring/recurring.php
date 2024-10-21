@@ -1,6 +1,7 @@
 <?php
 require '../../../../headers.php';
 require '../../../../utils/general.php';
+require '../../../../utils/today.php';
 
 if (METHOD === 'POST') {
     require_once '../../../../database.php';
@@ -33,19 +34,24 @@ if (METHOD === 'POST') {
 
 if (METHOD === 'GET') {
     require_once '../../../../database.php';
-    $recurringPaymentsFields = "id,contract,label,value,start_date,end_date";
+    $recurringPaymentsFields = "id,contract,label,value,start_date,end_date,canceled";
     $contract_id = intval($DB->real_escape_string($_GET['contract']));
     //recurring
     $query = "SELECT $recurringPaymentsFields FROM contracts_recurring_payments WHERE contract = $contract_id";
     $recurring_result = $DB->query($query);
     if ($recurring_result->num_rows > 0) {
-        $recurringPayments = [];
-        while($recurringPayment=$recurring_result->fetch_object()) {
-            $recurringPayment->start_date = $recurringPayment->start_date."T00:00:00";
-            $recurringPayment->end_date = $recurringPayment->end_date."T00:00:00";
-            array_push($recurringPayments, $recurringPayment);
+        $recurring_payments = [];
+        while($recurring_payment=$recurring_result->fetch_object()) {
+            $rec_end_date_time = new DateTime($recurring_payment->end_date);
+
+            $recurring_payment->start_date = $recurring_payment->start_date."T00:00:00";
+            $recurring_payment->end_date = $recurring_payment->end_date."T00:00:00";
+            $recurring_payment->canceled = $recurring_payment->canceled ? true : false;
+            $recurring_payment->is_overdue = ($today->time > $rec_end_date_time)? true : false;
+
+            array_push($recurring_payments, $recurring_payment);
         }
-        throwSuccess($recurringPayments);
+        throwSuccess($recurring_payments);
     } else {
         throwError(203, "No hay pagos recurrentes.");
     }

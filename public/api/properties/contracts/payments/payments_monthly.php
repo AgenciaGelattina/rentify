@@ -45,7 +45,7 @@ if (METHOD === 'GET') {
                 //RECURRING PAYMENTS
                 $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date FROM contracts_recurring_payments AS crp WHERE crp.contract = $contract_id AND ('$date->year_month' BETWEEN DATE_FORMAT(start_date,'%Y-%m') AND DATE_FORMAT(end_date,'%Y-%m'))";
                 $req_paymnts_query = $DB->query($query);
-
+                $month->query = $query;
                 $month->recurring_payments = [];
                 $month->required_amount = 0;
                 $month->total_recurring_amount = 0;
@@ -57,10 +57,11 @@ if (METHOD === 'GET') {
                 }
                 
                 //MONTH PAYMENTS
-                $query = "SELECT cp.id,cp.amount,cp.contract,JSON_OBJECT('id',cp.recurring,'label',crp.label) AS recurring,JSON_OBJECT('id',cp.type,'label',pt.label) AS type,cp.date,cp.clarifications,cp.created FROM contracts_payments AS cp LEFT JOIN contracts_recurring_payments AS crp ON crp.id = cp.recurring LEFT JOIN payments_types AS pt on pt.id = cp.type WHERE MONTH(date) = $date->month AND YEAR(date) = $date->year AND cp.contract = $contract_id";
+                $query = "SELECT cp.id,cp.amount,cp.contract,JSON_OBJECT('id',cp.recurring,'label',crp.label) AS recurring,JSON_OBJECT('id',cp.type,'label',pt.label) AS type,cp.date,cp.clarifications FROM contracts_payments AS cp LEFT JOIN contracts_recurring_payments AS crp ON crp.id = cp.recurring LEFT JOIN payments_types AS pt on pt.id = cp.type WHERE MONTH(date) = $date->month AND YEAR(date) = $date->year AND cp.contract = $contract_id";
                 $payments_query = $DB->query($query);
 
                 $month->payments = [];
+                $month->payquery= $query;
                 if ($payments_query && $payments_query->num_rows > 0) {
                     while($row = $payments_query->fetch_object()) {
                         $type = json_decode($row->type);

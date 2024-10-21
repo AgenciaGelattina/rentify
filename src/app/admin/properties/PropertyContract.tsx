@@ -6,6 +6,7 @@ import PropertyDetails, { IProperty } from '@src/Components/Properties/Details';
 import TabsContent from '@src/Components/TabsContent';
 import ContractData from './ContractData';
 import ExpiredContracts from '@src/Components/Properties/Contracts/Expired';
+import FinalizedContracts from '@src/Components/Properties/Contracts/Finalized';
 
 export interface IPropertyContract {
     open: boolean;
@@ -19,7 +20,7 @@ type TPropertyContractProps = {
 const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ property, open, setOpen }) => {
 
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
-        <RspDialogTitle title="CONTRATO" onClose={() => setOpen({ open: false })} />
+        <RspDialogTitle title="CONTRATOS" onClose={() => setOpen({ open: false })} />
         <DialogContent>
             {property && <PropertyDetails {...property} />}
             {property && (<TabsContent tabs={[
@@ -30,9 +31,15 @@ const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ prop
                     }
                 },
                 { 
-                    tab: { label: "HISTORIAL DE CONTRATOS" },
+                    tab: { label: "CANCELADOS / EXPIRADOS" },
                     component: () => {
                         return <ExpiredContracts property={property} />
+                    }
+                },
+                { 
+                    tab: { label: "FINALIZADOS" },
+                    component: () => {
+                        return <FinalizedContracts property={property} />
                     }
                 }
             ]} />)}

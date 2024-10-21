@@ -86,7 +86,7 @@ const AuthUser: FC = () => {
             </CardActions>
             <Divider />
             <Box sx={{ textAlign: 'right' }}>
-                <Typography variant="caption">{`V${process.env.NEXT_PUBLIC_APP_VERSION!}`}</Typography>
+                <Typography variant="caption">{`${process.env.NEXT_PUBLIC_APP_VERSION!}`}</Typography>
             </Box>
         </SLogBox>
         <LoadingDialog show={auth.loading || tokenValidation} />

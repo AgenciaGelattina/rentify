@@ -77,6 +77,7 @@ const ContractsSummary: FC = () => {
                 <Table aria-label="collapsible table" size="small">
                     <TableHead>
                         <TableRow>
+                            <TableCell />
                             <TableCell>Estado</TableCell>
                             <TableCell>Propiedad</TableCell>
                             <TableCell>Cobro Mensual</TableCell>
@@ -84,7 +85,6 @@ const ContractsSummary: FC = () => {
                             <TableCell>Meses de Deuda</TableCell>
                             <TableCell>Fecha de Corte</TableCell>
                             <TableCell>Fecha de Vencimiento</TableCell>
-                            <TableCell />
                         </TableRow>
                     </TableHead>
                     <TableBody>

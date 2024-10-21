@@ -1,19 +1,9 @@
+
+- Renovar contratos.
 - Fecha de ingreso y salida devolucion de inmuble.
+- Agregar tipo de moneda (Pesos y Dolares) al contrato.
 
-- Dividir el cotrol de un contrato entre Activo e Finalizado.
-Activo cuando sigue activo, pero puede estar finalizado (entra dentro del calculo de resumen)
-Finalizado es cuando ya se da por finalizado y cerrado completamente.
+- Al Editar un cotrato tener en cuenta los pagos a la hora de cambiar fechas o días de cortes.
+- Agregar al calculo de pagos recurrentes la posibilidad de sumar pagos adelantados y atrasados.
 
-- Editar un cotrato? si es asi que es lo que se debería de poder editar?
-
-
-- Que sucede con los pagos atrasados, los van a agregar por meses? o se pagan en un solo registro.
-
-PROXIMOS BUGS a AGREGAR
-- Renovación de contrato.
-- Agregar boton para pago rápido.
-
-- Agregar resumen de pago en la cabecera de los meses en la lista de pagos.
-- Agregar selección de tipo de moneda (Pesos y Dolares) al contrato.
-- Seleccionar los pagos recurrentes dentro de las fechas correspondientes.
-- Pasar los pagos recurrentes a una TAB al lado de Pagos.
+- Revisar que sucede cuando la fecha de corte es mayor a la fecha de inicio de contrato y se cobra un mes despues.

@@ -1,4 +1,4 @@
--- DESARROLLO V 1.1.4
+-- DESARROLLO V 1.1.6
 
 -- --------------------------------------------------------
 -- Table `accounts_roles`
@@ -108,7 +108,6 @@ CREATE TABLE `properties` (
   `group` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `title` varchar(50) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `created` date NOT NULL,
   `active` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
   FOREIGN KEY (`type`) REFERENCES properties_types (`id`),
   FOREIGN KEY (`status`) REFERENCES properties_status (`id`),
@@ -124,8 +123,11 @@ CREATE TABLE `property_contracts` (
   `due_date` tinyint(2) UNSIGNED NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `created` date NOT NULL,
-  `active` tinyint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `in_date` date NOT NULL,
+  `out_date` date NOT NULL,
+  `currency` varchar(3) NOT NULL,
+  `canceled` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `finalized` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   FOREIGN KEY (`property`) REFERENCES properties (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -187,6 +189,7 @@ CREATE TABLE `contracts_recurring_payments` (
   `value` int(10) UNSIGNED NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
+  `canceled` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -201,7 +204,6 @@ CREATE TABLE `contracts_payments` (
   `amount` int(10) UNSIGNED NOT NULL,
   `date` date NOT NULL,
   `clarifications` varchar(150) NOT NULL,
-  `created` date NOT NULL,
   FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`),
   FOREIGN KEY (`type`) REFERENCES payments_types (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

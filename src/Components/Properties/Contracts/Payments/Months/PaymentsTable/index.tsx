@@ -54,6 +54,25 @@ const PaymentsTable: FC<IPaymentsTableProps> = ({ contract, paymentsDataDefault,
     const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
+                head: {
+                    label: "",
+                },
+                component: (payment: IPayment) => {
+                    return (<Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={1}>
+                        <ConditionalRender condition={editMode}>
+                            <IconButton onClick={() => editPayment(payment)}>
+                                <Edit fontSize="inherit" />
+                            </IconButton>
+                        </ConditionalRender>
+                        <ConditionalRender condition={!isEmpty(payment.clarifications)}>
+                            <IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
+                                <Description fontSize="inherit" />
+                            </IconButton>
+                        </ConditionalRender>
+                    </Stack>);
+                }
+            },
+            {
                 dataKey: "date",
                 head: {
                     label: "Fecha de Pago",
@@ -90,22 +109,14 @@ const PaymentsTable: FC<IPaymentsTableProps> = ({ contract, paymentsDataDefault,
                 },
                 component: (payment: IPayment) => {
                     return (<Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
-                        <ConditionalRender condition={!isEmpty(payment.clarifications)}>
-                            <IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
-                                <Description fontSize="inherit" />
-                            </IconButton>
-                        </ConditionalRender>
                         <ConditionalRender condition={editMode}>
-                            <IconButton onClick={() => editPayment(payment)}>
-                                <Edit fontSize="inherit" />
-                            </IconButton>
                             <IconButton onClick={() => removePayment(payment.id)}>
                                 <DeleteForever fontSize="inherit" color="error" />
                             </IconButton>
                         </ConditionalRender>
                     </Stack>);
                 }
-            }
+            },
         ];
     }
 

@@ -6,8 +6,19 @@ require '../../utils/today.php';
 require '../../database.php';
 
 if (METHOD === 'GET') {
-    $property = intval($DB->real_escape_string($_GET['property_id']));
-    $query = "SELECT id,property,due_date,start_date,end_date FROM property_contracts WHERE property = $property AND active = 1 AND end_date >= CURDATE()";
+    
+    $status = $DB->real_escape_string($_GET['status']);
+    $query = "SELECT id,property,due_date,start_date,end_date,canceled,finalized FROM property_contracts";
+
+    if ($status === "current") {
+        $property = intval($DB->real_escape_string($_GET['property_id']));
+        $query .= " WHERE property = $property AND canceled = 0 AND finalized = 0 AND end_date >= CURDATE()";
+    }
+    if ($status === "data") {
+        $contract = intval($DB->real_escape_string($_GET['contract_id']));
+        $query .= " WHERE id = $contract";
+    }
+    
     $contract_result = $DB->query($query);
     
     if ($contract_result->num_rows > 0) {
@@ -20,10 +31,11 @@ if (METHOD === 'GET') {
         $contract_start_date_time = new DateTime($contract->start_date);
         $contract->end_date = $row->end_date."T00:00:00";
         $contract_end_date_time = new DateTime($contract->end_date);
-        $contract->active = true;
+        $contract->canceled = $row->canceled == 0 ? false : true;
+        $contract->finalized = $row->finalized == 0 ? false : true;
 
         //OVERDUE
-        $contract_is_overdue = ($today->time > $contract_end_date_time)? true : false;
+        $contract_is_overdue = ($today->time > $contract_end_date_time) ? true : false;
         $contract->is_overdue = $contract_is_overdue ? true : false;
 
         $due_date_day = intval($row->due_date) < 10 ? '0'.$row->due_date : $row->due_date;
@@ -59,7 +71,7 @@ if (METHOD === 'GET') {
         }
 
         // RECURRING PAYMENTS
-        $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,";
+        $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,crp.canceled,";
         $query .= "(SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = crp.contract AND recurring = crp.id) AS total_amount ";
         $query .= "FROM contracts_recurring_payments AS crp WHERE crp.contract = $contract->id";
         $rec_payments = $DB->query($query);
@@ -78,6 +90,7 @@ if (METHOD === 'GET') {
             $recurring_payment->id = $rec->id;
             $recurring_payment->label = $rec->label;
             $recurring_payment->value = $rec->value;
+            $recurring_payment->canceled = $rec->canceled ? true : false;
             $recurring_payment->start_date = $rec->start_date."T00:00:00";
             $rec_start_date_time = new DateTime($recurring_payment->start_date);
             $recurring_payment->end_date = $rec->end_date."T00:00:00";
@@ -189,7 +202,7 @@ if (METHOD === 'POST') {
     } else {
         $value = $DB->real_escape_string(POST['value']);
 
-        $query_contract ="INSERT INTO property_contracts (`property`,`due_date`,`start_date`,`end_date`,`created`) VALUES ($property,$due_date,'$start_date','$end_date',CURDATE())";
+        $query_contract ="INSERT INTO property_contracts (`property`,`due_date`,`start_date`,`end_date`) VALUES ($property,$due_date,'$start_date','$end_date')";
         $property_result = $DB->query($query_contract);
         $newID = $DB->insert_id;
         if ($newID > 0) {

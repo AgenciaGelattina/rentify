@@ -25,7 +25,7 @@ if (METHOD === 'POST') {
     $status = intval($DB->real_escape_string(POST['status']));
     $group = intval($DB->real_escape_string(POST['group']));
     if ($id === 0) {
-        $query ="INSERT INTO properties (`title`, `description`, `type`, `status`, `group`, `active`, `created`) VALUES ('".$title."','".$description."', $type, $status, $group, 1, CURDATE())";
+        $query ="INSERT INTO properties (`title`, `description`, `type`, `status`, `group`, `active`) VALUES ('".$title."','".$description."', $type, $status, $group, 1)";
         $property = $DB->query($query);
         if ($DB->affected_rows > 0) {
             throwSuccess(true, "Se ha creado la propiedad");

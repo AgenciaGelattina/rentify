@@ -77,6 +77,13 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
     const pd: CSSProperties = showRecurringData? { paddingBottom: 30, paddingTop: 10, borderBottom: 'solid .2rem rgb(224 224 224)' } : { paddingBottom: 0, paddingTop: 0 };
     return (<>
         <TableRow>
+            <TableCell>
+                <Stack direction="row" alignItems="center" sx={{ justifyContent: 'end' }} spacing={1}>
+                    <IconButton color='success' onClick={() => openContractGeneralView(property, contract)}>
+                        <Description fontSize="inherit" />
+                    </IconButton>
+                </Stack>
+            </TableCell>
             <TableCell onClick={togleRecurringDataView}>
                 {contract?.payment_status?.status && <LabelStatus {...contract.payment_status.status} action={showRecurringData ? <ExpandLess /> : <ExpandMore />} />}
             </TableCell>
@@ -98,13 +105,6 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
             </TableCell>
             <TableCell>
                 <Typography variant="body2" color={contract.is_overdue ? 'error' : contract.payment_status.status.severity}>{formatDate(contract.due_date.end, DATE_FORMAT.DATE_LONG)}</Typography>
-            </TableCell>
-            <TableCell>
-                <Stack direction="row" alignItems="center" sx={{ justifyContent: 'end' }} spacing={1}>
-                    <IconButton color='success' onClick={() => openContractGeneralView(property, contract)}>
-                        <Description fontSize="inherit" />
-                    </IconButton>
-                </Stack>
             </TableCell>
         </TableRow>
         <TableRow sx={{ backgroundColor: '#f8f9fa' }}>

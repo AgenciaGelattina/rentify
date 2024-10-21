@@ -1,22 +1,25 @@
 import { Accordion, AccordionDetails, AccordionSummary,Divider,Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { FC } from 'react';
+import { FC, SyntheticEvent } from 'react';
 import { ExpandMore, Description } from '@mui/icons-material';
 import LabelStatus, { ILabelStatus } from '@src/Components/LabelStatus';
 import LabelTextBox from '@src/Components/LabelTextBox';
 import { formatDate } from '@src/Utils';
 import { DATE_FORMAT } from '@src/Constants';
 import { IRecurring } from '../Payments/Recurring/Detail';
+import { isNotNil } from 'ramda';
+import { ConditionalRender } from '@phoxer/react-components';
 
 export interface IContract {
     id: number;
     start_date: string | number | Date;
     end_date: string | number | Date;
     due_date: IContractDueDate;
-    active: boolean;
     is_overdue: boolean;
     payment_status: IContractPaymentStatus;
     recurring_payments?: IRecurring[];
+    canceled: boolean;
+    finalized: boolean;
 }
 
 export interface IContractDueDate {
@@ -36,10 +39,11 @@ export interface IContractPaymentStatus {
 
 interface IContractDetailsPros {
     contract: IContract;
+    actions?: React.ReactNode;
 };
 
-const ContractDetails: FC<IContractDetailsPros> = ({ contract }) => {
-    const { id, start_date, end_date, due_date, payment_status } = contract;
+const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions }) => {
+    const { id, start_date, end_date, due_date, payment_status, canceled, finalized } = contract;
 
     return (<Accordion>
         <AccordionSummary
@@ -70,7 +74,14 @@ const ContractDetails: FC<IContractDetailsPros> = ({ contract }) => {
                     <LabelTextBox title="Vencimiento:" text={formatDate(due_date.end, DATE_FORMAT.DATE_LONG)} />
                 </Grid>
             </Grid>
+            <Divider sx={{ margin: '1rem 0 1rem 0' }} />
             {payment_status && <LabelStatus {...payment_status.status} />}
+            {canceled && <LabelStatus severity='warning' label="CANCELADO" />}
+            {finalized && <LabelStatus severity='error' label="FINALIZADO" />}
+            <ConditionalRender condition={isNotNil(actions)}>
+                <Divider sx={{ margin: '1rem 0 1rem 0' }} />
+                {actions}
+            </ConditionalRender>
         </AccordionDetails>
     </Accordion>);
 }

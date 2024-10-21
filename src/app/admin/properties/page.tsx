@@ -48,6 +48,21 @@ const PropertiesManagement: FC = () => {
     const buildDataContent = (): IDataTableColumn[] => {
         return [
             {
+                head: {
+                    label: "",
+                },
+                component: (rowData: IProperty) => {
+                    return (<Stack direction="row" alignItems="center" spacing={1}>
+                        <IconButton onClick={() => setPropertyData({ open: true, id: rowData.id })}>
+                            <Edit fontSize="inherit" />
+                        </IconButton>
+                        <IconButton color={ rowData.active_contract ? 'info' : 'warning' } onClick={() => setPropertyContract({ open: true, property: rowData })}>
+                            <Description fontSize="inherit" />
+                        </IconButton>
+                    </Stack>);
+                }
+            },
+            {
                 dataKey: "title",
                 head: {
                     label: "Propiedad",
@@ -98,21 +113,6 @@ const PropertiesManagement: FC = () => {
                         </Button>);
                     }
                     return "";
-                }
-            },
-            {
-                head: {
-                    label: "",
-                },
-                component: (rowData: any) => {
-                    return (<Stack direction="row" alignItems="center" spacing={1}>
-                        <IconButton onClick={() => setPropertyData({ open: true, id: rowData.id })}>
-                            <Edit fontSize="inherit" />
-                        </IconButton>
-                        <IconButton color={ rowData.active_contract ? 'success' : 'default' } onClick={() => setPropertyContract({ open: true, property: rowData })}>
-                            <Description fontSize="inherit" />
-                        </IconButton>
-                    </Stack>);
                 }
             }
         ]

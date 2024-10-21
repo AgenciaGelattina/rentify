@@ -6,11 +6,12 @@ export interface IRecurring {
     id: number;
     label: string;
     value: number;
-    start_date: Date;
-    end_date: Date;
+    start_date: Date | string;
+    end_date: Date | string;
     is_overdue: boolean;
     due_date: IRecurringPaymentDueDate;
     payment_status: IRecurringPaymentStatus;
+    canceled: boolean;
 }
 
 export interface IRecurringPaymentDueDate {

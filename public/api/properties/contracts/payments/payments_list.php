@@ -7,7 +7,7 @@ if (METHOD === 'GET') {
     require_once '../../../database.php';
     $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
 
-    $query = "SELECT cp.id,cp.amount,cp.contract,JSON_OBJECT('id',cp.recurring,'label',crp.label) AS recurring,JSON_OBJECT('id',cp.type,'label',pt.label) AS type,cp.date,cp.clarifications,cp.created FROM contracts_payments AS cp LEFT JOIN contracts_recurring_payments AS crp ON crp.id = cp.recurring LEFT JOIN payments_types AS pt on pt.id = cp.type WHERE cp.contract = $contract_id";
+    $query = "SELECT cp.id,cp.amount,cp.contract,JSON_OBJECT('id',cp.recurring,'label',crp.label) AS recurring,JSON_OBJECT('id',cp.type,'label',pt.label) AS type,cp.date,cp.clarifications FROM contracts_payments AS cp LEFT JOIN contracts_recurring_payments AS crp ON crp.id = cp.recurring LEFT JOIN payments_types AS pt on pt.id = cp.type WHERE cp.contract = $contract_id";
     $payments_query = $DB->query($query);
 
     $payments_data = new stdClass();

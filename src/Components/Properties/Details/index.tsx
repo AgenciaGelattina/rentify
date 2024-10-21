@@ -9,13 +9,10 @@ export interface IProperty {
     title: string;
     description: string;
     type: { id: number; label: string };
-    group: { id: number; title: string };
+    group: { id: number; title: string, description: string };
     status: { id: number; label: string };
-    group_title?: string;
-    created?: string;
-    updated?: string;
-    active_contract?: number;
-    active?: boolean;
+    active_contract: number | null;
+    active: boolean;
 }
 
 const PropertyDetails: React.FC<IProperty> = ({ id, title, description, type, group, status }) => {

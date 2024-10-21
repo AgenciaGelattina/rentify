@@ -18,7 +18,7 @@ interface IRecurringListProps {
 }
 
 const RecurringList: FC<IRecurringListProps> = ({ editMode = false, contract, recurringPaymentForm, setRecurringPaymentForm }) => {
-    const [recurringData, setRecurringData] = useState<IRecurringPayment[]>([]);
+    const [recurringData, setRecurringData] = useState<IRecurring[]>([]);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     
@@ -35,12 +35,7 @@ const RecurringList: FC<IRecurringListProps> = ({ editMode = false, contract, re
         const { id, recurring_payments } = contract;
         if (id > 0) {
             if (recurring_payments) {
-                //Format Recurring Payments Details to FormData
-                const recurring_payments_data = recurring_payments.map((rec: IRecurring) => {
-                    const { id, label, value, start_date, end_date } = rec;
-                    return { id, label, value, start_date, end_date, contract: id };
-                });
-                setRecurringData(recurring_payments_data);
+                setRecurringData(recurring_payments);
             } else {
                 loadRecurringPayments();
             }
@@ -48,32 +43,37 @@ const RecurringList: FC<IRecurringListProps> = ({ editMode = false, contract, re
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contract.id]);
 
-    const editRecurringPayment = (recurringPayment: IRecurringPayment) => {
+    const editRecurringPayment = (recurringPayment: IRecurring) => {
         if (editMode && setRecurringPaymentForm) {
             setRecurringPaymentForm({ open: true, recurringPayment });
         }
     }
 
     return (<>
-        <Stack spacing={1} sx={{marginBottom: '1rem'}}>
-            {recurringData.map((rec: IRecurringPayment, ix: number) => {
-                return (<Grid key={mapKey('rc', ix)} container>
-                    <Grid item xs={6}>
-                        <Typography variant="subtitle2">
-                            <IconButton size="small" onClick={() => editRecurringPayment(rec)}>
-                                <Edit fontSize="inherit" />
-                            </IconButton>
-                            {rec.label}
-                        </Typography>
-                        <Typography>{formatToMoney(rec.value)}</Typography>
+        <Stack spacing={1} sx={{ marginBottom: '1rem', padding: '.5rem'}}>
+            {recurringData.map((rec: IRecurring, ix: number) => {
+
+                return (<Grid key={mapKey('rc', ix)} sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }} container>
+                    <Grid item xs={6} sx={{display: "flex"}}>
+                        <IconButton size="small" onClick={() => editRecurringPayment(rec)}>
+                            <Edit fontSize="inherit" />
+                        </IconButton>
+                        <Box>
+                            <Typography variant="subtitle2" color={(rec.is_overdue || rec.canceled) ? "error" : "success"}>
+                                {rec.label}
+                            </Typography>
+                            <Typography>{formatToMoney(rec.value)}</Typography>
+                        </Box>
                     </Grid>
                     <Grid item xs={3}>
                         <Typography variant="subtitle2">Inicia:</Typography>
                         <Typography>{formatDate(rec.start_date || "", DATE_FORMAT.DATE_LONG)}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                        <Typography variant="subtitle2">Finaliza:</Typography>
-                        <Typography>{formatDate(rec.end_date || "", DATE_FORMAT.DATE_LONG)}</Typography>
+                        <Typography variant="subtitle2">
+                            { rec.is_overdue ? "Finalizado:" : "Finaliza:" }
+                        </Typography>
+                        <Typography color={rec.is_overdue ? "error" : "success"}>{formatDate(rec.end_date || "", DATE_FORMAT.DATE_LONG)}</Typography>
                     </Grid>
                 </Grid>)
             })}

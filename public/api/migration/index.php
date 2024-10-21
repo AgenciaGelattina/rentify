@@ -1,5 +1,5 @@
 <?php
-$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_Prod");
+$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_DevB");
 if($DB->connect_errno){
     printf("Connect failed: %s\n", $DB->connect_error);
     exit();
@@ -30,7 +30,7 @@ while($row=$properties->fetch_object()){
 echo "-----------------------------------";
 echo "</pre>";
 */
-
+/*
 //RECURRINGS 
 $properties = $DB->query("SELECT `id`,`value`,`start_date`,`end_date` FROM `property_contracts`;");
 echo "<pre>";
@@ -42,6 +42,19 @@ while($row=$properties->fetch_object()){
 };
 echo "-----------------------------------";
 echo "</pre>";
+*/
+//MIGRATION
+$fields = "`id`, `property`, `due_date`, `start_date`, `end_date`, `active`";
+$table = "property_contracts";
 
+$table_query = $DB->query("SELECT $fields FROM $table");
+echo "<pre>";
+echo "INSERT INTO $table (`id`, `property`, `due_date`, `start_date`, `end_date`, `canceled`, `finalized`) VALUES <br>";
+while($row=$table_query->fetch_object()){
+    $canceled = $row->active == 1 ? 0 : 1;
+    echo "($row->id, $row->property, $row->due_date, '$row->start_date', '$row->end_date', $canceled, 0), <br>";
+};
+echo "-----------------------------------";
+echo "</pre>";
 $DB->close();
 ?>

@@ -8,25 +8,24 @@ import { formatDate } from '@src/Utils';
 import { DATE_FORMAT } from '@src/Constants';
 import { Description } from '@mui/icons-material';
 import { IContract } from '@src/Components/Properties/Contracts/Details';
-import ExpiredContractDetails, { IExpiredContractSummary } from './Details';
+import FinalizedContractDetails, { IFinalizedContractSummary } from './Details';
 
-interface IExpiredContracts {
+type TFinalizedContracts = {
     property: IProperty;
 }
 
-const ExpiredContracts: FC<IExpiredContracts> = ({ property }) => {
+const FinalizedContracts: FC<TFinalizedContracts> = ({ property }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
-    const [expiredContracts, setExpiredContracts] = useState<IContract[]>([]);
-    const [expiredContract, setExpiredContract] = useState<IExpiredContractSummary>({ open: false });
+    const [finalizedContracts, setFinalizedContracts] = useState<IContract[]>([]);
+    const [finalizedContract, setFinalizedContract] = useState<IFinalizedContractSummary>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getContractsList = () => {
-        setExpiredContracts([]);
         if (property && property.id > 0) {
-            fetchData.get('/properties/contracts/list.php', { property_id: property.id, type: "expired" }, (response: TCallBack) => {
+            fetchData.get('/properties/contracts/list.php', { property_id: property.id, type: "finalized" }, (response: TCallBack) => {
                 const contracts = validateResult(response.result);
                 if (contracts) {
-                    setExpiredContracts(contracts);
+                    setFinalizedContracts(contracts);
                 }
             });
         }
@@ -56,7 +55,7 @@ const ExpiredContracts: FC<IExpiredContracts> = ({ property }) => {
                 },
                 component: (rowData: IContract) => {
                     return (<Stack direction="row" alignItems="center" spacing={1}>
-                        <IconButton onClick={() => { setExpiredContract({ open: true, contract: rowData, property }) }}>
+                        <IconButton onClick={() => { setFinalizedContract({ open: true, contract: rowData, property }) }}>
                             <Description fontSize="inherit" />
                         </IconButton>
                     </Stack>);
@@ -79,26 +78,14 @@ const ExpiredContracts: FC<IExpiredContracts> = ({ property }) => {
                 component: (end_date: string, rowData: any) => {
                     return <Typography variant='subtitle2'>{`${formatDate(end_date, DATE_FORMAT.MONTH_YEAR)}`}</Typography>;
                 }
-            },
-            {
-                head: {
-                    label: "Estado",
-                },
-                component: (contract: IContract) => {
-                    const { canceled } = contract;
-                    if (canceled) {
-                        return <Typography color="error" variant='subtitle2'>Cancelado</Typography>;
-                    }
-                    return <Typography color="danger" variant='subtitle2'>Expirado</Typography>;
-                }
             }
         ];
     }
 
     return (<>
-        <DataTable columns={buildDataContent()} data={expiredContracts} loading={loading} />
-        <ExpiredContractDetails {...expiredContract} setOpen={setExpiredContract} getContractsList={getContractsList} />
+        <DataTable columns={buildDataContent()} data={finalizedContracts} loading={loading} />
+        <FinalizedContractDetails {...finalizedContract} setOpen={setFinalizedContract} getContractsList={getContractsList} />
     </>)
 }
 
-export default ExpiredContracts;
+export default FinalizedContracts;

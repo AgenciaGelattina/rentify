@@ -1,5 +1,19 @@
 # Properties Administration App
 
+# V1.1.6
+- Se reparó el error de las propiedades duplicadas.
+- Posibilidad de cancelar un pago Recurrente.
+- Posibilidad de borrar un pago recurrente (si no está vinculado a un pago).
+- Optimización de datos de pagos recurrentes.
+
+# V1.1.5
+- Diferencia entre cancelar un contrato y finalizar un contrato.
+- Lista de contratos Cancelados / Expirados.
+- Posibilidad de Editar un contrato Cancelado / Expirado.
+- Posibilidad de ReActivar un contrato cancelado.
+- Lista de contratos Finalizados.
+- Posibilidad de ReActivar un contrato Finalizado.
+
 # V1.1.4
 - Se puede finalizar un contrato.
 - Se puede editar un contrato.

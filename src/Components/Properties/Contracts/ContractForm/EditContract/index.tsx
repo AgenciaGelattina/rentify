@@ -26,6 +26,7 @@ export interface IEditContractData {
 interface IEditContractProps {
     contract?: IEditContractData;
     onContractDataSaved: () => void;
+    onCancel: () => void;
 }
 
 const formValidations = yup.object().shape({
@@ -51,7 +52,7 @@ const formatContractData = (contract: IEditContractData) => {
     return contractData;
 }
 
-const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved }) => {
+const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved, onCancel }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const { handleSubmit, control, watch, setValue, setError, formState: { errors }, reset } = useForm<IEditContractData>({ defaultValues: defaultContractValues, resolver: yupResolver(formValidations) as Resolver<IEditContractData> });
@@ -136,7 +137,8 @@ const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved })
             </Grid>
         </Grid>
         <DialogActions>
-            <Button disabled={!isDirty || loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR CONTRATO</Button>
+            <Button disabled={loading} onClick={onCancel}>CANCELAR</Button>
+            <Button disabled={!isDirty || loading} color="error" onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR CONTRATO</Button>
         </DialogActions>
     </>);
 };

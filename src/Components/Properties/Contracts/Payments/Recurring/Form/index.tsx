@@ -1,4 +1,4 @@
-import { Button, DialogActions, DialogContent, Divider, TextField } from "@mui/material";
+import { Alert, Button, DialogActions, DialogContent, Divider, TextField } from "@mui/material";
 import RspDialog from "@src/Components/RspDialog";
 import RspDialogTitle from "@src/Components/RspDialog/RspDialogTitle";
 import Grid from '@mui/material/Unstable_Grid2';
@@ -10,10 +10,11 @@ import useDataResponse from "@src/Hooks/useDataResponse";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import { fieldError } from "@src/Utils";
-import { isNil } from "ramda";
+import { isNil, isNotNil } from "ramda";
 import ErrorHelperText from "@src/Components/Forms/ErrorHelperText";
 import { DatePicker } from "@mui/x-date-pickers";
 import { add } from "date-fns";
+import { IRecurring } from "../Detail";
 
 export interface IRecurringPayment {
     id: number;
@@ -22,6 +23,7 @@ export interface IRecurringPayment {
     value: number;
     start_date: Date | null;
     end_date: Date | null;
+    canceled: number;
 }
 
 const formValidations = yup.object().shape({
@@ -31,11 +33,12 @@ const formValidations = yup.object().shape({
     value: yup.number().min(1, "Escriba un importe mayor a $1.").required("Escriba un importe."),
     start_date: yup.date().nullable(),
     end_date: yup.date().nullable(),
+    canceled: yup.number()
 });
 
 export interface IRecurringPaymentForm {
     open: boolean;
-    recurringPayment: IRecurringPayment | null;
+    recurringPayment: IRecurring | null;
 }
 
 interface IRecurringPaymentFormProps extends IRecurringPaymentForm {
@@ -55,7 +58,8 @@ const defaultRecurringPaymentData = (contract_id: number): IRecurringPayment => 
         label: "",
         value: 0,
         start_date: null,
-        end_date: null
+        end_date: null,
+        canceled: 0
     }
 }
 
@@ -63,17 +67,26 @@ const defaultRecurringPaymentData = (contract_id: number): IRecurringPayment => 
 const RecurringPaymentForm: FC<IRecurringPaymentFormProps> = ({ open, contract, recurringPayment, setRecurringPaymentForm, loadRecurringPayments }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, setError, watch, formState: { errors }, reset } = useForm<IRecurringPayment>({ defaultValues: defaultRecurringPaymentData(contract.id), resolver: yupResolver(formValidations) as Resolver<IRecurringPayment> });
+    const { handleSubmit, control, setError, watch, getValues, formState: { errors }, reset } = useForm<IRecurringPayment>({ defaultValues: defaultRecurringPaymentData(contract.id), resolver: yupResolver(formValidations) as Resolver<IRecurringPayment> });
     const { isDirty } = useFormState({ control });
     const startDate = watch('start_date') || undefined;
     const endDate = watch('end_date') || undefined;
     const isEditing = watch('id') > 0;
+    const isCanceled = watch('canceled') === 1;
 
     useEffect(() => {
         if (recurringPayment) {
-            const dataToEdit = { ...recurringPayment };
-            dataToEdit.start_date = new Date(recurringPayment.start_date || "");
-            dataToEdit.end_date = new Date(recurringPayment.end_date || "");
+            const { id, label, value, start_date, end_date, canceled } = recurringPayment;
+
+            const dataToEdit: IRecurringPayment = {
+                id,
+                label,
+                value,
+                start_date: new Date(start_date || ""),
+                end_date: new Date(end_date || ""),
+                contract: contract.id,
+                canceled: canceled ? 1 : 0
+            };
             reset(dataToEdit);
         }
         return () => {
@@ -98,6 +111,31 @@ const RecurringPaymentForm: FC<IRecurringPaymentFormProps> = ({ open, contract, 
         fetchData.post('/properties/contracts/payments/recurring/recurring.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
             if (saved) {
+                reset();
+                loadRecurringPayments();
+                setRecurringPaymentForm({ open: false, recurringPayment: null });
+            }
+        });
+    };
+
+    const cancelRecurringPayment = () => {
+        const id = getValues('id');
+        const cancel = getValues('canceled') === 0 ? 1 : 0;
+        fetchData.post('/properties/contracts/payments/recurring/cancel.php', { id, cancel }, (response: TCallBack) => {
+            const saved = validateResult(response.result);
+            if (saved) {
+                reset();
+                loadRecurringPayments();
+                setRecurringPaymentForm({ open: false, recurringPayment: null });
+            }
+        });
+    }
+
+    const deleteRecurringPayment = () => {
+        const id = getValues('id');
+        fetchData.post('/properties/contracts/payments/recurring/delete.php', { id }, (response: TCallBack) => {
+            const deleted = validateResult(response.result);
+            if (deleted) {
                 reset();
                 loadRecurringPayments();
                 setRecurringPaymentForm({ open: false, recurringPayment: null });
@@ -153,9 +191,18 @@ const RecurringPaymentForm: FC<IRecurringPaymentFormProps> = ({ open, contract, 
                     <ErrorHelperText {...fieldError(errors.end_date)} />
                 </Grid>
             </Grid>
+            {isNotNil(recurringPayment) && recurringPayment.is_overdue && <Alert severity="warning">El pago recurrente está vencido.</Alert>}
+            {isNotNil(recurringPayment) && !recurringPayment.is_overdue && !isCanceled && <Alert severity="success">El pago recurrente está vigente.</Alert>}
+            {isCanceled && <Alert severity="error">El pago recurrente está cancelado.</Alert>}
         </DialogContent>
         <DialogActions>
-          <Button disabled={!isDirty || loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR</Button>
+            {isEditing && isCanceled && <Button color="error" disabled={loading} onClick={deleteRecurringPayment}>
+                BORRAR
+            </Button>}
+            {isEditing && <Button color="warning" disabled={loading} onClick={cancelRecurringPayment}>
+                    {isCanceled ? "REACTIVAR": "CANCELAR"}
+            </Button>}
+            <Button disabled={!isDirty || loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR</Button>
         </DialogActions>
     </RspDialog>) 
 }

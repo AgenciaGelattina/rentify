@@ -19,7 +19,7 @@ if (METHOD === 'POST') {
             throwError(203, "No se pudo guardar el pago #$id");
         }
     } else {
-        $query ="INSERT INTO contracts_payments (contract,recurring,amount,type,date,clarifications,created) VALUES ($contract_id,$recurring,$amount,$type,'$date','$clarifications',CURDATE())";
+        $query ="INSERT INTO contracts_payments (contract,recurring,amount,type,date,clarifications) VALUES ($contract_id,$recurring,$amount,$type,'$date','$clarifications')";
         $property_result = $DB->query($query);
         $newID = $DB->insert_id;
         if ($newID > 0) {

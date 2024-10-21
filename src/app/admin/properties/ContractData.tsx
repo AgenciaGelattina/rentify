@@ -19,7 +19,7 @@ interface IContractDataToEdit {
     contract?: IEditContractData;
 }
 
-const formatContractData = (contract: IContract, property: IProperty): IEditContractData => {
+export const formatContractDataToEdit = (contract: IContract, property: IProperty): IEditContractData => {
     return {
         id: contract.id,
         property: property.id,
@@ -38,25 +38,27 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
     const { validateResult } = useDataResponse();
     const [contractData, setContractData] = useState<IContract | null>(null);
     const [editContract, setEditContract] = useState<IContractDataToEdit>({ showEditForm: false });
-    const [endContractModal, setEndContractModal] = useState<boolean>(false);
+    const [cancelContractModal, setCancelContractModal] = useState<boolean>(false);
     const [recurringPaymentForm, setRecurringPaymentForm] = useState<IRecurringPaymentForm>({ open: false, recurringPayment: null });
     //const { showSnackMessage } = useSnackMessages();
 
     const getContractData = () => {
         setContractData(null);
-        fetchData.get('/properties/contracts/contract.php', { property_id: property.id }, (response: TCallBack) => {
+        fetchData.get('/properties/contracts/contract.php', { property_id: property.id, status: "current" }, (response: TCallBack) => {
             const contract = validateResult(response.result);
             if (contract) {
                 setContractData(contract);
-                setEditContract({ showEditForm: false, contract: formatContractData(contract, property) })
+                if (contract.id > 0) {
+                    setEditContract({ showEditForm: false, contract: formatContractDataToEdit(contract, property) });
+                }
             }
         });
     }
 
-    const endContract = () => {
-        setEndContractModal(false);
+    const cancelContract = () => {
+        setCancelContractModal(false);
         if (contractData) {
-            fetchData.post('/properties/contracts/activation.php', { contract_id: contractData.id, action: "cancel" }, (response: TCallBack) => {
+            fetchData.post('/properties/contracts/cancel.php', { contract_id: contractData.id, cancel: 1 }, (response: TCallBack) => {
                 const canceled = validateResult(response.result);
                 if (canceled) {
                     getContractData();
@@ -83,10 +85,25 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
             <NewContract property={property} contract={null} onContractDataSaved={getContractData} />
         </ConditionalRender>
         <ConditionalRender condition={editContract.showEditForm && isNotNil(editContract.contract)}>
-            <EditContract contract={editContract.contract} onContractDataSaved={getContractData} />
+            <EditContract contract={editContract.contract} onContractDataSaved={getContractData} onCancel={() => {
+                setEditContract((fd: IContractDataToEdit) => {
+                    return { ...fd, showEditForm: false }
+                });
+            }} />
         </ConditionalRender>
         <ConditionalRender condition={(!isNewContract && !editContract.showEditForm ) && contractData.id > 0}>
-            <ContractDetails contract={contractData} />
+            <ContractDetails contract={contractData} actions={
+                <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
+                    <Button disabled={loading} variant="contained" color='warning' onClick={() => {
+                        setCancelContractModal(true);
+                    }}>CANCELAR</Button>
+                    <Button disabled={loading} variant="contained" onClick={() => {
+                        setEditContract((fd: IContractDataToEdit) => {
+                            return { ...fd, showEditForm: true }
+                        });
+                    }}>EDITAR</Button>
+            </Stack>
+            } />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />
             <Header title="PAGOS RECURRENTES:" typographyProps={{ variant: "subtitle2"} }>
                 <Button size='small' disabled={loading} onClick={() => setRecurringPaymentForm({ open: true, recurringPayment: null })}>+ PAGO RECURRENTE</Button>
@@ -99,23 +116,14 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
             />
             <ContractTabs contract={contractData} editMode={true} />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />
-            <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
-                <Button disabled={loading} variant="contained" color='error' onClick={() => {
-                    setEndContractModal(true);
-                }}>FINALIZAR</Button>
-                <Button disabled={loading} variant="contained" onClick={() => {
-                    setEditContract((fd: IContractDataToEdit) => {
-                        return { ...fd, showEditForm: true }
-                    });
-                }}>EDITAR</Button>
-            </Stack>
+            
             <AlertModal
-                open={endContractModal}
-                message="Estas seguro que quieres finalizar el contrato?"
+                open={cancelContractModal}
+                message="Estas seguro que quieres cancelar el contrato?, el contrato pasará a la lista de CANCELADOS / EXPIRADOS"
                 closeModal={() => {
-                    setEndContractModal(false);
+                    setCancelContractModal(false);
                 }}
-                onConfirmation={endContract}
+                onConfirmation={cancelContract}
             />
         </ConditionalRender>
     </>);
