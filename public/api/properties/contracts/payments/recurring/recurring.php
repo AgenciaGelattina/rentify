@@ -1,7 +1,6 @@
 <?php
 require '../../../../headers.php';
 require '../../../../utils/general.php';
-require '../../../../utils/today.php';
 
 if (METHOD === 'POST') {
     require_once '../../../../database.php';
@@ -44,11 +43,11 @@ if (METHOD === 'GET') {
         while($recurring_payment=$recurring_result->fetch_object()) {
             $rec_end_date_time = new DateTime($recurring_payment->end_date);
 
-            $recurring_payment->start_date = $recurring_payment->start_date."T00:00:00";
-            $recurring_payment->end_date = $recurring_payment->end_date."T00:00:00";
+            $recurring_payment->start_date = addTMZero($recurring_payment->start_date);
+            $recurring_payment->end_date = addTMZero($recurring_payment->end_date);
             $recurring_payment->canceled = $recurring_payment->canceled ? true : false;
-            $recurring_payment->is_overdue = ($today->time > $rec_end_date_time)? true : false;
-
+            $recurring_payment->expired = ($NOW->time > $rec_end_date_time)? true : false;
+            
             array_push($recurring_payments, $recurring_payment);
         }
         throwSuccess($recurring_payments);

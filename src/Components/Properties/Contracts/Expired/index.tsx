@@ -9,15 +9,18 @@ import { DATE_FORMAT } from '@src/Constants';
 import { Description } from '@mui/icons-material';
 import { IContract } from '@src/Components/Properties/Contracts/Details';
 import ExpiredContractDetails, { IExpiredContractSummary } from './Details';
+import RenewContract, { IRenewContractModal } from '../ContractForm/Renew';
 
-interface IExpiredContracts {
+interface IExpiredContractsProps {
     property: IProperty;
+    getProperties: () => void;
 }
 
-const ExpiredContracts: FC<IExpiredContracts> = ({ property }) => {
+const ExpiredContracts: FC<IExpiredContractsProps> = ({ property, getProperties }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const [expiredContracts, setExpiredContracts] = useState<IContract[]>([]);
     const [expiredContract, setExpiredContract] = useState<IExpiredContractSummary>({ open: false });
+    const [renewContract, setRenewContract] = useState<IRenewContractModal>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getContractsList = () => {
@@ -95,9 +98,14 @@ const ExpiredContracts: FC<IExpiredContracts> = ({ property }) => {
         ];
     }
 
+    const onRenewContract = (contract: IContract) => {
+        setRenewContract({ open: true, contract, property })
+    }
+
     return (<>
         <DataTable columns={buildDataContent()} data={expiredContracts} loading={loading} />
-        <ExpiredContractDetails {...expiredContract} setOpen={setExpiredContract} getContractsList={getContractsList} />
+        <ExpiredContractDetails {...expiredContract} setOpen={setExpiredContract} getContractsList={getContractsList} getProperties={getProperties} onRenewContract={onRenewContract} />
+        <RenewContract {...renewContract} setOpen={setRenewContract} />
     </>)
 }
 

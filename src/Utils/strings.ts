@@ -1,3 +1,4 @@
+import { CURRENCY } from "@src/Constants";
 
 /**
  * RANDOM UNIQUE ID V1.0
@@ -28,8 +29,9 @@ export const mapKey = (ui: string, ix: number): string => {
 /**
  * FORMAT MONEY
 */
-export const formatToMoney = (number: number | bigint): string => {
-    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MEX' }).format(number);
+export const formatToMoney = (number: number | bigint, currency: string = "mxs"): string => {
+    const currencyData = new Intl.NumberFormat(CURRENCY[currency].local, { style: 'currency', currency: CURRENCY[currency].code }).format(number);
+    return `${CURRENCY[currency].code} ${currencyData}` ;
 }
 
 /**

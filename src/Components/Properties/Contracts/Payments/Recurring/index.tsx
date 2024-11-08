@@ -59,10 +59,10 @@ const RecurringList: FC<IRecurringListProps> = ({ editMode = false, contract, re
                             <Edit fontSize="inherit" />
                         </IconButton>
                         <Box>
-                            <Typography variant="subtitle2" color={(rec.is_overdue || rec.canceled) ? "error" : "success"}>
+                            <Typography variant="subtitle2" color={(rec.expired || rec.canceled) ? "error" : "success"}>
                                 {rec.label}
                             </Typography>
-                            <Typography>{formatToMoney(rec.value)}</Typography>
+                            <Typography>{formatToMoney(rec.value, rec.currency)}</Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={3}>
@@ -71,9 +71,9 @@ const RecurringList: FC<IRecurringListProps> = ({ editMode = false, contract, re
                     </Grid>
                     <Grid item xs={3}>
                         <Typography variant="subtitle2">
-                            { rec.is_overdue ? "Finalizado:" : "Finaliza:" }
+                            { rec.expired ? "Finalizado:" : "Finaliza:" }
                         </Typography>
-                        <Typography color={rec.is_overdue ? "error" : "success"}>{formatDate(rec.end_date || "", DATE_FORMAT.DATE_LONG)}</Typography>
+                        <Typography color={rec.expired ? "error" : "success"}>{formatDate(rec.end_date || "", DATE_FORMAT.DATE_LONG)}</Typography>
                     </Grid>
                 </Grid>)
             })}

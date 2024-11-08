@@ -97,7 +97,7 @@ const PaymentsTable: FC<IPaymentsTableProps> = ({ contract, paymentsDataDefault,
                 head: {
                     label: "Pago"
                 },
-                component: (amount: number) => {
+                component: (amount: number, data: IPayment) => {
                     return (<Typography variant="body2">
                         <NumericFormat displayType="text" value={amount} thousandSeparator valueIsNumericString prefix="$" />
                     </Typography>);

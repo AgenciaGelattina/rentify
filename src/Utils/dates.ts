@@ -14,6 +14,10 @@ export const formatDate = (date: string | number | Date, outFormat: string = DAT
     return "Fecha Inválida";
 }
 
+export const getOnlyDate = (date: Date) => {
+    return format(date, DATE_FORMAT.MYSQL);
+}
+
 export const diffDates = (start: string | number | Date, end: string | number | Date): Duration => {
     return intervalToDuration({ start: new Date(start), end: new Date(end) });
 }

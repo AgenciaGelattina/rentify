@@ -5,7 +5,7 @@ require '../utils/general.php';
 if (METHOD === 'GET') {
     require '../database.php';
     $folder = $DB->real_escape_string($_GET['folder']);
-    $files = $DB->query("SELECT id,name,type,size,created FROM files WHERE folder = '$folder' ORDER BY created");
+    $files = $DB->query("SELECT id,name,type,size,created FROM contracts_folders_files WHERE folder = '$folder' ORDER BY created");
 
     function parseToFileStatus($queryRows){
         $rows=[];

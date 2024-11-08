@@ -1,4 +1,4 @@
--- DESARROLLO V 1.1.6
+-- DESARROLLO V 1.1.7
 
 -- --------------------------------------------------------
 -- Table `accounts_roles`
@@ -125,7 +125,7 @@ CREATE TABLE `property_contracts` (
   `end_date` date NOT NULL,
   `in_date` date NOT NULL,
   `out_date` date NOT NULL,
-  `currency` varchar(3) NOT NULL,
+  `currency` varchar(3) NOT NULL DEFAULT "mxn",
   `canceled` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `finalized` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   FOREIGN KEY (`property`) REFERENCES properties (`id`)
@@ -157,8 +157,8 @@ CREATE TABLE `contracts_folders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
--- Table `files`
-CREATE TABLE `files` (
+-- Table `contracts_folders_files`
+CREATE TABLE `contracts_folders_files` (
   `id` varchar(36) NOT NULL PRIMARY KEY,
   `folder` varchar(36) NOT NULL,
   `name` varchar(150) NOT NULL,

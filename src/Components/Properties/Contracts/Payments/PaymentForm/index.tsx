@@ -7,7 +7,7 @@ import { Button, DialogActions, DialogContent, Divider, TextField, Typography } 
 import Grid from '@mui/material/Unstable_Grid2';
 import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
-import { fieldError, getUIKey } from '@src/Utils';
+import { fieldError, formatDate, getUIKey } from '@src/Utils';
 import { useEffect } from 'react';
 import { isNil, isNotNil } from 'ramda';
 import TextFieldMoney from '@src/Components/Forms/TextFieldMoney';
@@ -95,10 +95,15 @@ const PaymentForm: React.FC<IPaymentFormProps & TPaymentForm> = ({ payment, cont
 
     const onFormSubmit = (data: FieldValues) => {
         const { date } = data;
+
         if (isNil(date)) {
             setError('date', { type: "error", message: "Seleccione una fecha de pago." });
             return false;
         }
+
+        //fix date format
+        data.date = formatDate(date);
+
         fetchData.post('/properties/contracts/payments/payment.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
             if (saved) {

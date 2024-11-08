@@ -5,9 +5,8 @@ require '../../../utils/constants.php';
 
 if (METHOD === 'GET') {
     require '../../../database.php';
-    require '../../../utils/today.php';
 
-    $query = "SELECT pc.id,pc.due_date,pc.start_date,pc.end_date,pc.canceled,pr.id AS property_id,pr.title,pr.description,pr.group,pg.title AS group_title,pr.type,pt.label AS type_label,pr.status,st.label AS status_label ";
+    $query = "SELECT pc.id,pc.due_date,pc.currency,pc.start_date,pc.end_date,pc.in_date,pc.out_date,pc.canceled,pr.id AS property_id,pr.title,pr.description,pr.group,pg.title AS group_title,pr.type,pt.label AS type_label,pr.status,st.label AS status_label ";
     $query .= "FROM property_contracts AS pc ";
     $query .= "LEFT JOIN properties AS pr ON pr.id = pc.property ";
     $query .= "LEFT JOIN properties_types AS pt ON pt.id = pr.type ";
@@ -29,48 +28,59 @@ if (METHOD === 'GET') {
             // CONTRACT
             $contract = new stdClass();
             $contract->id = $row->id;
-            $contract->start_date = $row->start_date."T00:00:00";
-            $contract_start_date_time = new DateTime($contract->start_date);
-            $contract->end_date = $row->end_date."T00:00:00";
-            $contract_end_date_time = new DateTime($contract->end_date);
+            $contract->currency = $row->currency;
+
+            $contract->start_date = addTMZero($row->start_date);
+            $contract_start_date_time = new DateTime($row->start_date);
+            $contract->end_date = addTMZero($row->end_date);
+            $contract_end_date_time = new DateTime($row->end_date);
+
+            $contract->in_date = addTMZero($row->in_date);
+            //$contract_in_date_time = new DateTime($row->in_date);
+            $contract->out_date = addTMZero($row->out_date);
+            //$contract_out_date_time = new DateTime($row->out_date);
+
+            $contract->expired = ($NOW->time > $contract_end_date_time)? true : false;
             $contract->canceled = $row->canceled == 0 ? false : true;
             $contract->finalized = false;
 
             //OVERDUE
-            $contract_is_overdue = ($today->time > $contract_end_date_time)? true : false;
+            $contract_is_overdue = ($NOW->time > $contract_end_date_time)? true : false;
             $contract->is_overdue = $contract_is_overdue ? true : false;
 
             $due_date_day = intval($row->due_date) < 10 ? '0'.$row->due_date : $row->due_date;
-
-            if ($contract->is_overdue) {
-                $due_date_date = $contract_end_date_time->format("Y-m-d");
-                $overdue_date_limit_date = $contract_end_date_time->format("Y-m-d");
-            } else {
-                $due_date_date = date("Y-m-".$due_date_day);
-                $overdue_date_limit_date = date('Y-m-d', strtotime($due_date_date. ' + 5 days'));
-            }
+            $due_date_date = date("Y-m-".$due_date_day);
             $due_date_time = new DateTime($due_date_date);
+
+            if ($contract->expired) {
+                $due_date_date = $contract_end_date_time->format("Y-m-d");
+            } else if ($contract_start_date_time > $due_date_time) {
+                $due_date_time->modify('+1 month');
+                $due_date_date = $due_date_time->format('Y-m-d');
+            }
+
+            $due_date_time = new DateTime($due_date_date);
+            $overdue_date_limit_date = date('Y-m-d', strtotime($due_date_date. ' + 5 days'));
             $overdue_date_time = new DateTime($overdue_date_limit_date);
             
             $contract_due_date = new stdClass();
             $contract_due_date->day = $row->due_date;
-            $contract_due_date->start = $due_date_date."T00:00:00";
-            $contract_due_date->end = $overdue_date_limit_date."T00:00:00";
+            $contract_due_date->start = addTMZero($due_date_date);
+            $contract_due_date->end = addTMZero($overdue_date_limit_date);
             $contract->due_date = $contract_due_date;
 
             //TOTAL MONTHS
-            $diff = $contract_start_date_time->diff($contract_end_date_time); 
-            $contract_total_months = (($diff->y) * 12) + ($diff->m) + 1;
+            $contract_total_months = getTotalMonths($contract->start_date, $contract->end_date);
 
             //CURRENT MONTH
-            $rent_is_due = ($today->time > $due_date_time) ? true : false;
-            $rent_is_overdue = ($today->time > $overdue_date_time) ? true : false;
-            $diff = $contract_start_date_time->modify('first day of this month')->diff($today->last_day_month);
-            $add_month = $rent_is_due ? 1 : 0;
-            $contract_current_month = (($diff->y) * 12) + ($diff->m) + $add_month;
+            $contract_current_month = getTotalMonths($contract->start_date, $NOW->last_day_month);
             if ($contract_current_month > $contract_total_months) {
                 $contract_current_month = $contract_total_months;
             }
+
+            //OVERDUE
+            $rent_is_due = ($NOW->time > $due_date_time) ? true : false;
+            $rent_is_overdue = ($NOW->time > $overdue_date_time) ? true : false;
 
             // RECURRING PAYMENTS
             $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,";
@@ -92,22 +102,20 @@ if (METHOD === 'GET') {
                 $recurring_payment->id = $rec->id;
                 $recurring_payment->label = $rec->label;
                 $recurring_payment->value = $rec->value;
-                $recurring_payment->start_date = $rec->start_date."T00:00:00";
-                $rec_start_date_time = new DateTime($recurring_payment->start_date);
-                $recurring_payment->end_date = $rec->end_date."T00:00:00";
-                $rec_end_date_time = new DateTime($recurring_payment->end_date);
+                $recurring_payment->currency = $contract->currency;
+                $recurring_payment->start_date = addTMZero($rec->start_date);
+                $rec_start_date_time = new DateTime($rec->start_date);
+                $recurring_payment->end_date = addTMZero($rec->end_date);
+                $rec_end_date_time = new DateTime($rec->end_date);
                 
-                $rec_is_overdue = ($today->time > $rec_end_date_time)? true : false;
-                $recurring_payment->is_overdue = $rec_is_overdue ? true : false;
+                $rec_is_expired = ($NOW->time > $rec_end_date_time)? true : false;
+                $recurring_payment->expired = $rec_is_overdue ? true : false;
                 
                 //TOTAL MONTHS
-                $diff = $rec_start_date_time->diff($rec_end_date_time); 
-                $recurring_payment->total_months = (($diff->y) * 12) + ($diff->m) + 1;
+                $recurring_payment->total_months = getTotalMonths($recurring_payment->start_date, $recurring_payment->end_date);
                 
                 //CURRENT MONTH
-                $diff = $rec_start_date_time->modify('first day of this month')->diff($today->last_day_month);
-                $add_month = $rent_is_due ? 1 : 0;
-                $recurring_payment->current_month = (($diff->y) * 12) + ($diff->m) + $add_month;
+                $recurring_payment->current_month = getTotalMonths($recurring_payment->start_date,$NOW->date);
                 if ($recurring_payment->current_month > $recurring_payment->total_months) {
                     $recurring_payment->current_month = $recurring_payment->total_months;
                 }
@@ -122,17 +130,25 @@ if (METHOD === 'GET') {
                 $rec_payment_status->pending_months = ceil($rec_payment_status->pending_amount / $rec->value);
                 $contract_payment_status->monthly_amount += $rec->value;
 
+                // DUE DATE
                 $rec_due_date = new stdClass();
                 $rec_due_date->day = $due_date_day;
-                if ($recurring_payment->is_overdue) {
-                    $due_date_date = $rec_end_date_time->format("Y-m-d");
-                    $overdue_date_limit_date = $rec_end_date_time->format("Y-m-d");
-                } else {
-                    $due_date_date = date("Y-m-".$due_date_day);
-                    $overdue_date_limit_date = date('Y-m-d', strtotime($due_date_date. ' + 5 days'));
+
+                $rec_due_date_date = date("Y-m-".$due_date_day);
+                $rec_due_date_time = new DateTime($rec_due_date_date);
+
+                if ($recurring_payment->expired) {
+                    $rec_due_date_date = $rec_end_date_time->format("Y-m-d");
+                } else if ($rec_start_date_time > $rec_due_date_time) {
+                    $rec_due_date_time->modify('+1 month');
+                    $rec_due_date_date = $rec_due_date_time->format('Y-m-d');
                 }
-                $rec_due_date->start = $due_date_date."T00:00:00";
-                $rec_due_date->end = $overdue_date_limit_date."T00:00:00";
+
+                $rec_due_date_time = new DateTime($rec_due_date_date);
+                $rec_overdue_date_limit_date = date('Y-m-d', strtotime($rec_due_date_date. ' + 5 days'));
+
+                $rec_due_date->start = addTMZero($rec_due_date_date);
+                $rec_due_date->end = addTMZero($rec_overdue_date_limit_date);
                 $recurring_payment->due_date = $rec_due_date;
 
                 $rec_status = new stdClass();
@@ -161,18 +177,14 @@ if (METHOD === 'GET') {
 
             //CONTRACT STATUS
             $contract_status = new stdClass();
-            if ($contract->is_overdue) {
+            if ($contract_has_debts) {
                 $contract_status->label = PAYMENT_STATUS_LABEL[1];
-                $contract_status->severity = SEVERITY[2];
+                $contract_status->severity = ($rent_is_overdue || $contract_pending_months > 0) ? SEVERITY[2] : SEVERITY[1];
             } else {
-                if ($contract_has_debts) {
-                    $contract_status->label = PAYMENT_STATUS_LABEL[1];
-                    $contract_status->severity = ($rent_is_overdue || $contract_pending_months > 0) ? SEVERITY[2] : SEVERITY[1];
-                } else {
-                    $contract_status->label = PAYMENT_STATUS_LABEL[0];
-                    $contract_status->severity = SEVERITY[0];
-                }
+                $contract_status->label = PAYMENT_STATUS_LABEL[0];
+                $contract_status->severity = SEVERITY[0];
             }
+            
             $contract_payment_status->status = $contract_status;
             
             $contract->payment_status = $contract_payment_status;

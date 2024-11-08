@@ -7,7 +7,6 @@ type TTextFieldMoney = {
     label: string;
 }
 
-
 const NumericFormatCustom = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>(
     (props, ref) => {
         const { onChange, ...other } = props;

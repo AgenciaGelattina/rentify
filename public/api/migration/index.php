@@ -1,11 +1,11 @@
 <?php
-$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_DevB");
+$DB = new mysqli("localhost","Rentify","R3nt1fy$#23","Rentify_Test");
 if($DB->connect_errno){
     printf("Connect failed: %s\n", $DB->connect_error);
     exit();
 }else{
-	date_default_timezone_set('America/Mexico_City');
-	$DB->set_charset("utf8");
+    date_default_timezone_set('America/Mexico_City');
+    $DB->set_charset("utf8");
 }
 
 /*
@@ -19,17 +19,19 @@ while($row=$properties->fetch_object()){
 echo "-----------------------------------";
 echo "</pre>";
 */
-/*
+
 //CONTRACTS
-$properties = $DB->query("SELECT `id`,`property`,`due_date`,`start_date`,`end_date`,`created` FROM `property_contracts`");
+$query_select = $DB->query("SELECT `id`,`property`,`due_date`,`start_date`,`end_date`,`canceled`,`finalized` FROM `property_contracts`");
 echo "<pre>";
-echo "INSERT INTO `property_contracts` (`id`,`property`,`due_date`,`start_date`,`end_date`,`created`,`active`) VALUES <br>";
-while($row=$properties->fetch_object()){
-    echo "($row->id, $row->property, $row->due_date, '$row->start_date', '$row->end_date', '$row->created', 1), <br>";
+$query_insert = "INSERT INTO `property_contracts` (`id`,`property`,`due_date`,`start_date`,`end_date`,`in_date`,`out_date`,`currency`,`canceled`,`finalized`) VALUES <br>";
+$query_values = [];
+while($row=$query_select->fetch_object()){
+    array_push($query_values, "($row->id, $row->property, $row->due_date, '$row->start_date', '$row->end_date', '$row->start_date', '$row->end_date', 'mxn', $row->canceled, $row->finalized)");
 };
+echo $query_insert .= implode(",", $query_values).";";
 echo "-----------------------------------";
 echo "</pre>";
-*/
+
 /*
 //RECURRINGS 
 $properties = $DB->query("SELECT `id`,`value`,`start_date`,`end_date` FROM `property_contracts`;");
@@ -43,18 +45,6 @@ while($row=$properties->fetch_object()){
 echo "-----------------------------------";
 echo "</pre>";
 */
-//MIGRATION
-$fields = "`id`, `property`, `due_date`, `start_date`, `end_date`, `active`";
-$table = "property_contracts";
 
-$table_query = $DB->query("SELECT $fields FROM $table");
-echo "<pre>";
-echo "INSERT INTO $table (`id`, `property`, `due_date`, `start_date`, `end_date`, `canceled`, `finalized`) VALUES <br>";
-while($row=$table_query->fetch_object()){
-    $canceled = $row->active == 1 ? 0 : 1;
-    echo "($row->id, $row->property, $row->due_date, '$row->start_date', '$row->end_date', $canceled, 0), <br>";
-};
-echo "-----------------------------------";
-echo "</pre>";
 $DB->close();
 ?>

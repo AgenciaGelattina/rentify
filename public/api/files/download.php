@@ -4,7 +4,7 @@ require '../utils/general.php';
 if (METHOD === 'GET' && isset($_GET['file'])) {
     require '../database.php';
     $file_id = $DB->real_escape_string($_GET['file']);
-    $file = $DB->query("SELECT id,folder,name,type,size,created FROM files WHERE id = '$file_id'");
+    $file = $DB->query("SELECT id,folder,name,type,size,created FROM contracts_folders_files WHERE id = '$file_id'");
     if ($file->num_rows > 0) {
         $fileData = $file->fetch_object();
         $file_path = FOLDERSPATH."/$fileData->folder/$fileData->id.$fileData->type";

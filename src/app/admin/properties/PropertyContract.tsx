@@ -7,6 +7,7 @@ import TabsContent from '@src/Components/TabsContent';
 import ContractData from './ContractData';
 import ExpiredContracts from '@src/Components/Properties/Contracts/Expired';
 import FinalizedContracts from '@src/Components/Properties/Contracts/Finalized';
+import { isNotNil } from 'ramda';
 
 export interface IPropertyContract {
     open: boolean;
@@ -15,25 +16,26 @@ export interface IPropertyContract {
 
 type TPropertyContractProps = {
     setOpen: (propertyContract: IPropertyContract) => void;
+    getProperties: () => void;
 }
 
-const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ property, open, setOpen }) => {
-
+const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ property, open, setOpen, getProperties }) => {
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="CONTRATOS" onClose={() => setOpen({ open: false })} />
         <DialogContent>
-            {property && <PropertyDetails {...property} />}
-            {property && (<TabsContent tabs={[
+            {isNotNil(property) && (<>
+                <PropertyDetails property={property} />
+                <TabsContent tabs={[
                 { 
                     tab: { label: "CONTRATO VIGENTE" },
                     component: () => {
-                        return <ContractData property={property} />
+                        return <ContractData property={property} getProperties={getProperties} />
                     }
                 },
                 { 
                     tab: { label: "CANCELADOS / EXPIRADOS" },
                     component: () => {
-                        return <ExpiredContracts property={property} />
+                        return <ExpiredContracts property={property} getProperties={getProperties} />
                     }
                 },
                 { 
@@ -42,7 +44,8 @@ const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ prop
                         return <FinalizedContracts property={property} />
                     }
                 }
-            ]} />)}
+            ]} />
+            </>)}
         </DialogContent>
     </RspDialog>)
 }

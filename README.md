@@ -1,5 +1,12 @@
 # Properties Administration App
 
+# V1.1.7
+- Se agregaron los campos de Entrada y Salida de Inmueble
+- Se agregó la opción de seleccionar el tipo de Moneda MXN o USD.
+- Se agregó la Renovación de contratos expirados.
+- Se reparó un bug en la lista de grupos de propiedades.
+- Se reparó el problema con las fechas locales y del servidor.
+
 # V1.1.6
 - Se reparó el error de las propiedades duplicadas.
 - Posibilidad de cancelar un pago Recurrente.

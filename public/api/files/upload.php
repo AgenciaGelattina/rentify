@@ -34,7 +34,7 @@ if (METHOD === 'POST') {
     $uploaded = move_uploaded_file($upload->file->tmp_name, $file->path);
 
     if ($uploaded) {
-        $query ="INSERT INTO files (`id`,`folder`,`name`,`type`,`size`) VALUES ('$file->id','$folder->name','$file->name','$file->type',$file->size)";
+        $query ="INSERT INTO contracts_folders_files (`id`,`folder`,`name`,`type`,`size`) VALUES ('$file->id','$folder->name','$file->name','$file->type',$file->size)";
         $files = $DB->query($query);
         if ($DB->affected_rows > 0) {
             unset($file->path);

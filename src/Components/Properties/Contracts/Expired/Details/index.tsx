@@ -27,9 +27,11 @@ interface IContractDataToEdit {
 interface IExpiredContractDetails extends IExpiredContractSummary {
     setOpen: (value: SetStateAction<IExpiredContractSummary>) => void;
     getContractsList: () => void;
+    getProperties: () => void;
+    onRenewContract: (contract: IContract) => void;
 }
 
-const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, property, setOpen, getContractsList }) => {
+const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, property, setOpen, getContractsList, getProperties, onRenewContract }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [contractData, setContractData] = useState<IContract | null>();
@@ -37,6 +39,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
     const [finalizeContractModal, setFinalizeContractModal] = useState<boolean>(false);
 
     const getContractData = () => {
+        setContractData(null);
         if (isNotNil(contract) && isNotNil(property)) {
             fetchData.get('/properties/contracts/contract.php', { contract_id: contract.id, status: "data" }, (response: TCallBack) => {
                 const contract = validateResult(response.result);
@@ -58,10 +61,11 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
     
 
     const activateContract = () => {
-        if (contractData && isNotNil(property)) {
+        if (isNotNil(contractData) && isNotNil(property)) {
             fetchData.post('/properties/contracts/cancel.php', { property_id: property.id, contract_id: contractData.id, cancel: 0 }, (response: TCallBack) => {
                 const actived = validateResult(response.result);
                 if (actived) {
+                    getProperties();
                     getContractsList();
                     setOpen({ open: false });
                 }
@@ -71,7 +75,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
 
     const finalizeContract = () => {
         setFinalizeContractModal(false);
-        if (contractData) {
+        if (isNotNil(contractData)) {
             fetchData.post('/properties/contracts/finalize.php', { contract_id: contractData.id, finalize: 1 }, (response: TCallBack) => {
                 const finalized = validateResult(response.result);
                 if (finalized) {
@@ -82,12 +86,20 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
         }
     };
 
-    const canBeReactivated = contractData?.canceled && isAfter(new Date(contractData.end_date), new Date());
+    const renewContract = () => {
+        if (isNotNil(contractData)) {
+            onRenewContract(contractData);
+            setOpen({ open: false });
+        }
+    }
+
+    const canBeReactivated = contractData?.canceled && !contractData?.expired;
+    const canBeRenewed = !contractData?.canceled && contractData?.expired;
 
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="RESUMEN DE CONTRATO" onClose={() => setOpen({ open: false })} />
         <DialogContent>
-            {isNotNil(property) && <PropertyDetails {...property} />}
+            {isNotNil(property) && <PropertyDetails property={property} />}
             {editContract.showEditForm && editContract.contract && <EditContract contract={editContract.contract} onContractDataSaved={getContractData} onCancel={() => {
                 setEditContract((fd: IContractDataToEdit) => {
                     return { ...fd, showEditForm: false }
@@ -95,6 +107,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
             }} />}
             {isNotNil(contractData) && !editContract.showEditForm && <ContractDetails contract={contractData} actions={
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
+                    {canBeRenewed && <Button disabled={loading} variant="contained" color='success' onClick={renewContract}>RENOVAR</Button>}
                     {canBeReactivated && <Button disabled={loading} variant="contained" color='error' onClick={activateContract}>REACTIVAR</Button>}
                     <Button disabled={loading} variant="contained" color='error' onClick={() => {
                         setFinalizeContractModal(true);
@@ -117,10 +130,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
                 onConfirmation={finalizeContract}
             />
         </DialogContent>
-
-        
     </RspDialog>)
-    
 }
 
 export default ExpiredContractDetails;

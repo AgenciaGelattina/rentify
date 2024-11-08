@@ -15,8 +15,12 @@ export interface IProperty {
     active: boolean;
 }
 
-const PropertyDetails: React.FC<IProperty> = ({ id, title, description, type, group, status }) => {
+interface IPropertyDetailsProps {
+  property: IProperty;
+}
 
+const PropertyDetails: React.FC<IPropertyDetailsProps> = ({ property }) => {
+    const { id, title, description, type, group, status } = property;
     return (<Accordion>
         <AccordionSummary
           expandIcon={<ExpandMore />}

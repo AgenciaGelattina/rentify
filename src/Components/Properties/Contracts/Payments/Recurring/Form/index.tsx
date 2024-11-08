@@ -191,8 +191,8 @@ const RecurringPaymentForm: FC<IRecurringPaymentFormProps> = ({ open, contract, 
                     <ErrorHelperText {...fieldError(errors.end_date)} />
                 </Grid>
             </Grid>
-            {isNotNil(recurringPayment) && recurringPayment.is_overdue && <Alert severity="warning">El pago recurrente está vencido.</Alert>}
-            {isNotNil(recurringPayment) && !recurringPayment.is_overdue && !isCanceled && <Alert severity="success">El pago recurrente está vigente.</Alert>}
+            {isNotNil(recurringPayment) && recurringPayment.expired && <Alert severity="warning">El pago recurrente está vencido.</Alert>}
+            {isNotNil(recurringPayment) && !recurringPayment.expired && !isCanceled && <Alert severity="success">El pago recurrente está vigente.</Alert>}
             {isCanceled && <Alert severity="error">El pago recurrente está cancelado.</Alert>}
         </DialogContent>
         <DialogActions>

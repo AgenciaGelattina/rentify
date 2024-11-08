@@ -69,7 +69,7 @@ const FinalizedContractDetails: FC<IFinalizedContractDetails> = ({ open, contrac
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="RESUMEN DE CONTRATO" onClose={() => setOpen({ open: false })} />
         <DialogContent>
-            {isNotNil(property) && <PropertyDetails {...property} />}
+            {isNotNil(property) && <PropertyDetails property={property} />}
             {isNotNil(contractData) && <ContractDetails contract={contractData} actions={
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
                     <Button disabled={loading} variant="contained" color='warning' onClick={() => {

@@ -2,14 +2,13 @@
 require '../../headers.php';
 require '../../utils/general.php';
 require '../../utils/constants.php';
-require '../../utils/today.php';
 require '../../database.php';
 
 if (METHOD === 'GET') {
     $property = intval($DB->real_escape_string($_GET['property_id']));
     $type = $DB->real_escape_string($_GET['type']);
 
-    $query = "SELECT id,property,due_date,start_date,end_date,canceled,finalized FROM property_contracts WHERE property = $property";
+    $query = "SELECT id,property,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts WHERE property = $property";
     
     if ($type === "expired") {
         $query .= " AND (canceled = 1 OR start_date <= CURDATE() AND end_date < CURDATE()) AND finalized = 0";
@@ -26,8 +25,12 @@ if (METHOD === 'GET') {
             // CONTRACT
             $contract = new stdClass();
             $contract->id = $row->id;
-            $contract->start_date = $row->start_date."T00:00:00";
-            $contract->end_date = $row->end_date."T00:00:00";
+            $contract->currency = $row->currency;
+            $contract->start_date = addTMZero($row->start_date);
+            $contract->end_date = addTMZero($row->end_date);
+            $contract->in_date = addTMZero($row->start_date);
+            $contract->out_date = addTMZero($row->end_date);
+            $contract->expired = new DateTime($row->end_date) > $NOW->time ? true : false;
             $contract->canceled = $row->canceled == 0 ? false : true;
             $contract->finalized = $row->finalized == 0 ? false : true;
            

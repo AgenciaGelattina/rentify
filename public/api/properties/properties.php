@@ -5,7 +5,7 @@ require '../utils/general.php';
 if (METHOD === 'GET') {
     require '../database.php';
 
-    $query = "SELECT pr.id,pr.title,pr.description,pr.active,JSON_OBJECT('id',pr.type,'label',pt.label) AS `type`,JSON_OBJECT('id',pr.status,'label',st.label) AS `status`,JSON_OBJECT('id',pr.group,'title',pg.title,'description',pg.description) AS `group`,pc.id AS `active_contract` FROM properties AS pr LEFT JOIN properties_types AS pt ON pt.id = pr.type LEFT JOIN properties_status AS st ON st.id = pr.status LEFT JOIN properties_groups AS pg ON pg.id = pr.group LEFT JOIN property_contracts AS pc ON (pc.property = pr.id AND pc.start_date <= CURDATE() AND pc.end_date >= CURDATE() AND pc.canceled = 0 AND pc.finalized = 0)";
+    $query = "SELECT pr.id,pr.title,pr.description,pr.active,JSON_OBJECT('id',pr.type,'label',pt.label) AS `type`,JSON_OBJECT('id',pr.status,'label',st.label) AS `status`,JSON_OBJECT('id',pr.group,'title',pg.title,'description',pg.description) AS `group`,pc.id AS `active_contract` FROM properties AS pr LEFT JOIN properties_types AS pt ON pt.id = pr.type LEFT JOIN properties_status AS st ON st.id = pr.status LEFT JOIN properties_groups AS pg ON pg.id = pr.group LEFT JOIN property_contracts AS pc ON (pc.property = pr.id AND pc.end_date >= CURDATE() AND pc.canceled = 0 AND pc.finalized = 0)";
 
     $group = isset($_GET['group']) ? intval($DB->real_escape_string($_GET['group'])) : 0;
     if ($group > 0) {

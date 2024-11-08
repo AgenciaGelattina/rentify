@@ -20,7 +20,6 @@ interface IResumeRowProps extends IResumeData {
 }
 
 const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGeneralView }) => {
-    //console.log('ResumeRow', property, contract);
     const [showRecurringData, setShowRecurringData] = useState<boolean>(false);
 
     const togleRecurringDataView = () => {
@@ -51,8 +50,8 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
                 head: {
                     label: "Cobro Mensual"
                 },
-                component: (value: number) => {
-                    return <Typography variant="body2">{formatToMoney(value)}</Typography>;
+                component: (value: number, rec: IRecurring) => {
+                    return <Typography variant="body2">{formatToMoney(value, rec.currency)}</Typography>;
                 }
             },
             {
@@ -60,7 +59,7 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
                     label: "Deuda:"
                 },
                 component: (rec: IRecurring) => {
-                    return <Typography variant="body2">{formatToMoney(rec.payment_status.pending_amount)}</Typography>;
+                    return <Typography variant="body2">{formatToMoney(rec.payment_status.pending_amount, rec.currency)}</Typography>;
                 }
             },
             {
@@ -92,10 +91,10 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
                 <Typography variant="caption">{property.group.title}</Typography>
             </TableCell>
             <TableCell component="th" scope="row">
-                <Typography variant="body2">{formatToMoney(contract.payment_status.monthly_amount)}</Typography>
+                <Typography variant="body2">{formatToMoney(contract.payment_status.monthly_amount, contract.currency)}</Typography>
             </TableCell>
             <TableCell component="th" scope="row">
-                <Typography variant="body2" color={contract.payment_status.status.severity}>{formatToMoney(contract.payment_status.pending_amount)}</Typography>
+                <Typography variant="body2" color={contract.payment_status.status.severity}>{formatToMoney(contract.payment_status.pending_amount, contract.currency)}</Typography>
             </TableCell>
             <TableCell component="th" scope="row">
                 <Typography variant="body2" color={contract.payment_status.status.severity}>{contract.payment_status.pending_months}</Typography>
@@ -104,7 +103,7 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
                 <Typography variant="body2">{formatDate(contract.due_date.start, DATE_FORMAT.DATE_LONG)}</Typography>
             </TableCell>
             <TableCell>
-                <Typography variant="body2" color={contract.is_overdue ? 'error' : contract.payment_status.status.severity}>{formatDate(contract.due_date.end, DATE_FORMAT.DATE_LONG)}</Typography>
+                <Typography variant="body2" color={contract.expired ? 'error' : contract.payment_status.status.severity}>{formatDate(contract.due_date.end, DATE_FORMAT.DATE_LONG)}</Typography>
             </TableCell>
         </TableRow>
         <TableRow sx={{ backgroundColor: '#f8f9fa' }}>

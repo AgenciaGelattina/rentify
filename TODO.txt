@@ -1,7 +1,6 @@
 
-- Renovar contratos.
-- Fecha de ingreso y salida devolucion de inmuble.
-- Agregar tipo de moneda (Pesos y Dolares) al contrato.
+
+
 
 - Al Editar un cotrato tener en cuenta los pagos a la hora de cambiar fechas o días de cortes.
 - Agregar al calculo de pagos recurrentes la posibilidad de sumar pagos adelantados y atrasados.

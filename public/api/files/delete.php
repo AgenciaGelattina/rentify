@@ -7,9 +7,9 @@ if (METHOD === 'POST') {
     $file_id = $DB->real_escape_string(POST['file_id']);
     $folder = $DB->real_escape_string(POST['folder']);
     
-    $DB->query("DELETE FROM files WHERE id = '$file_id' AND folder = '$folder'");
+    $DB->query("DELETE FROM contracts_folders_files WHERE id = '$file_id' AND folder = '$folder'");
     if ($DB->affected_rows > 0) {
-        $files = $DB->query("SELECT id,name,type,size,created FROM files WHERE folder = '$folder' ORDER BY created");
+        $files = $DB->query("SELECT id,name,type,size,created FROM contracts_folders_files WHERE folder = '$folder' ORDER BY created");
 
         function parseToFileStatus($queryRows){
             $rows=[];

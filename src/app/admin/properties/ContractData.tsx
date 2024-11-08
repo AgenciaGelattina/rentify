@@ -23,24 +23,27 @@ export const formatContractDataToEdit = (contract: IContract, property: IPropert
     return {
         id: contract.id,
         property: property.id,
+        currency: contract.currency,
         due_date: contract.due_date.day,
         start_date: contract.start_date ? new Date(contract.start_date) : null,
         end_date: contract.end_date ? new Date(contract.end_date) : null,
+        in_date: contract.in_date ? new Date(contract.in_date) : null,
+        out_date: contract.out_date ? new Date(contract.out_date) : null,
     }
 }
 
 interface IContractDataProps {
     property: IProperty;
+    getProperties: () => void;
 }
 
-const ContractData: FC<IContractDataProps> = ({ property }) => {
+const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [contractData, setContractData] = useState<IContract | null>(null);
     const [editContract, setEditContract] = useState<IContractDataToEdit>({ showEditForm: false });
     const [cancelContractModal, setCancelContractModal] = useState<boolean>(false);
     const [recurringPaymentForm, setRecurringPaymentForm] = useState<IRecurringPaymentForm>({ open: false, recurringPayment: null });
-    //const { showSnackMessage } = useSnackMessages();
 
     const getContractData = () => {
         setContractData(null);
@@ -55,12 +58,18 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
         });
     }
 
+    const onContractDataSaved = () => {
+        getContractData();
+        getProperties();
+    }
+
     const cancelContract = () => {
         setCancelContractModal(false);
         if (contractData) {
-            fetchData.post('/properties/contracts/cancel.php', { contract_id: contractData.id, cancel: 1 }, (response: TCallBack) => {
+            fetchData.post('/properties/contracts/cancel.php', { property_id: property.id, contract_id: contractData.id, cancel: 1 }, (response: TCallBack) => {
                 const canceled = validateResult(response.result);
                 if (canceled) {
+                    getProperties();
                     getContractData();
                 }
             });
@@ -81,17 +90,15 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
     const isNewContract = contractData.id === 0;
 
     return (<>
-        <ConditionalRender condition={isNewContract}>
-            <NewContract property={property} contract={null} onContractDataSaved={getContractData} />
-        </ConditionalRender>
-        <ConditionalRender condition={editContract.showEditForm && isNotNil(editContract.contract)}>
-            <EditContract contract={editContract.contract} onContractDataSaved={getContractData} onCancel={() => {
+        {isNewContract &&  <NewContract property={property} contract={null} onContractDataSaved={onContractDataSaved} />}
+        {(editContract.showEditForm && isNotNil(editContract.contract)) && (
+            <EditContract contract={editContract.contract} onContractDataSaved={onContractDataSaved} onCancel={() => {
                 setEditContract((fd: IContractDataToEdit) => {
                     return { ...fd, showEditForm: false }
                 });
             }} />
-        </ConditionalRender>
-        <ConditionalRender condition={(!isNewContract && !editContract.showEditForm ) && contractData.id > 0}>
+        )}
+        {((!isNewContract && !editContract.showEditForm) && contractData.id > 0) && (<>
             <ContractDetails contract={contractData} actions={
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
                     <Button disabled={loading} variant="contained" color='warning' onClick={() => {
@@ -125,7 +132,7 @@ const ContractData: FC<IContractDataProps> = ({ property }) => {
                 }}
                 onConfirmation={cancelContract}
             />
-        </ConditionalRender>
+        </>)}
     </>);
 }
 

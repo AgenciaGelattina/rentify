@@ -26,7 +26,8 @@ const PropertiesManagement: FC = () => {
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
     const { validateResult } = useDataResponse();
 
-    const getProperties = (data?: FieldValues) => {
+    const getProperties = () => {
+        const data = filterFormData.getValues();
         fetchData.get('/properties/properties.php', data, (response: TCallBack) => {
             const properties = validateResult(response.result);
             setProperties(properties || []);
@@ -107,7 +108,7 @@ const PropertiesManagement: FC = () => {
                     if (fieldData.id > 0) {
                         return (<Button variant='text' sx={{ textAlign: 'left'}} onClick={() => {
                             filterFormData.setValue('group', fieldData.id);
-                            getProperties(filterFormData.getValues());
+                            getProperties();
                         }}>
                             {fieldData.title}
                         </Button>);
@@ -129,7 +130,7 @@ const PropertiesManagement: FC = () => {
             </CardContent>
         </CardBox>
         <PropertyData {...propertyData} setOpen={setPropertyData} getProperties={getProperties} />
-        <PropertyContract {...propertyContract} setOpen={setPropertyContract} />
+        <PropertyContract {...propertyContract} setOpen={setPropertyContract} getProperties={getProperties} />
     </RoleVerification>)
 };
 

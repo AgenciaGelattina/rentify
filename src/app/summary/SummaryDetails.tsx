@@ -22,7 +22,7 @@ const SummaryDetails: FC<TSummaryDetails & TSumaryEvents> = ({ open, setOpen, pr
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="CONTRATO ACTIVO" onClose={() => setOpen({ open: false })} />
         <DialogContent>
-            {isNotNil(property) && <PropertyDetails {...property} />}
+            {isNotNil(property) && <PropertyDetails property={property} />}
             {isNotNil(contract) && <ContractDetails contract={contract} />}
             {isNotNil(contract) && <ContractTabs contract={contract} editMode={false} />}
         </DialogContent>

@@ -5,7 +5,6 @@ import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/reac
 import PaymentMonth from './Months';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import PaymentForm, { TPaymentForm } from './PaymentForm';
-import { getUIKey } from '@src/Utils';
 import PaymentsTable from './Months/PaymentsTable';
 import { ILabelStatus } from '@src/Components/LabelStatus';
 import { IContract } from '../Details';
@@ -27,6 +26,7 @@ export interface IPayment {
     recurring: { id: number, label: string };
     type: { id: number, label: string };
     amount: number;
+    currency: string;
     date: Date;
     clarifications: string;
     created?: Date | null;
@@ -83,7 +83,6 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
     }
 
     const setQuickPayment = (rp: IRecurringPayment, payment_date: Date = new Date) => {
-        console.log('setQuickPayment', rp);
         const { id, value, label } = rp;
         const payment: IPayment = {
             id: 0,
@@ -91,6 +90,7 @@ const ContractPayments: FC<TContractPayments> = ({ contract, editMode = false })
             recurring: { id, label },
             type: { id: 1, label: "recurring" },
             amount: value,
+            currency: contract.currency,
             date: payment_date,
             clarifications: ''
         }

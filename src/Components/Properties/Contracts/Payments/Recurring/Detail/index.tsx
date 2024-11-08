@@ -8,7 +8,8 @@ export interface IRecurring {
     value: number;
     start_date: Date | string;
     end_date: Date | string;
-    is_overdue: boolean;
+    expired: boolean;
+    currency: string;
     due_date: IRecurringPaymentDueDate;
     payment_status: IRecurringPaymentStatus;
     canceled: boolean;
