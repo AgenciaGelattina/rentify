@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, DialogActions, MenuItem, TextField } from "@mui/material";
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { DatePicker } from "@mui/x-date-pickers";
 import { TCallBack, useFetchData } from "@phoxer/react-components";
 import ConditionalAlert from "@src/Components/ConditionalAlert";
@@ -113,7 +113,7 @@ const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved, o
     return (<>
         <ConditionalAlert condition={true} severity="warning" title="Se va a editar un contrato vigente." message="Esto podría traer errores en los cálculos actuales." />
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-            <Grid xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller name="start_date" control={control} render={({ field }) => {
                     return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Inicio" {...field}
                         format={DATE_FORMAT.DATE}
@@ -122,7 +122,7 @@ const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved, o
                 }} />
                 <ErrorHelperText {...fieldError(errors.start_date)} />
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller name="end_date" control={control} render={({ field }) => {
                     return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Vencimiento" {...field}
                         format={DATE_FORMAT.DATE}
@@ -135,36 +135,36 @@ const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved, o
             </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12} sm={6}>
-                    <Controller name="in_date" control={control} render={({ field }) => {
-                        return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Ingreso" {...field}
-                            format={DATE_FORMAT.DATE}
-                            minDate={isNotNil(startDate) ? startDate : undefined}
-                            onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
-                        />
-                    }} />
-                    <ErrorHelperText {...fieldError(errors.in_date)} />
-                </Grid>
-                <Grid xs={12} sm={6}>
-                    <Controller name="out_date" control={control} render={({ field }) => {
-                        return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Salida" {...field}
-                            format={DATE_FORMAT.DATE}
-                            disabled={isNil(inDate)}
-                            minDate={isNotNil(inDate) ? add(new Date(inDate), { days: 1 }) : undefined}
-                            maxDate={isNotNil(endDate) ? endDate : undefined}
-                            onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
-                        />
-                    }} />
-                    <ErrorHelperText {...fieldError(errors.out_date)} />
-                </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller name="in_date" control={control} render={({ field }) => {
+                    return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Ingreso" {...field}
+                        format={DATE_FORMAT.DATE}
+                        minDate={isNotNil(startDate) ? startDate : undefined}
+                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
+                    />
+                }} />
+                <ErrorHelperText {...fieldError(errors.in_date)} />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+                <Controller name="out_date" control={control} render={({ field }) => {
+                    return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Salida" {...field}
+                        format={DATE_FORMAT.DATE}
+                        disabled={isNil(inDate)}
+                        minDate={isNotNil(inDate) ? add(new Date(inDate), { days: 1 }) : undefined}
+                        maxDate={isNotNil(endDate) ? endDate : undefined}
+                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
+                    />
+                }} />
+                <ErrorHelperText {...fieldError(errors.out_date)} />
+            </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-            <Grid xs={12} md={4}>
-                    <Controller name="currency" control={control} render={({ field }) => {
-                        return <CurrencySelector {...field} {...fieldError(errors.currency)} />
-                    }} />
+            <Grid size={{ xs: 12, md: 4 }}>
+                <Controller name="currency" control={control} render={({ field }) => {
+                    return <CurrencySelector {...field} {...fieldError(errors.currency)} />
+                }} />
             </Grid>
-            <Grid xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
                 <Controller name="due_date" control={control} render={({ field }) => {
                     return <DueDateSelector {...field} startDate={startDate} />
                 }} />

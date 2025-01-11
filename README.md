@@ -1,5 +1,11 @@
 # Properties Administration App
 
+# V1.1.8
+- Se actualizaron las librerías a la ultima version.
+- Se agregó el tipo de contrato Express
+- Se modificó el termino "Pagos" a "Cargos" para referirse a los cobros.
+- La fecha de ingreso a la propiedad es la que calcula el inicio de cobros mensuales en contratos Recurrentes.
+
 # V1.1.7
 - Se agregaron los campos de Entrada y Salida de Inmueble
 - Se agregó la opción de seleccionar el tipo de Moneda MXN o USD.

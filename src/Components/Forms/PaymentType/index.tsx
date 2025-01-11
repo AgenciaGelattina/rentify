@@ -1,12 +1,22 @@
-import { forwardRef } from "react";
+import { FC, forwardRef, ReactNode, useMemo } from "react";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
-import { ControllerRenderProps, FieldValues } from 'react-hook-form';
+import { PAYMENT_TYPE } from "@src/Constants";
+import { TContractType } from "@src/Components/Properties/Contracts/Details";
+import { TPaymentType } from "@src/Components/Properties/Contracts/Payments";
 
-const PaymentTypeSelector = forwardRef<TextFieldProps, ControllerRenderProps<FieldValues, string>>((props, ref) => {
-    return (<TextField label="TIPO DE PAGO" {...props} select fullWidth>
-        <MenuItem value={1}>Pago Recurrente</MenuItem>
-        <MenuItem value={2}>Pago Único</MenuItem>
+interface IPaymentTypeSelectorProps {
+    paymentTypes: TPaymentType[];
+}
+
+const PaymentTypeSelector: FC<IPaymentTypeSelectorProps & TextFieldProps> = (props) => {
+    const { id, value, paymentTypes , onChange } = props;
+
+    return (<TextField id={id} label="Tipo de Pago" onChange={onChange} value={value} select fullWidth>
+        {paymentTypes.map((pt: TPaymentType) => {
+            return <MenuItem key={pt} value={pt}>{PAYMENT_TYPE[pt]}</MenuItem> 
+        })}
     </TextField>);
-});
-PaymentTypeSelector.displayName= 'PaymentTypeSelector';
+};
+
+PaymentTypeSelector.displayName = 'PaymentTypeSelector';
 export default PaymentTypeSelector;

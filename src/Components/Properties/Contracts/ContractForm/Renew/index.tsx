@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Checkbox, DialogActions, DialogContent, Divider, FormControlLabel, MenuItem, TextField, Typography } from "@mui/material";
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { DatePicker } from "@mui/x-date-pickers";
 import { TCallBack, useFetchData } from "@phoxer/react-components";
 import ConditionalAlert from "@src/Components/ConditionalAlert";
@@ -162,7 +162,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
             {isNotNil(contract) && <ContractDetails contract={contract} />}
             <ConditionalAlert condition={true} severity="info" title="Renovación de contrato." message="Seleccione las nuevas fechas del nuevo contrato." />
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                     <Controller name="start_date" control={control} render={({ field }) => {
                         return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Inicio" {...field}
                             format={DATE_FORMAT.DATE}
@@ -171,7 +171,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                     }} />
                     <ErrorHelperText {...fieldError(errors.start_date)} />
                 </Grid>
-                <Grid xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                     <Controller name="end_date" control={control} render={({ field }) => {
                         return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Vencimiento" {...field}
                             format={DATE_FORMAT.DATE}
@@ -185,7 +185,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
             </Grid>
             {(isNotNil(startDate) && isNotNil(endDate)) && (<>
                 <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                    <Grid xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                         <Controller name="in_date" control={control} render={({ field }) => {
                             return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Ingreso" {...field}
                                 format={DATE_FORMAT.DATE}
@@ -195,7 +195,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                         }} />
                         <ErrorHelperText {...fieldError(errors.in_date)} />
                     </Grid>
-                    <Grid xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                         <Controller name="out_date" control={control} render={({ field }) => {
                             return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Fecha de Salida" {...field}
                                 format={DATE_FORMAT.DATE}
@@ -210,17 +210,17 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                    <Grid xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <Controller name="currency" control={control} render={({ field }) => {
                             return <CurrencySelector {...field} {...fieldError(errors.currency)} />
                         }} />
                     </Grid>
-                    <Grid xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                         <Controller name="value" control={control} render={({ field }) => {
                             return <TextFieldMoney {...field} label="Renta Mensual" {...fieldError(errors.value)} onChange={(e) => field.onChange(e)} disabled={isNil(startDate)} />
                         }} />
                     </Grid>
-                    <Grid xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                         <Controller name="due_date" control={control} render={({ field }) => {
                             return <DueDateSelector {...field} startDate={startDate} />
                         }} />

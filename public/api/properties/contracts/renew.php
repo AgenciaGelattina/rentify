@@ -75,7 +75,7 @@ if (METHOD === 'POST') {
     if ($newID > 0) {
 
         //RECURRING PAYMENT
-        $query_payment_insert ="INSERT INTO contracts_recurring_payments (contract,label,value,start_date,end_date) VALUES ($newID,'Renta','$value','$start_date','$end_date')";
+        $query_payment_insert ="INSERT INTO contracts_recurring_charges (contract,label,value,start_date,end_date) VALUES ($newID,'Renta','$value','$start_date','$end_date')";
         $DB->query($query_payment_insert);
         
 

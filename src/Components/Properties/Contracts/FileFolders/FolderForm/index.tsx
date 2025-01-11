@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { Button, DialogActions, DialogContent, Divider, TextField, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import { fieldError, getUIKey } from '@src/Utils';
@@ -90,17 +90,17 @@ const FolderForm: React.FC<TFolderFormProps & TFolderForm> = ({ name, contract_i
         <RspDialogTitle title={isEmpty(name) ?  'NUEVA CARPETA' :  'EDITAR CARPETA'} onClose={closeFolerForm} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="title" control={control} render={({ field }) => {
                         return <TextField id="title" label="TÍTULO" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="description" control={control} render={({ field }) => {
                         return <TextField id="description" label="DESCRIPCIÓN" type="text" {...field} onChange={(e) => field.onChange(e)} multiline fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <TextField label="NOMBRE DE CARPETA" value={getValues('name')} InputProps={{
                         readOnly: true,
                     }} fullWidth />

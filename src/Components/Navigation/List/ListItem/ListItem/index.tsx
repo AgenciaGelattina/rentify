@@ -1,5 +1,5 @@
 /** 2.0.2 | www.phoxer.com */
-import { useState, FC } from 'react';
+import { FC } from 'react';
 import MenuList from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -43,8 +43,6 @@ const ListItem: FC<IListItemProps> = ({ listItem, onItemSelected }) => {
     if (listItem.visible === false) {
         return null;
     }
-
-    console.log('ListItem', listItem.expanded);
 
     return (<MenuList component="div" dense disablePadding>
         {showLabel && (<ListItemButton onClick ={() => onItemSelected(listItem)} selected={active}>

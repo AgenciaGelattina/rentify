@@ -3,7 +3,7 @@ define('PROTOCOL', $_SERVER['SERVER_PROTOCOL']);
 define('METHOD', $_SERVER['REQUEST_METHOD']);
 define('POST', json_decode(file_get_contents('php://input'), true));
 define('ROOTPATH', $_SERVER['DOCUMENT_ROOT']);
-define('FOLDERSPATH', $_SERVER['DOCUMENT_ROOT']."/rentify/test/assets/folders");
+define('FOLDERSPATH', $_SERVER['DOCUMENT_ROOT']."/rentify/dev/assets/folders");
 define('DOMAIN', "https://agenciagelattina.com/rentify");
 
 $TIME_ZONE = new DateTimeZone("America/Mexico_City");
@@ -27,10 +27,30 @@ function getRowsArray($queryRows){
     return $rows;
 }
 
+function checkDueDateDay($due_date) {
+    return intval($due_date) < 10 ? '0'.$due_date : $due_date;
+}
+
 function getTotalMonths($start_date, $end_date) {
     $date1 = new DateTime($start_date);
     $date2 = new DateTime($end_date);
     $interval = $date1->diff($date2);
     return ($interval->y * 12) + $interval->m;
-}
+};
+
+function getTotalDays($start_date, $end_date) {
+    $date1 = new DateTime($start_date);
+    $date2 = new DateTime($end_date);
+    $interval = $date1->diff($date2);
+    return $interval->d;
+};
+
+function getPaymentType($recurring, $express) {
+    if (!is_null($recurring)) {
+        return "monthly";
+    } else (!is_null($express)) {
+        return "unique";
+    } else {
+        return "extraordinary";
+    }
 ?>

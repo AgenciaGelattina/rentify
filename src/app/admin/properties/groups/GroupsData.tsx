@@ -7,7 +7,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { DialogContent, DialogActions, TextField, Button, Divider, Typography} from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { fieldError } from '@src/Utils';
 import { isNotNil } from 'ramda';
 import GroupsTypeSelector from '@src/Components/Forms/GroupsType';
@@ -82,23 +82,23 @@ const GroupData: React.FC<IGroupDataProps> = ({ group, open, setGroupData, getGr
         <RspDialogTitle title={group.id > 0 ?  'EDITAR GRUPO DE PROPIEDADES' : 'NUEVO GRUPO DE PROPIEDADES'} onClose={() => setGroupData(defaultGroupDataState)} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="title" control={control} render={({ field }) => {
                         return <TextField id="title" label="Título del Grupo de Propiedades" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                     {isNotNil(group.properties) && (<Typography variant="caption">{`Numero de propiedades: ${group.properties}`}</Typography>)}
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="type" control={control} render={({ field }) => {
                         return <GroupsTypeSelector {...field} {...fieldError(errors.type)} />
                     }} />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="address" control={control} render={({ field }) => {
                         return <TextField id="address" label="Dirección física" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="description" control={control} render={({ field }) => {
                         return <TextField id="description" label="Descripción del Grupo" type="text" {...field} multiline {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />

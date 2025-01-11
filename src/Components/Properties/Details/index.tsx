@@ -1,6 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Chip, Typography } from "@mui/material";
 import { ExpandMore, HomeWork, HolidayVillage } from '@mui/icons-material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import LabelTextBox from "@src/Components/LabelTextBox";
 import { ConditionalRender } from "@phoxer/react-components";
 
@@ -35,10 +35,10 @@ const PropertyDetails: React.FC<IPropertyDetailsProps> = ({ property }) => {
             <LabelTextBox title="Grupo:" text={group.title} />
           </ConditionalRender>
           <Grid container spacing={1}>
-              <Grid xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <LabelTextBox title="Tipo de Propiedad:" text={type.label} />
               </Grid>
-              <Grid xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <LabelTextBox title="Estado de la Propiedad:" text={status.label} />
               </Grid>
           </Grid>

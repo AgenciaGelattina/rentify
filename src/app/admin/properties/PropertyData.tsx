@@ -7,7 +7,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { DialogContent, DialogActions, TextField, Button, Divider} from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { fieldError } from '@src/Utils';
 import PropertiesStatusSelector from '@src/Components/Forms/PropertiesStatus';
 import PropertiesTypeSelector from '@src/Components/Forms/PropertiesType';
@@ -87,12 +87,12 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
         <RspDialogTitle title={id > 0 ?  'EDITAR PROPIEDAD' : 'NUEVA PROPIEDAD'} onClose={() => setOpen({ open: false, id: 0 })} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="title" control={control} render={({ field }) => {
                         return <TextField id="title" label="Título de la Propiedad" type="text" {...field} {...fieldError(errors.title)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="description" control={control} render={({ field }) => {
                         return <TextField id="description" label="Descripción de la Propiedad" multiline maxRows={4} type="text" {...field} {...fieldError(errors.description)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
@@ -100,12 +100,12 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
             </Grid>
             <Divider />
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="type" control={control} render={({ field }) => {
                         return <PropertiesTypeSelector {...field} {...fieldError(errors.type)} />
                     }} />
                 </Grid>
-                <Grid xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="status" control={control} render={({ field }) => {
                         return <PropertiesStatusSelector {...fieldError(errors.status)} {...field} />
                     }} />
@@ -113,7 +113,7 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
             </Grid>
             <Divider />
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="group" control={control} render={({ field }) => {
                         return <PropertiesGroupsSelector {...field} {...fieldError(errors.type)} />
                     }} />

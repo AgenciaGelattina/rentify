@@ -1,4 +1,4 @@
-import { Box, Typography, TypographyOwnProps, BoxProps } from "@mui/material";
+import { Box, Typography, TypographyOwnProps, BoxProps, useMediaQuery, useTheme } from "@mui/material";
 
 export type TLabelTextBox = {
     title: string;
@@ -10,9 +10,12 @@ export type TLabelTextBox = {
 }
 
 const LabelTextBox: React.FC<TLabelTextBox> = ({ title, text, isHtml = false, boxProps, titleTypographyProps, textTypographyProps }) => {
-    return (<Box {...boxProps}>
-        <Typography variant="subtitle2" {...titleTypographyProps}>{title}</Typography>
-        {text && <Typography variant="body2" {...textTypographyProps} gutterBottom>{text}</Typography>}
+    const theme = useTheme();
+    const md = useMediaQuery(theme.breakpoints.up('md'));
+    
+    return (<Box sx={{ display: md ? "flex" : "block", alignContent: "center" }} {...boxProps} >
+        <Typography variant="subtitle2" sx={{ marginRight: md ? ".5rem" : "0" }} {...titleTypographyProps}>{title}</Typography>
+        {text && <Typography variant="body2" {...textTypographyProps}>{text}</Typography>}
     </Box>)
 }
 

@@ -1,7 +1,7 @@
 //** 1.0.0 | www.phoxer.com */
 import { JSXElementConstructor, ReactElement, useEffect, useState } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, Divider } from "@mui/material";
-import Grid, { Grid2Props } from '@mui/material/Unstable_Grid2';
+import Grid, { Grid2Props } from '@mui/material/Grid2';
 import { ExpandMore, FilterList } from '@mui/icons-material';
 import { Controller, ControllerRenderProps, FieldValues, FormState, UseFormReturn } from "react-hook-form";
 import { isNil, isEmpty } from 'ramda';

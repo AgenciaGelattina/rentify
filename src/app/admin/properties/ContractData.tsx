@@ -4,15 +4,14 @@ import { ConditionalRender, TCallBack, useFetchData, useSnackMessages } from '@p
 import LoadingBox from '@src/Components/LoadingBox';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { IProperty } from '@src/Components/Properties/Details';
-import RecurringList from '@src/Components/Properties/Contracts/Payments/Recurring';
-import { IRecurringPaymentForm } from '@src/Components/Properties/Contracts/Payments/Recurring/Form';
-import Header from '@src/Components/Header';
 import NewContract from '@src/Components/Properties/Contracts/ContractForm/NewContract';
 import EditContract, { IEditContractData, defaultContractValues } from '@src/Components/Properties/Contracts/ContractForm/EditContract';
 import { isNil, isNotNil } from 'ramda';
 import ContractDetails, { IContract } from '@src/Components/Properties/Contracts/Details';
 import ContractTabs from '@src/Components/Properties/Contracts/Details/Tabs';
 import AlertModal, { IAlertModalProps } from '@src/Components/AlertModal';
+import RecurringPayments from '@src/Components/Properties/Contracts/Charges/Recurring';
+import ExpressPayments from '@src/Components/Properties/Contracts/Charges/Express';
 
 interface IContractDataToEdit {
     showEditForm: boolean;
@@ -43,7 +42,6 @@ const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
     const [contractData, setContractData] = useState<IContract | null>(null);
     const [editContract, setEditContract] = useState<IContractDataToEdit>({ showEditForm: false });
     const [cancelContractModal, setCancelContractModal] = useState<boolean>(false);
-    const [recurringPaymentForm, setRecurringPaymentForm] = useState<IRecurringPaymentForm>({ open: false, recurringPayment: null });
 
     const getContractData = () => {
         setContractData(null);
@@ -88,9 +86,11 @@ const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
     };
 
     const isNewContract = contractData.id === 0;
+    const isRecurring = contractData.type === "recurring";
+    const isExpress = contractData.type === "express";
 
     return (<>
-        {isNewContract &&  <NewContract property={property} contract={null} onContractDataSaved={onContractDataSaved} />}
+        {isNewContract &&  <NewContract property={property} onContractDataSaved={onContractDataSaved} />}
         {(editContract.showEditForm && isNotNil(editContract.contract)) && (
             <EditContract contract={editContract.contract} onContractDataSaved={onContractDataSaved} onCancel={() => {
                 setEditContract((fd: IContractDataToEdit) => {
@@ -112,15 +112,17 @@ const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
             </Stack>
             } />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />
-            <Header title="PAGOS RECURRENTES:" typographyProps={{ variant: "subtitle2"} }>
-                <Button size='small' disabled={loading} onClick={() => setRecurringPaymentForm({ open: true, recurringPayment: null })}>+ PAGO RECURRENTE</Button>
-            </Header>
-            <RecurringList
+            
+            {isRecurring && <RecurringPayments
                 contract={contractData}
                 editMode={true}
-                recurringPaymentForm={recurringPaymentForm}
-                setRecurringPaymentForm={setRecurringPaymentForm}
-            />
+            /> }
+
+            {isExpress && <ExpressPayments
+                contract={contractData}
+                editMode={true}
+            />}
+
             <ContractTabs contract={contractData} editMode={true} />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />
             

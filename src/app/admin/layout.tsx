@@ -1,7 +1,7 @@
 "use client"
 import PageWrapper from '@src/Components/Wrappers/Page';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3'
 
 export type TAdminLayout = {
     children: React.ReactNode;

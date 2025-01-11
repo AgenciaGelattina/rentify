@@ -6,8 +6,9 @@ import Stack from '@mui/material/Stack';
 import Typography, { TypographyOwnProps } from '@mui/material/Typography';
 import { ConditionalRender } from '@phoxer/react-components';
 import { isNotNil } from 'ramda';
+import { FC } from 'react';
 
-type THeader = {
+interface IHeader {
     title: string;
     icon?: JSX.Element;
     children?: React.ReactNode;
@@ -37,9 +38,9 @@ const STypography = styled(Typography)`
     line-height: 0rem;
 `
 
-const Header: React.FC<THeader> = ({ title, icon, children, appBarProps, toolBarProps, typographyProps }) => {
+const Header: FC<IHeader> = ({ title, icon, children, appBarProps, toolBarProps, typographyProps }) => {
     return (<SAppBar { ...{ position:"static", ...appBarProps } }>
-        <SToolbar variant="dense">
+        <SToolbar variant="dense" {...toolBarProps}>
             {icon && icon}
             <ConditionalRender condition={isNotNil(typographyProps)} showOnNoCondition={<STypography>{title}</STypography>}>
                 <Typography {...typographyProps} sx={{ flexGrow: 1 }}>{title}</Typography>
@@ -50,4 +51,4 @@ const Header: React.FC<THeader> = ({ title, icon, children, appBarProps, toolBar
 }
 
 export default Header;
-export type { THeader };
+export type { IHeader };

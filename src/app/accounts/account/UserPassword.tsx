@@ -9,7 +9,7 @@ import useDataResponse from "@src/Hooks/useDataResponse";
 import useSessionStorage from '@src/Hooks/useSessionStorage';
 import { CardActions, CardContent, TextField, Button, Divider, FormControlLabel, Switch, Box } from '@mui/material';
 import CardBox from '@src/Components/Wrappers/CardBox';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import KeyIcon from '@mui/icons-material/Key';
 import { fieldError } from '@src/Utils';
 import { STATE_ACTIONS } from '@src/Constants';
@@ -62,7 +62,7 @@ const Password: React.FC = () => {
         <CardBox>
             <CardContent>
                 <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller name="password" control={control} render={({ field }) => {
                             return <TextField id="password" label="Password Actual" type={passwordType} {...fieldError(errors.password)} {...field} onChange={(e) => field.onChange(e)} fullWidth />
                         }} />
@@ -70,12 +70,12 @@ const Password: React.FC = () => {
                     
                 </Grid>
                 <Grid container spacing={2}>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller name="passwordA" control={control} render={({ field }) => {
                             return <TextField id="passwordA" label="Nuevo Password" type={passwordType} {...fieldError(errors.passwordA)} {...field} onChange={(e) => field.onChange(e)} fullWidth />
                         }} />
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller name="passwordB" control={control} render={({ field }) => {
                             return <TextField id="passwordB" label="Confirmar Nuevo Password" {...fieldError(errors.passwordB)} type={passwordType} {...field} onChange={(e) => field.onChange(e)} fullWidth />
                         }} />

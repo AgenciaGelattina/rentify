@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useFetchData, TCallBack, useSnackMessages } from '@phoxer/react-components';
 import { DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button, FormControlLabel, Switch, Divider } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import RolesSelector from '@src/Components/Forms/RolesSelector';
 import RspDialog from '@src/Components/RspDialog';
 import { fieldError } from '@src/Utils';
@@ -91,29 +91,29 @@ const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, get
         <DialogTitle>{id > 0 ?  'EDITAR USUARIO' : 'NUEVO USUARIO'}</DialogTitle>
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="names" control={control} render={({ field }) => {
                         return <TextField id="names" label="Nombres" type="text" {...field} {...fieldError(errors.names)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="surnames" control={control} render={({ field }) => {
                         return <TextField id="surnames" label="Apellidos" type="text" {...field} {...fieldError(errors.surnames)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12} md={8}>
+                <Grid size={{ xs: 12, md:8 }}>
                     <Controller name="email" control={control} render={({ field }) => {
                         return <TextField id="email" label="Correo Electrónico" type="text" {...field} {...fieldError(errors.email)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />
                 </Grid>
-                <Grid xs={12} md={4}>
+                <Grid size={{ xs: 12, md: 4 }}>
                     <Controller name="role" control={control} render={({ field }) => {
                         return <RolesSelector {...field} />;
                     }} />
                 </Grid>
                 {id === 0 && (<>
                     <Divider />
-                    <Grid xs={12} md={6}>
+                    <Grid size={{ xs: 12, md: 6 }}>
                         <Controller name="password" control={control} render={({ field }) => {
                             return <TextField id="password" label="Temporal Password" type="text" {...field} {...fieldError(errors.password)} onChange={(e) => field.onChange(e)} fullWidth />
                         }} />

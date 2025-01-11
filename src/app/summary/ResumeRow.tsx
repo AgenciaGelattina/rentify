@@ -1,8 +1,8 @@
 import { Box, Button, Card, CardContent, CardHeader, Collapse, Divider, IconButton, Paper, Stack, Table, TableCell, TableRow, Typography } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import Grid from "@mui/material/Grid2/Grid2";
 import LabelStatus, { ILabelStatus } from "@src/Components/LabelStatus";
 import { IContract } from "@src/Components/Properties/Contracts/Details";
-import { IRecurring, IRecurringPaymentStatus } from "@src/Components/Properties/Contracts/Payments/Recurring/Detail";
+import { IRecurring, IRecurringPaymentStatus } from "@src/Components/Properties/Contracts/Charges/Recurring/Detail";
 import { IProperty } from "@src/Components/Properties/Details";
 import { CSSProperties, FC, useState } from "react";
 import { Description, ExpandMore, ExpandLess } from "@mui/icons-material";

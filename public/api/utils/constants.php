@@ -1,4 +1,4 @@
 <?php
-define('SEVERITY', array("success","warning","error"));
-define('PAYMENT_STATUS_LABEL', array("SIN ADEUDOS","CON ADEUDOS"));
+define('SEVERITY', array("success","warning","error","info"));
+define('PAYMENT_STATUS_LABEL', array("SIN ADEUDOS","CON ADEUDOS","PENDIENTE"));
 ?>

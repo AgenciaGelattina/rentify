@@ -7,7 +7,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { DialogContent, DialogActions, TextField, Button } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { fieldError } from '@src/Utils';
 
 
@@ -67,7 +67,7 @@ const TypeData: React.FC<ITypeDataProps> = ({ type, open, setTypeData, getTypes 
         <RspDialogTitle title={type.id > 0 ?  'EDITAR GRUPO' : 'NUEVA GRUPO'} onClose={() => setTypeData(defaultTypeDataState)} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <Controller name="label" control={control} render={({ field }) => {
                         return <TextField id="title" label="Título de la Propiedad" type="text" {...field} {...fieldError(errors.label)} onChange={(e) => field.onChange(e)} fullWidth />
                     }} />

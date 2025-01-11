@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@src/Constants';
 import { IContract } from '@src/Components/Properties/Contracts/Details';
-import { IRecurring } from '@src/Components/Properties/Contracts/Payments/Recurring/Detail';
+import { IRecurring } from '@src/Components/Properties/Contracts/Charges/Recurring/Detail';
 import LabelStatus, { ILabelStatus } from '@src/Components/LabelStatus';
 import ResumeRow, { IResumeData } from './ResumeRow';
 import { mapKey } from '@src/Utils';
@@ -29,6 +29,7 @@ const initialQueryParams: FieldValues = {
 }
 
 const ContractsSummary: FC = () => {
+    /*
   const { state } = useContext(StoreContext);
   const [summaryDetails, setSummaryDetails] = useState<TSummaryDetails>({ open: false });
   const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -99,6 +100,8 @@ const ContractsSummary: FC = () => {
     </CardBox>
     <SummaryDetails {...summaryDetails} setOpen={setSummaryDetails} />
   </>);
+  */
+  return null;
 
 }
 

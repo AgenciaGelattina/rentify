@@ -1,4 +1,4 @@
--- DESARROLLO V 1.1.7
+-- DESARROLLO V 1.1.8
 
 -- --------------------------------------------------------
 -- Table `accounts_roles`
@@ -120,6 +120,7 @@ CREATE TABLE `properties` (
 CREATE TABLE `property_contracts` (
   `id` mediumint(8) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `property` smallint(5) UNSIGNED NOT NULL,
+  `type` varchar(10) NOT NULL DEFAULT "express",
   `due_date` tinyint(2) UNSIGNED NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
@@ -168,21 +169,20 @@ CREATE TABLE `contracts_folders_files` (
   FOREIGN KEY (`folder`) REFERENCES contracts_folders (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- --------------------------------------------------------
--- Table `payments_types`
-
-CREATE TABLE `payments_types` (
-  `id` tinyint(3) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `label` varchar(50) NOT NULL
+-- Table structure for table `contracts_express_charges`
+--
+CREATE TABLE `contracts_express_charges` (
+  `id` int(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `contract` mediumint(8) UNSIGNED NOT NULL,
+  `label` varchar(80) NOT NULL,
+  `value` int(10) UNSIGNED NOT NULL,
+  `canceled` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-INSERT INTO `payments_types` (`id`, `label`) VALUES
-(1, 'Recurrente'),
-(2, 'Único');
-
--- Table structure for table `contracts_recurring_payments`
+-- Table structure for table `contracts_recurring_charges`
 --
-CREATE TABLE `contracts_recurring_payments` (
+CREATE TABLE `contracts_recurring_charges` (
   `id` int(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `contract` mediumint(8) UNSIGNED NOT NULL,
   `label` varchar(80) NOT NULL,
@@ -200,10 +200,11 @@ CREATE TABLE `contracts_payments` (
   `id` int(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `contract` mediumint(8) UNSIGNED NOT NULL,
   `recurring` int(10) UNSIGNED NOT NULL DEFAULT 0,
-  `type` tinyint(3) UNSIGNED NOT NULL,
+  `express` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `amount` int(10) UNSIGNED NOT NULL,
   `date` date NOT NULL,
   `clarifications` varchar(150) NOT NULL,
   FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`),
-  FOREIGN KEY (`type`) REFERENCES payments_types (`id`)
+  KEY (`recurring`),
+  KEY (`express`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

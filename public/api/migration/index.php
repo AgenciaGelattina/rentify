@@ -36,7 +36,7 @@ echo "</pre>";
 //RECURRINGS 
 $properties = $DB->query("SELECT `id`,`value`,`start_date`,`end_date` FROM `property_contracts`;");
 echo "<pre>";
-echo "INSERT INTO `contracts_recurring_payments` (`id`,`contract`,`label`,`value`,`start_date`,`end_date`) VALUES <br>";
+echo "INSERT INTO `contracts_recurring_charges` (`id`,`contract`,`label`,`value`,`start_date`,`end_date`) VALUES <br>";
 $num = 1;
 while($row=$properties->fetch_object()){
     echo "($num, $row->id, 'Renta', $row->value,'$row->start_date', '$row->end_date'), <br>";

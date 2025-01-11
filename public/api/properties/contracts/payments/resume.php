@@ -85,7 +85,7 @@ if (METHOD === 'GET') {
             // RECURRING PAYMENTS
             $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,";
             $query .= "(SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = crp.contract AND recurring = crp.id) AS total_amount ";
-            $query .= "FROM contracts_recurring_payments AS crp WHERE crp.contract = $contract->id";
+            $query .= "FROM contracts_recurring_charges AS crp WHERE crp.contract = $contract->id";
             $rec_payments = $DB->query($query);
 
             $recurring_payments = [];
