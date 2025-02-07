@@ -166,7 +166,7 @@ const EditContract: FC<IEditContractProps> = ({ contract, onContractDataSaved, o
             </Grid>
             <Grid size={{ xs: 12, sm: 4 }}>
                 <Controller name="due_date" control={control} render={({ field }) => {
-                    return <DueDateSelector {...field} startDate={startDate} />
+                    return <DueDateSelector field={field} startDate={startDate} />
                 }} />
             </Grid>
         </Grid>

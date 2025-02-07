@@ -1,9 +1,11 @@
-import { forwardRef, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { isNil, isNotNil } from "ramda";
 import { getDaysInMonth } from 'date-fns';
 import DummyTextField from "../DummyTextField";
+import { INewContractData } from "@src/Components/Properties/Contracts/ContractForm/NewContract";
+import { IEditContractData } from "@src/Components/Properties/Contracts/ContractForm/EditContract/Recurring";
 
 export interface IDueDateOption {
     value: number;
@@ -11,11 +13,11 @@ export interface IDueDateOption {
 }
 
 interface IDueDateProps {
+    field: ControllerRenderProps<FieldValues, string> | ControllerRenderProps<INewContractData, "due_date"> | ControllerRenderProps<IEditContractData, "due_date">;
     startDate: Date | null;
 }
 
-const DueDateSelector = forwardRef<TextFieldProps, IDueDateProps & ControllerRenderProps<FieldValues, string>>((props, ref) => {
-    const { startDate } = props;
+const DueDateSelector: FC<IDueDateProps> = ({ field, startDate }) => {
     const [dueDatesList, setDueDatesList] = useState<IDueDateOption[]>([]);
 
     useEffect(() => {
@@ -36,13 +38,13 @@ const DueDateSelector = forwardRef<TextFieldProps, IDueDateProps & ControllerRen
     }, [startDate])
 
     if (dueDatesList.length > 0) {
-        return (<TextField id="due_date" label="Día de Corte" {...props} disabled={isNil(startDate)} select fullWidth>
+        return (<TextField id="due_date" label="Día de Corte" {...field} disabled={isNil(startDate)} select fullWidth>
             {dueDatesList.map((dd => {
                 return <MenuItem key={`d${dd.value}`} value={dd.value}>{dd.text}</MenuItem>;
             }))}
         </TextField>);
-    }
+    };
     return <DummyTextField label="Dia de Corte" />;
-});
+};
 DueDateSelector.displayName= 'DueDateSelector';
 export default DueDateSelector;

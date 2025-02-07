@@ -13,7 +13,8 @@ export interface IRecurringCharge {
     end_date: Date | string;
     currency: string;
     due_date: IRecurringChargeDueDate;
-    payments_status: IRecurringPaymentsStatus;
+    status: ILabelStatus;
+    statements: IRecurringStatements;
     expired: boolean;
     canceled: boolean;
 }
@@ -23,8 +24,7 @@ export interface IRecurringChargeDueDate {
     end: Date;
 }
 
-export interface IRecurringPaymentsStatus {
-    status: ILabelStatus;
+export interface IRecurringStatements {
     required_amount: number;
     total_amount: number;
     pending_amount: number;

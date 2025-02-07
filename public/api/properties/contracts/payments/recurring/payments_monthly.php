@@ -12,7 +12,7 @@ if (METHOD === 'GET') {
 
     $contract_start_date_time = new DateTime($contract_data->start_date);
     $contract_end_date_time = new DateTime($contract_data->end_date);
-    $contract_in_date_time = new DateTime($contract_data->start_date);
+    $contract_in_date_time = new DateTime($contract_data->in_date);
     $due_date_day = checkDueDateDay($contract_data->due_date);
     $contract_due_date_time = new DateTime($contract_start_date_time->format("Y-m")."-".$due_date_day);
 
@@ -23,16 +23,16 @@ if (METHOD === 'GET') {
     $month_date_time = $contract_in_date_time;
 
     //START DATE WITH DUE DATA FIX
-    if ($contract_due_date_time <= $month_date_time) {
+    if ($contract_due_date_time < $month_date_time) {
         $month_date_time->modify('+1 month');
     };
-
+    
     for ($i = 0; $i <= $contract_total_months; $i++) {
         $month = new stdClass();
         $month->due_date = addTMZero($month_date_time->format("Y-m")."-".$due_date_day);
 
         $due_date_time = new DateTime($month->due_date);
-        if ($due_date_time < $NOW->time) {
+        //if ($month_date_time < $NOW->time) {
             $overdue_date_limit_date = date('Y-m-d', strtotime($month->due_date.' + 5 days'));
             $overdue_date_time = new DateTime($overdue_date_limit_date);
             
@@ -85,7 +85,7 @@ if (METHOD === 'GET') {
             
             $month_status = new stdClass();
             $month_status->label = PAYMENT_STATUS_LABEL[0];
-            $month_status->severity = SEVERITY[0];
+            $month_status->severity = SEVERITY[3];
             if ($rent_is_due) {
                 if ($month->total_charge_amount < $month->required_amount) {
                     $month_status->label = PAYMENT_STATUS_LABEL[1];
@@ -94,15 +94,17 @@ if (METHOD === 'GET') {
                     } else {
                         $month_status->severity = SEVERITY[1];
                     };
+                } else {
+                    $month_status->severity = SEVERITY[0];
                 }
             };
             $month->status = $month_status;
             
             array_push($months, $month);
-            if ($month_date_time < $contract_end_date_time) {
+            //if ($month_date_time < $contract_end_date_time) {
                 $month_date_time->modify('+1 month');
-            }
-        }
+            //}
+        //}
     }
     
     throwSuccess($months);

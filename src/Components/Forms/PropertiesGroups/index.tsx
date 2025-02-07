@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { useFetchExpress } from "@phoxer/react-components";
 import useDataResponse from "@src/Hooks/useDataResponse";
 import { Autocomplete, AutocompleteProps, TextField } from "@mui/material";
@@ -6,8 +6,14 @@ import { isNil, isNotNil } from 'ramda';
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { getUIKey } from "@src/Utils";
 import DummyTextField from "../DummyTextField";
+import { TPropertyData } from "@src/app/admin/properties/PropertyData";
 
-const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any, any>, ControllerRenderProps<FieldValues, string>>(({ value, onChange }, ref) => {
+interface IPropertiesGroupsSelector {
+  field: ControllerRenderProps<FieldValues, string> | ControllerRenderProps<TPropertyData, "group">;
+}
+
+const PropertiesGroupsSelector: FC<IPropertiesGroupsSelector> = ({ field }) => {
+    const { value, onChange, ref } = field;
     const groups = useFetchExpress(`${process.env.NEXT_PUBLIC_API_URL!}/properties/groups/list.php`);
     const { validateResult } = useDataResponse();
 
@@ -53,7 +59,7 @@ const PropertiesGroupsSelector = forwardRef<AutocompleteProps<any, any, any, any
       />);
     }
     return <DummyTextField name="groups" helperText={options.length === 0 ? "No hay grupos disponibles" : ""} error={true} />;
-});
+};
 
 PropertiesGroupsSelector.displayName = 'PropertiesGroupsSelector';
 export default PropertiesGroupsSelector;

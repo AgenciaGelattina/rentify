@@ -35,7 +35,11 @@ function getTotalMonths($start_date, $end_date) {
     $date1 = new DateTime($start_date);
     $date2 = new DateTime($end_date);
     $interval = $date1->diff($date2);
-    return ($interval->y * 12) + $interval->m;
+    if ($interval->d > 15) {
+        return ($interval->y * 12) + ($interval->m + 1);
+    } else {
+        return ($interval->y * 12) + $interval->m;
+    }
 };
 
 function getTotalDays($start_date, $end_date) {
@@ -44,13 +48,15 @@ function getTotalDays($start_date, $end_date) {
     $interval = $date1->diff($date2);
     return $interval->d;
 };
-
+/*
 function getPaymentType($recurring, $express) {
     if (!is_null($recurring)) {
         return "monthly";
-    } else (!is_null($express)) {
+    } else if (!is_null($express)) {
         return "unique";
     } else {
         return "extraordinary";
     }
+}
+*/
 ?>

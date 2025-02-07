@@ -1,4 +1,5 @@
 import { IListItem } from '@src/Components/Navigation/List/ListItem/ListItem';
+import { JSX } from 'react';
 
 export type TDataProviders = {
     children: JSX.Element;

@@ -8,13 +8,12 @@ type TConditionalAlert = {
 }
 
 const ConditionalAlert: React.FC<TConditionalAlert> = ({ condition, severity, title, message }) => {
-    if (condition) {
-        return (<Alert severity={severity}>
+    return (<>
+        {condition && (<Alert severity={severity}>
             <AlertTitle>{title}</AlertTitle>
             {message && message}
-        </Alert>);
-    } 
-    else null;
+        </Alert>)} 
+    </>);
 }
 
 export default ConditionalAlert;

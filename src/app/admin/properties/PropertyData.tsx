@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm, Controller, useFormState, FieldValues } from "react-hook-form";
+import { useForm, Controller, useFormState, FieldValues, Resolver } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import RspDialog from '@src/Components/RspDialog';
@@ -54,7 +54,7 @@ const defaultValues: TPropertyData = {
 
 const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProperties }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
-    const { handleSubmit, control, formState: { errors }, reset } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, formState: { errors }, reset } = useForm<TPropertyData>({ defaultValues, resolver: yupResolver(formValidations) as Resolver<TPropertyData> });
     const { isDirty } = useFormState({ control });
     const { validateResult } = useDataResponse();
 
@@ -115,7 +115,7 @@ const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProp
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid size={12}>
                     <Controller name="group" control={control} render={({ field }) => {
-                        return <PropertiesGroupsSelector {...field} {...fieldError(errors.type)} />
+                        return <PropertiesGroupsSelector field={field} {...fieldError(errors.type)} />
                     }} />
                 </Grid>
             </Grid>

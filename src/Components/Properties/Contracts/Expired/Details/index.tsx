@@ -8,7 +8,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { isNotNil } from 'ramda';
 import { FC, SetStateAction, useEffect, useState } from 'react';
-import EditContract, { IEditContractData } from '../../ContractForm/EditContract';
+import EditContract, { IEditContractData } from '../../ContractForm/EditContract/Recurring';
 import { formatContractDataToEdit } from '@src/app/admin/properties/ContractData';
 import ContractTabs from '../../Details/Tabs';
 import { isAfter } from 'date-fns';
@@ -57,6 +57,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
         } else {
             setContractData(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
     
 
@@ -95,28 +96,30 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
 
     const canBeReactivated = contractData?.canceled && !contractData?.expired;
     const canBeRenewed = !contractData?.canceled && contractData?.expired;
+    const isRecurring = contractData?.type === "recurring";
+    //const isExpress = contractData?.type === "express";
 
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="RESUMEN DE CONTRATO" onClose={() => setOpen({ open: false })} />
         <DialogContent>
             {isNotNil(property) && <PropertyDetails property={property} />}
-            {editContract.showEditForm && editContract.contract && <EditContract contract={editContract.contract} onContractDataSaved={getContractData} onCancel={() => {
+            {editContract.showEditForm && editContract.contract && isRecurring && <EditContract contract={editContract.contract} onContractDataSaved={getContractData} onCancel={() => {
                 setEditContract((fd: IContractDataToEdit) => {
                     return { ...fd, showEditForm: false }
                 });
             }} />}
             {isNotNil(contractData) && !editContract.showEditForm && <ContractDetails contract={contractData} actions={
                 <Stack spacing={1} direction="row" sx={{ justifyContent: "end", alignItems: "center" }}>
-                    {canBeRenewed && <Button disabled={loading} variant="contained" color='success' onClick={renewContract}>RENOVAR</Button>}
+                    {canBeRenewed && isRecurring && <Button disabled={loading} variant="contained" color='success' onClick={renewContract}>RENOVAR</Button>}
                     {canBeReactivated && <Button disabled={loading} variant="contained" color='error' onClick={activateContract}>REACTIVAR</Button>}
                     <Button disabled={loading} variant="contained" color='error' onClick={() => {
                         setFinalizeContractModal(true);
                     }}>FINALIZAR</Button>
-                    <Button disabled={loading} variant="contained" onClick={() => {
+                    {isRecurring && <Button disabled={loading} variant="contained" onClick={() => {
                         setEditContract((fd: IContractDataToEdit) => {
                             return { ...fd, showEditForm: true }
                         });
-                    }}>EDITAR</Button>
+                    }}>EDITAR</Button>}
                 </Stack>
             } />}
             {isNotNil(contractData) && <ContractTabs contract={contractData} editMode={true} /> }

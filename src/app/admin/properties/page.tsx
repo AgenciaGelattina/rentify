@@ -38,9 +38,9 @@ const PropertiesManagement: FC = () => {
         return [
             {
                 dataKey: 'group',
-                gridItemProps: { xs: 12 },
+                gridItemProps: { size: { xs: 12 } },
                 component: (field) => {
-                    return <PropertiesGroupsSelector {...field} />
+                    return <PropertiesGroupsSelector field={field} />
                 }
             }
         ]

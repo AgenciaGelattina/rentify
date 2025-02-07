@@ -5,7 +5,7 @@ import { FC } from "react";
 const ErrorHelperText: FC<TFieldError> = (fieldError) => {
     const { error, color, helperText } = fieldError;
     if (error) {
-        return <FormHelperText error={error}>{helperText}</FormHelperText>;
+        return <FormHelperText error={error} color={color}>{helperText}</FormHelperText>;
     }
     return null;
 }

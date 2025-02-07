@@ -5,7 +5,7 @@ import LoadingBox from '@src/Components/LoadingBox';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { IProperty } from '@src/Components/Properties/Details';
 import NewContract from '@src/Components/Properties/Contracts/ContractForm/NewContract';
-import EditContract, { IEditContractData, defaultContractValues } from '@src/Components/Properties/Contracts/ContractForm/EditContract';
+import EditContract, { IEditContractData, defaultContractValues } from '@src/Components/Properties/Contracts/ContractForm/EditContract/Recurring';
 import { isNil, isNotNil } from 'ramda';
 import ContractDetails, { IContract } from '@src/Components/Properties/Contracts/Details';
 import ContractTabs from '@src/Components/Properties/Contracts/Details/Tabs';
@@ -104,11 +104,11 @@ const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
                     <Button disabled={loading} variant="contained" color='warning' onClick={() => {
                         setCancelContractModal(true);
                     }}>CANCELAR</Button>
-                    <Button disabled={loading} variant="contained" onClick={() => {
+                    {isRecurring && <Button disabled={loading} variant="contained" onClick={() => {
                         setEditContract((fd: IContractDataToEdit) => {
                             return { ...fd, showEditForm: true }
                         });
-                    }}>EDITAR</Button>
+                    }}>EDITAR</Button>}
             </Stack>
             } />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />

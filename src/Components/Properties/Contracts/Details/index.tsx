@@ -24,13 +24,15 @@ export interface IContract {
     status: ILabelStatus;
     recurring_charges?: IRecurringCharge[];
     express_charges?: IExpressCharge[];
-    payments_status: RecurringPaymentsStatus | ExpressPaymentsStatus;
+    statements: IContractStatements;
     expired: boolean;
     canceled: boolean;
     finalized: boolean;
-}
+};
 
+export type TContractCharge = IRecurringCharge | IExpressCharge;
 export type TContractType = "recurring" | "express";
+export type TContractState = "active" | "expired" | "canceled" | "finalized";
 
 export interface IContractDueDate {
     day: number;
@@ -41,26 +43,19 @@ export interface IContractDueDate {
 interface IContractDetailsPros {
     contract: IContract;
     actions?: React.ReactNode;
+    expanded?: boolean;
 };
 
-interface RecurringPaymentsStatus {
-    monthly_amount: number;
-    pending_months: number;
+export interface IContractStatements {
     required_amount: number;
     total_amount: number;
     pending_amount: number;
 }
 
-interface ExpressPaymentsStatus {
-    required_amount: number;
-    total_amount: number;
-    pending_amount: number;
-}
-
-const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions }) => {
+const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions, expanded }) => {
     const { id, type, start_date, end_date, due_date, in_date, out_date, currency, status, expired, canceled, finalized } = contract;
 
-    return (<Accordion>
+    return (<Accordion defaultExpanded={expanded}>
         <AccordionSummary
             expandIcon={<ExpandMore />}
             id="contract"

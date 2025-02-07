@@ -2,9 +2,13 @@
 
 # V1.1.8
 - Se actualizaron las librerías a la ultima version.
-- Se agregó el tipo de contrato Express
+- Se agregó el tipo de contrato Express.
 - Se modificó el termino "Pagos" a "Cargos" para referirse a los cobros.
+- Se hizo una refactorización del código del servidor para aceptar el nuevo tipo de contrato.
+- Se hizo una refactorización del código de contratos para procesar el nuevo tipo de contrato.
 - La fecha de ingreso a la propiedad es la que calcula el inicio de cobros mensuales en contratos Recurrentes.
+- Se reparó el bug de el ultimo mes del contrato no visible.
+- Se reparó el bug de la navegación en el resumen de contratos activos.
 
 # V1.1.7
 - Se agregaron los campos de Entrada y Salida de Inmueble

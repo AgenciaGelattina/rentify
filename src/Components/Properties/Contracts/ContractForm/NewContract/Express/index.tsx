@@ -11,7 +11,8 @@ import { DATE_FORMAT } from "@src/Constants";
 import ErrorHelperText from "@src/Components/Forms/ErrorHelperText";
 import CurrencySelector from "@src/Components/Forms/CurrencySelector";
 import TextFieldMoney from "@src/Components/Forms/TextFieldMoney";
-import { Button, DialogActions, Typography } from "@mui/material";
+import { Alert, Button, DialogActions, Typography } from "@mui/material";
+import { AccessAlarm } from '@mui/icons-material';
 import { clone, isNil, isNotNil } from "ramda";
 import { add } from 'date-fns';
 
@@ -88,7 +89,9 @@ const NewExpressContract: FC<INewExpressContractProps> = ({ property, loading, s
     }
 
     return (<>
-        <Typography variant="caption" gutterBottom>Contrato con renta única.</Typography>
+        <Alert icon={<AccessAlarm fontSize="inherit" />} severity="info">
+            Contrato de corto plazo (Menos a 2 meses) y con cargos de servicios fijos.
+        </Alert>
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
             <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller name="start_date" control={control} render={({ field }) => {

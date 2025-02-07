@@ -20,14 +20,13 @@ type TSumaryEvents = {
 const SummaryDetails: FC<TSummaryDetails & TSumaryEvents> = ({ open, setOpen, property, contract }) => {
 
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
-        <RspDialogTitle title="CONTRATO ACTIVO" onClose={() => setOpen({ open: false })} />
+        <RspDialogTitle title="CONTRATO" onClose={() => setOpen({ open: false })} />
         <DialogContent>
             {isNotNil(property) && <PropertyDetails property={property} />}
-            {isNotNil(contract) && <ContractDetails contract={contract} />}
+            {isNotNil(contract) && <ContractDetails contract={contract} expanded={true} />}
             {isNotNil(contract) && <ContractTabs contract={contract} editMode={false} />}
         </DialogContent>
-    </RspDialog>)
-    
+    </RspDialog>);
 }
 
 export default SummaryDetails;

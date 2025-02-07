@@ -1,4 +1,5 @@
 /** 1.0.3 | www.phoxer.com */
+import { FC, JSX } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar, { AppBarOwnProps } from '@mui/material/AppBar';
 import Toolbar, { ToolbarOwnProps } from '@mui/material/Toolbar';
@@ -6,7 +7,6 @@ import Stack from '@mui/material/Stack';
 import Typography, { TypographyOwnProps } from '@mui/material/Typography';
 import { ConditionalRender } from '@phoxer/react-components';
 import { isNotNil } from 'ramda';
-import { FC } from 'react';
 
 interface IHeader {
     title: string;

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Modal } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText } from "@mui/material";
 
 
 export interface IAlertModalProps {

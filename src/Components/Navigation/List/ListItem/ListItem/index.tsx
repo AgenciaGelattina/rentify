@@ -1,5 +1,5 @@
 /** 2.0.2 | www.phoxer.com */
-import { FC } from 'react';
+import { FC, JSX } from 'react';
 import MenuList from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';

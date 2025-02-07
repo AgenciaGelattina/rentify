@@ -1,37 +1,38 @@
 import { Box, Button, Card, CardContent, CardHeader, Collapse, Divider, IconButton, Paper, Stack, Table, TableCell, TableRow, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2/Grid2";
 import LabelStatus, { ILabelStatus } from "@src/Components/LabelStatus";
-import { IContract } from "@src/Components/Properties/Contracts/Details";
-import { IRecurring, IRecurringPaymentStatus } from "@src/Components/Properties/Contracts/Charges/Recurring/Detail";
+import { IContract, TContractCharge, TContractType } from "@src/Components/Properties/Contracts/Details";
 import { IProperty } from "@src/Components/Properties/Details";
-import { CSSProperties, FC, useState } from "react";
+import { CSSProperties, FC, useMemo, useState } from "react";
 import { Description, ExpandMore, ExpandLess } from "@mui/icons-material";
 import DataTable, { IDataTableColumn } from "@src/Components/DataTable";
-import { formatDate, formatToMoney } from "@src/Utils";
+import { dateIsExpired, formatDate, formatToMoney } from "@src/Utils";
 import { DATE_FORMAT } from "@src/Constants";
+import { isNotNil } from "ramda";
+import ContractType from "@src/Components/ContractType";
 
 export interface IResumeData {
     contract: IContract;
     property: IProperty;
-}
+};
 
 interface IResumeRowProps extends IResumeData {
     openContractGeneralView: (property: IProperty, contract: IContract) => void;
 }
 
 const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGeneralView }) => {
-    const [showRecurringData, setShowRecurringData] = useState<boolean>(false);
+    const [showChargesData, setChargesData] = useState<boolean>(false);
 
-    const togleRecurringDataView = () => {
-        setShowRecurringData((srd: boolean) => !srd);
-    }
+    const chargesData: TContractCharge[] = useMemo(() => {
+        return isNotNil(contract.recurring_charges) ? contract.recurring_charges : isNotNil(contract.express_charges) ? contract.express_charges : [];
+    }, [contract.express_charges, contract.recurring_charges]);
 
-    const buildDataContent = (): IDataTableColumn[] => {
+    const buildDataContent = (type: TContractType): IDataTableColumn[] => {
         return [
             {
                 dataKey: "label",
                 head: {
-                    label: "Pago Recurrente"
+                    label: "Cargos"
                 },
                 component: (label: string) => {
                     return <Typography variant="body2">{label}</Typography>;
@@ -41,79 +42,66 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
                 head: {
                     label: "Estado"
                 },
-                component: (rec: IRecurring) => {
-                    return <LabelStatus {...rec.payment_status.status} />;
+                component: (charge: TContractCharge) => {
+                    return <LabelStatus {...charge.status} />;
                 }
             },
             {
                 dataKey: "value",
                 head: {
-                    label: "Cobro Mensual"
+                    label: "Monto a cobrar:"
                 },
-                component: (value: number, rec: IRecurring) => {
-                    return <Typography variant="body2">{formatToMoney(value, rec.currency)}</Typography>;
+                component: (value: number, charge: TContractCharge) => {
+                    return <Typography variant="body2">{formatToMoney(value, charge.currency)}</Typography>;
                 }
             },
             {
                 head: {
                     label: "Deuda:"
                 },
-                component: (rec: IRecurring) => {
-                    return <Typography variant="body2">{formatToMoney(rec.payment_status.pending_amount, rec.currency)}</Typography>;
-                }
-            },
-            {
-                head: {
-                    label: "Meses de Deuda:"
-                },
-                component: (rec: IRecurring) => {
-                    return <Typography variant="body2">{rec.payment_status.pending_months}</Typography>;
+                component: (charge: TContractCharge) => {
+                    return <Typography variant="body2">{formatToMoney(charge.statements.pending_amount, charge.currency)}</Typography>;
                 }
             }
         ];
-    }
+    };
 
-    const pd: CSSProperties = showRecurringData? { paddingBottom: 30, paddingTop: 10, borderBottom: 'solid .2rem rgb(224 224 224)' } : { paddingBottom: 0, paddingTop: 0 };
+    const pd: CSSProperties = showChargesData ? { paddingBottom: 30, paddingTop: 10, borderBottom: 'solid .2rem rgb(224 224 224)' } : { paddingBottom: 0, paddingTop: 0 };
     return (<>
         <TableRow>
             <TableCell>
-                <Stack direction="row" alignItems="center" sx={{ justifyContent: 'end' }} spacing={1}>
-                    <IconButton color='success' onClick={() => openContractGeneralView(property, contract)}>
-                        <Description fontSize="inherit" />
-                    </IconButton>
+                <Stack direction="row" alignItems="center" sx={{ justifyContent: 'center' }} spacing={1}>
+                    <ContractType type={contract.type} onClick={() => openContractGeneralView(property, contract)} />
                 </Stack>
-            </TableCell>
-            <TableCell onClick={togleRecurringDataView}>
-                {contract?.payment_status?.status && <LabelStatus {...contract.payment_status.status} action={showRecurringData ? <ExpandLess /> : <ExpandMore />} />}
             </TableCell>
             <TableCell component="th" scope="row">
                 <Typography variant="subtitle2">{property.title}</Typography>
-                <Typography variant="caption">{property.group.title}</Typography>
+                {property.group.id > 1 && <Typography variant="caption">{property.group.title}</Typography>}
+            </TableCell>
+            <TableCell sx={{ cursor: "pointer" }} onClick={() => setChargesData((bl) => !bl)}>
+                {contract.status && <LabelStatus {...contract.status} action={showChargesData ? <ExpandLess /> : <ExpandMore />} />}
             </TableCell>
             <TableCell component="th" scope="row">
-                <Typography variant="body2">{formatToMoney(contract.payment_status.monthly_amount, contract.currency)}</Typography>
-            </TableCell>
-            <TableCell component="th" scope="row">
-                <Typography variant="body2" color={contract.payment_status.status.severity}>{formatToMoney(contract.payment_status.pending_amount, contract.currency)}</Typography>
-            </TableCell>
-            <TableCell component="th" scope="row">
-                <Typography variant="body2" color={contract.payment_status.status.severity}>{contract.payment_status.pending_months}</Typography>
+                <Typography variant="body2">{formatToMoney(contract.statements.pending_amount, contract.currency)}</Typography>
             </TableCell>
             <TableCell>
-                <Typography variant="body2">{formatDate(contract.due_date.start, DATE_FORMAT.DATE_LONG)}</Typography>
+                <Typography variant="body2" color={dateIsExpired(contract.due_date.start) ? 'error' : 'success'}>{formatDate(contract.due_date.start, DATE_FORMAT.DATE_LONG)}</Typography>
+                <Typography variant="caption" color={dateIsExpired(contract.due_date.end) ? 'error' : 'success'}>{formatDate(contract.due_date.end, DATE_FORMAT.DATE_LONG)}</Typography>
             </TableCell>
             <TableCell>
-                <Typography variant="body2" color={contract.expired ? 'error' : contract.payment_status.status.severity}>{formatDate(contract.due_date.end, DATE_FORMAT.DATE_LONG)}</Typography>
+                <Typography variant="body2" color={contract.expired ? 'error' : 'success'}>{formatDate(contract.end_date, DATE_FORMAT.DATE_LONG)}</Typography>
             </TableCell>
         </TableRow>
         <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell style={pd} colSpan={8}>
-                <Collapse in={showRecurringData}>
-                    <DataTable columns={buildDataContent()} data={contract.recurring_payments || []} loading={false} />
+                <Collapse in={showChargesData}>
+                    <DataTable columns={buildDataContent(contract.type)} data={chargesData || []} loading={false} />
                 </Collapse>
             </TableCell>
         </TableRow>
     </>);
+
+   return null;
 };
 
 export default ResumeRow;

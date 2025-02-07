@@ -18,10 +18,11 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@src/Constants';
 import { IContract } from '@src/Components/Properties/Contracts/Details';
-import { IRecurring } from '@src/Components/Properties/Contracts/Charges/Recurring/Detail';
 import LabelStatus, { ILabelStatus } from '@src/Components/LabelStatus';
 import ResumeRow, { IResumeData } from './ResumeRow';
 import { mapKey } from '@src/Utils';
+import ContractTypeSelector from '@src/Components/Forms/ContractTypeSelector';
+import ContractStateSelector from '@src/Components/Forms/ContractExpiredSelector';
 
 const initialQueryParams: FieldValues = {
     group: null,
@@ -29,8 +30,7 @@ const initialQueryParams: FieldValues = {
 }
 
 const ContractsSummary: FC = () => {
-    /*
-  const { state } = useContext(StoreContext);
+  //const { state } = useContext(StoreContext);
   const [summaryDetails, setSummaryDetails] = useState<TSummaryDetails>({ open: false });
   const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
   const { validateResult } = useDataResponse();
@@ -47,18 +47,32 @@ const ContractsSummary: FC = () => {
 
   const buildDataFilters = (): IDataFilter[] => {
       return [
-          {
-              dataKey: 'group',
-              gridItemProps: { xs: 12, sm: 6 },
-              component: (field) => {
-                  return <PropertiesGroupsSelector {...field} />
-              }
-          },
-          {
-            dataKey: 'payment_status',
-            gridItemProps: { xs: 12, sm: 6 },
+        {
+            dataKey: 'group',
+            gridItemProps: { size: { xs: 12, sm: 6 } },
             component: (field) => {
-                return <PaymentsStatuSelector {...field} />
+                return <PropertiesGroupsSelector field={field} />
+            }
+        },
+        {
+            dataKey: 'payment_status',
+            gridItemProps: { size: { xs: 12, sm: 6 } },
+            component: (field) => {
+                return <PaymentsStatuSelector field={field} />
+            }
+        },
+        {
+            dataKey: 'contract_type',
+            gridItemProps: { size: { xs: 12, sm: 6 } },
+            component: (field) => {
+                return <ContractTypeSelector field={field} />
+            }
+        },
+        {
+            dataKey: 'contract_state',
+            gridItemProps: { size: { xs: 12, sm: 6 } },
+            component: (field) => {
+                return <ContractStateSelector field={field} />
             }
         }
       ]
@@ -79,13 +93,11 @@ const ContractsSummary: FC = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Estado</TableCell>
                             <TableCell>Propiedad</TableCell>
-                            <TableCell>Cobro Mensual</TableCell>
-                            <TableCell>Duda a Cobrar</TableCell>
-                            <TableCell>Meses de Deuda</TableCell>
-                            <TableCell>Fecha de Corte</TableCell>
-                            <TableCell>Fecha de Vencimiento</TableCell>
+                            <TableCell>Estado</TableCell>
+                            <TableCell>Deuda</TableCell>
+                            <TableCell>Fechas de Corte</TableCell>
+                            <TableCell>Fecha de Finalización</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -100,9 +112,6 @@ const ContractsSummary: FC = () => {
     </CardBox>
     <SummaryDetails {...summaryDetails} setOpen={setSummaryDetails} />
   </>);
-  */
-  return null;
-
 }
 
 export default ContractsSummary;

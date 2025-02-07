@@ -8,7 +8,7 @@ import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import { isNotNil } from 'ramda';
 import { FC, SetStateAction, useEffect, useState } from 'react';
-import { IEditContractData } from '../../ContractForm/EditContract';
+import { IEditContractData } from '../../ContractForm/EditContract/Recurring';
 import ContractTabs from '../../Details/Tabs';
 
 export interface IFinalizedContractSummary {
@@ -51,6 +51,7 @@ const FinalizedContractDetails: FC<IFinalizedContractDetails> = ({ open, contrac
         } else {
             setContractData(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     const finalizeContract = () => {

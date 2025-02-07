@@ -108,6 +108,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
         if(isNotNil(endDate) && isNil(outDate)) {
             setValue("out_date", endDate);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startDate, endDate]);
 
     const onFormSubmit = (data: FieldValues) => {
@@ -222,7 +223,7 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                     </Grid>
                     <Grid size={{ xs: 12, sm: 4 }}>
                         <Controller name="due_date" control={control} render={({ field }) => {
-                            return <DueDateSelector {...field} startDate={startDate} />
+                            return <DueDateSelector field={field} startDate={startDate} />
                         }} />
                     </Grid>
                 </Grid>

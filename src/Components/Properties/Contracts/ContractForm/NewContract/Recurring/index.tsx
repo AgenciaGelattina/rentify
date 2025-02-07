@@ -7,7 +7,8 @@ import * as yup from 'yup';
 import ErrorHelperText from '@src/Components/Forms/ErrorHelperText';
 import { fieldError } from '@src/Utils';
 import TextFieldMoney from '@src/Components/Forms/TextFieldMoney';
-import { Button, DialogActions, MenuItem, TextField, Typography } from '@mui/material';
+import { Alert, Button, DialogActions } from '@mui/material';
+import { CalendarMonth } from '@mui/icons-material';
 import { isNil, clone, isNotNil } from 'ramda';
 import { add } from 'date-fns';
 import { IProperty } from '@src/Components/Properties/Details';
@@ -101,7 +102,9 @@ const NewRecurringContract: FC<INewRecurringContractProps> = ({ property, loadin
     }
     
     return (<>
-        <Typography variant="caption" gutterBottom>Contrato con renta recurrente a meses.</Typography>
+        <Alert icon={<CalendarMonth fontSize="inherit" />} severity="info">
+            Contrato con cargos recurrentes divididos entre renta o servicios mensuales.
+        </Alert>
         <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
             <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller name="start_date" control={control} render={({ field }) => {
@@ -163,7 +166,7 @@ const NewRecurringContract: FC<INewRecurringContractProps> = ({ property, loadin
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4 }}>
                     <Controller name="due_date" control={control} render={({ field }) => {
-                        return <DueDateSelector {...field} startDate={startDate} />
+                        return <DueDateSelector field={field} startDate={startDate} />
                     }} />
                 </Grid>
             </Grid>

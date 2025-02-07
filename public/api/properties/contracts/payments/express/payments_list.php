@@ -21,7 +21,7 @@ if (METHOD === 'GET') {
             } else {
                 $row->type = "unique";
                 $row->express = json_decode($row->express, true);
-            }
+            };
             $row->date = addTMZero($row->date);
             array_push($payments_data->payments, $row);
         };

@@ -14,13 +14,13 @@ export interface IExpressCharge {
     start_date: Date;
     end_date: Date;
     currency: string;
-    status: IExpressChargeStatus;
+    status: ILabelStatus;
+    statements: IExpressStatements;
     expired: boolean;
     canceled: boolean;
 }
 
-export interface IExpressChargeStatus {
-    status: ILabelStatus;
+export interface IExpressStatements {
     required_amount: number;
     total_amount: number;
     pending_amount: number;
