@@ -1,10 +1,10 @@
 <?php
-require '../../../headers.php';
-require '../../../utils/general.php';
-require '../../../utils/constants.php';
+require '../../headers.php';
+require '../../utils/general.php';
+require '../../utils/constants.php';
 
 if (METHOD === 'GET') {
-    require '../../../database.php';
+    require '../../database.php';
 
     $contracts_query = "SELECT pc.id,pc.type,pc.due_date,pc.start_date,pc.end_date,pc.in_date,pc.out_date,pc.currency,pc.canceled,pc.property AS property_id,pr.title AS property_title,pr.description AS property_description,JSON_OBJECT('id',pt.id,'label',pt.label) AS property_type,JSON_OBJECT('id',pg.id,'title',pg.title,'description',pg.description) AS property_group,JSON_OBJECT('id',st.id,'label',st.label) AS property_status FROM property_contracts AS pc LEFT JOIN properties AS pr ON pr.id = pc.property LEFT JOIN properties_types AS pt ON pt.id = pr.type LEFT JOIN properties_groups AS pg ON pg.id = pr.group LEFT JOIN properties_status AS st ON st.id = pr.status WHERE pc.finalized = 0 AND pr.active = 1";
     
@@ -59,7 +59,7 @@ if (METHOD === 'GET') {
             $contract->finalized = false;
 
             // add $contract data by type
-            require "../contract_type.php";
+            require "contract_type.php";
 
             // PROPERTY
             $property = new stdClass();

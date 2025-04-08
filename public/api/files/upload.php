@@ -40,9 +40,10 @@ if (METHOD === 'POST') {
             unset($file->path);
             throwSuccess($file);
         } else {
-           throwError(203, "No se pudo crear el archivo");
+           throwError(203, "No se pudo crear el archivo.");
         }
-    }    
+    } else {
+        throwError(203, "No se pudo subir el archivo.");
+    }
 }
-
 ?>

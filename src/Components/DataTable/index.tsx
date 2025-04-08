@@ -23,7 +23,7 @@ export interface IDataTableColumn {
     component: (dataValue?: any, data?: any) => React.ReactNode;
 }
 
-interface IDataTable {
+interface IDataTableProps {
     columns: IDataTableColumn[];
     data: any[];
     loading: boolean;
@@ -32,7 +32,7 @@ interface IDataTable {
     size?: 'small' | 'medium';
 }
 
-const DataTable: React.FC<IDataTable> = ({ columns, loading, data = [], minHeight, size='small' }) => {
+const DataTable: React.FC<IDataTableProps> = ({ columns, loading, data = [], minHeight, size='small' }) => {
     return (<>
         <TableContainer>
             <Table size={size}>

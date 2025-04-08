@@ -12,6 +12,7 @@ if (METHOD === 'GET' && isset($_GET['file'])) {
         header("Content-Transfer-Encoding: Binary");
         header("Content-disposition: attachment; filename=\"$fileData->name.$fileData->type\""); 
         set_time_limit(0);
+        /*
         echo $file_path;
         $file = @fopen($file_path,"rb");
         while(!feof($file))
@@ -20,6 +21,7 @@ if (METHOD === 'GET' && isset($_GET['file'])) {
             ob_flush();
             flush();
         }
+        */
     }
     $DB->close();
 }

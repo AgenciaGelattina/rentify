@@ -1,4 +1,4 @@
-import { useEffect, useState, FC } from 'react';
+import { useEffect, useState, FC, useContext } from 'react';
 import { Box, IconButton, Stack } from '@mui/material';
 import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
@@ -7,17 +7,20 @@ import FolderForm, { TFolderForm } from './FolderForm';
 import LoadingBox from '@src/Components/LoadingBox';
 import Folder, { IFolder } from './Folder';
 import { getUIKey } from '@src/Utils';
+import { StoreContext } from '@src/DataProvider';
 
 type TContractFileFolders = {
     contract: { id: number };
-    editMode: boolean;
 }
 
-const ContractFileFolders: FC<TContractFileFolders> = ({ contract, editMode }) => {
+const ContractFileFolders: FC<TContractFileFolders> = ({ contract }) => {
+    const { state: { user } } = useContext(StoreContext);
     const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [folderForm, setFolderForm] = useState<TFolderForm>({ name: "", contract_id: contract.id, open: false });
     const [folders, setFolders] = useState<IFolder[]>([]);
+
+    const canEdit = (user.role < 3);
 
     const getFolders = ( ) => {
         const query = { contract_id: contract.id };
@@ -27,7 +30,7 @@ const ContractFileFolders: FC<TContractFileFolders> = ({ contract, editMode }) =
                 setFolders(folders);
             }
         });
-    }
+    };
     
     useEffect(() => {
         getFolders();
@@ -36,19 +39,15 @@ const ContractFileFolders: FC<TContractFileFolders> = ({ contract, editMode }) =
 
     return (<Box sx={{ border: '1px solid #ccc', backgroundColor: '#ebebeb', padding: '1rem' }}>
         <Header title="ARCHIVOS DEL CONTRATO" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            <ConditionalRender condition={editMode}>
-                <IconButton onClick={() => setFolderForm({ name: "", contract_id: contract.id, open: true })}>
+            {canEdit && (<IconButton onClick={() => setFolderForm({ name: "", contract_id: contract.id, open: true })}>
                     <CreateNewFolder fontSize="inherit" color='primary' />
-                </IconButton>
-            </ConditionalRender>
+            </IconButton>)}
         </Header>
         {loading && <LoadingBox />}
         {folders && (<Stack>
             {folders.map((folder: IFolder) => <Folder key={getUIKey()} folder={folder} onEditFolder={(name: string) => setFolderForm({ name, contract_id: contract.id, open: true }) } />)}
         </Stack>)}
-        <ConditionalRender condition={editMode}>
-            <FolderForm {...folderForm} setOpen={setFolderForm} getFolders={getFolders} />
-        </ConditionalRender>
+        {canEdit && <FolderForm {...folderForm} setOpen={setFolderForm} getFolders={getFolders} />}
     </Box>)
 }
 

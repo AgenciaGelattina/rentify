@@ -7,7 +7,7 @@ if (METHOD === 'GET') {
     require_once '../../../../database.php';
     $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
 
-    $query = "SELECT cp.id,cp.amount,cp.contract,pc.currency,IF(cp.express > 0, JSON_OBJECT('id',cp.express,'label',cech.label), NULL) AS express,cp.date,cp.clarifications FROM contracts_payments AS cp LEFT JOIN contracts_express_charges AS cech ON cech.id = cp.express LEFT JOIN property_contracts AS pc on pc.id = cp.contract WHERE cp.contract = $contract_id ORDER BY cp.date";
+    $query = "SELECT cp.id,cp.amount,cp.contract,pc.currency,IF(cp.express > 0, JSON_OBJECT('id',cp.express,'label',cech.label), NULL) AS express,cp.date,cp.clarifications,confirmed FROM contracts_payments AS cp LEFT JOIN contracts_express_charges AS cech ON cech.id = cp.express LEFT JOIN property_contracts AS pc on pc.id = cp.contract WHERE cp.contract = $contract_id ORDER BY cp.date";
     $payments_query = $DB->query($query);
 
     $payments_data = new stdClass();
@@ -15,7 +15,9 @@ if (METHOD === 'GET') {
     $payments_data->total_amount = 0;
     if($payments_query && $payments_query->num_rows > 0) {
         while ($row = $payments_query->fetch_object()) {
-            $payments_data->total_amount += $row->amount;
+            if ($row->confirmed === 1) {
+                $payments_data->total_amount += $row->amount;
+            }
             if (is_null($row->express)) {
                 $row->type = "extraordinary";
             } else {
@@ -23,6 +25,7 @@ if (METHOD === 'GET') {
                 $row->express = json_decode($row->express, true);
             };
             $row->date = addTMZero($row->date);
+            $row->confirmed = $row->confirmed === 1 ? true : false;
             array_push($payments_data->payments, $row);
         };
     }

@@ -7,28 +7,26 @@ import { IContract } from '..';
 
 interface IContractTabsProps {
     contract: IContract;
-    editMode: boolean;
 }
 
-const ContractTabs: FC<IContractTabsProps> = ({ contract, editMode }) => {
-
+const ContractTabs: FC<IContractTabsProps> = ({ contract }) => {
     return (<TabsContent tabs={[
-        { 
+        {
             tab: { label: "PAGOS" },
             component: () => {
-                return <Payments contract={contract} editMode={editMode} />;
+                return <Payments contract={contract}  />;
             }
         },
         { 
             tab: { label: "CONTACTOS" },
             component: () => {
-                return <Contractors contract={{ id: contract.id }} editMode={editMode} />;
+                return <Contractors contract={{ id: contract.id }}  />;
             }
         },
         { 
             tab: { label: "ARCHIVOS" },
             component: () => {
-                return <FileFolders contract={{ id: contract.id }} editMode={editMode} />
+                return <FileFolders contract={{ id: contract.id }}  />
             }
         }
     ]} />);

@@ -9,6 +9,7 @@ interface IQuickPayments {
 }
 
 const QuickPayments: FC<IQuickPayments> = ({ recurring_charges, setQuickPayment, due_date }) => {
+    console.log('QuickPayments', recurring_charges);
     return (<Box>
         <Stack spacing={1} direction="row">
             {recurring_charges.map((rp: IRecurringCharge) => {

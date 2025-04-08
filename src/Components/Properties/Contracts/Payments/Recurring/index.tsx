@@ -38,10 +38,10 @@ export interface IRecurringPaymentDate {
 
 interface IRecurringPaymentsProps {
     contract: IContract;
-    editMode: boolean;
 };
 
-const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract, editMode }) => {
+const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract }) => {
+
     const { fetchData, loading, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [paymentForm, setPaymentForm] = useState<IRecurringPaymentForm>(recurringPaymentFormDefault);
@@ -80,9 +80,18 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract, editMode }) 
     }, [showMonths]);
 
     const removePayment = (id: number) => {
-        fetchData.delete('/properties/contracts/payments/recurring/payment.php', { id }, (response: TCallBack) => {
+        fetchData.delete('/properties/contracts/payments/recurring/payment.php', { payment_id: id, contract_id: contract.id }, (response: TCallBack) => {
             const deleted = validateResult(response.result);
             if (deleted) {
+                getMonthlyPayments();
+            }
+        });
+    };
+
+    const confirmPayment = (id: number, confirmed: number) => {
+        fetchData.post('/properties/contracts/payments/confirm.php', { payment_id: id, contract_id: contract.id, confirmed }, (response: TCallBack) => {
+            const confirmed = validateResult(response.result);
+            if (confirmed) {
                 getMonthlyPayments();
             }
         });
@@ -102,16 +111,17 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract, editMode }) 
             currency: contract.currency,
             date: payment_date,
             clarifications: '',
-            type: "monthly"
+            type: "monthly",
+            confirmed: false
         }
         setPaymentForm({ payment, payment_date, open: true });
     };
     
     return (<>
         <Header title={showMonths ? "PAGOS (POR MES)" : "PAGOS"} typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            {editMode && <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ payment_date: new Date, open: true })}>
+            <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ payment_date: new Date, open: true })}>
                 REGISTRAR PAGO
-            </Button>}
+            </Button>
         </Header>
         <Box sx={{ display: 'flex', justifyContent: 'start', padding: '1rem' }}>
             <FormControlLabel
@@ -124,10 +134,10 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract, editMode }) 
             />
         </Box>
         {showMonths && monthlyPayments.map((payment: IPaymentMonth, ix:number) => {
-            return <PaymentMonth key={`pm${ix}`} paymentData={payment} setQuickPayment={setQuickPayment} removePayment={removePayment} editPayment={editPayment} editMode={editMode } />
+            return <PaymentMonth key={`pm${ix}`} paymentData={payment} setQuickPayment={setQuickPayment} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment} />
         })}
-        {!showMonths && (<PaymentsList paymentsData={paymentsData} isLoading={loading} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />)}
-        {editMode && <RecurringPaymentForm {...paymentForm} contract={contract} setOpen={setPaymentForm} getPayments={showMonths ? getMonthlyPayments : getPaymentsList} />}
+        {!showMonths && (<PaymentsList paymentsData={paymentsData} isLoading={loading} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment} />)}
+        <RecurringPaymentForm {...paymentForm} contract={contract} setOpen={setPaymentForm} getPayments={showMonths ? getMonthlyPayments : getPaymentsList} />
     </>);
 };
 

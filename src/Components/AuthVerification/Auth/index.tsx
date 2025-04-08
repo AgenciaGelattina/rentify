@@ -42,7 +42,6 @@ const AuthUser: FC = () => {
 
     useEffect(() => {
         const token = sessionStorage?.getItem('token');
-        console.log('READ TOKEN', token);
         if (token && state.user.id === 0) {
             auth.fetchData.get('/auth/token.php', { token });
         } else {

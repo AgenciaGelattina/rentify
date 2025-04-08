@@ -62,17 +62,6 @@ const NewExpressContract: FC<INewExpressContractProps> = ({ property, loading, s
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [property]);
 
-    useEffect(() => {
-        if(isNotNil(startDate)) {
-            setValue("in_date", startDate);
-        };
-        if(isNotNil(endDate)) {
-            setValue("out_date", endDate);
-            setValue("due_date", endDate.getDate());
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startDate, endDate]);
-
     const onFormSubmit = (data: FieldValues) => {
         const { start_date, end_date } = clone(data);
         
@@ -97,7 +86,10 @@ const NewExpressContract: FC<INewExpressContractProps> = ({ property, loading, s
                 <Controller name="start_date" control={control} render={({ field }) => {
                     return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Día de Inicio" {...field}
                         format={DATE_FORMAT.DATE}
-                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
+                        onChange={(selectedDate: Date | null) => {
+                            field.onChange(selectedDate);
+                            setValue("in_date", selectedDate);
+                        }}
                     />
                 }} />
                 <ErrorHelperText {...fieldError(errors.start_date)} />
@@ -108,7 +100,11 @@ const NewExpressContract: FC<INewExpressContractProps> = ({ property, loading, s
                         format={DATE_FORMAT.DATE}
                         disabled={isNil(startDate)}
                         minDate={isNotNil(startDate) ? add(new Date(startDate), { days: 1 }) : undefined}
-                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
+                        onChange={(selectedDate: Date | null) => {
+                            field.onChange(selectedDate);
+                            setValue("out_date", selectedDate);
+                            setValue("due_date", selectedDate ? selectedDate.getDate() : 0);
+                        }} 
                     />
                 }} />
                 <ErrorHelperText {...fieldError(errors.end_date)} />

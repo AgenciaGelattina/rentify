@@ -1,5 +1,4 @@
-import { ILabelStatus } from "@src/Components/LabelStatus";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { IContract } from "../../Details";
 import { Header, TCallBack, useFetchData } from "@phoxer/react-components";
 import { Button } from "@mui/material";
@@ -9,6 +8,8 @@ import ExpressPaymentForm, { IExpressPaymentForm } from "./Form";
 import { isNotNil } from "ramda";
 import PaymentsList, { IPaymentsData, paymentDataDefault } from "../List";
 import { IPayment } from "..";
+import { StoreContext } from "@src/DataProvider";
+import { STATE_ACTIONS } from "@src/Constants";
 
 export interface IExpressPayment {
     id: number;
@@ -18,11 +19,11 @@ export interface IExpressPayment {
 
 interface IExpressPaymentsProps {
     contract: IContract;
-    editMode: boolean;
 };
 
-const ExpressPayments: FC<IExpressPaymentsProps> = ({ contract, editMode }) => {
-    const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+const ExpressPayments: FC<IExpressPaymentsProps> = ({ contract }) => {
+    const { setMainState } = useContext(StoreContext);
+    const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [paymentForm, setPaymentForm] = useState<IExpressPaymentForm>({ payment_date: new Date, open: false });
     const [paymentsData, setPaymentsData] = useState<IPaymentsData>(paymentDataDefault);
@@ -44,26 +45,36 @@ const ExpressPayments: FC<IExpressPaymentsProps> = ({ contract, editMode }) => {
     }, []);
 
     const removePayment = (id: number) => {
-        fetchData.delete('/properties/contracts/payments/recurring/payment.php', { id }, (response: TCallBack) => {
+        fetchData.delete('/properties/contracts/payments/express/payment.php', { payment_id: id, contract_id: contract.id }, (response: TCallBack) => {
             const deleted = validateResult(response.result);
             if (deleted) {
                 getPaymentsList();
             }
         });
-    }
+    };
+
+    const confirmPayment = (id: number, confirmed: number) => {
+        fetchData.post('/properties/contracts/payments/confirm.php', { payment_id: id, contract_id: contract.id, confirmed }, (response: TCallBack) => {
+            const contract = validateResult(response.result);
+            if (contract.id > 0) {
+                setMainState(STATE_ACTIONS.UPDATE_CONTRACT_ON_SUMMARY, contract);
+                getPaymentsList();
+            };
+        });
+    };
 
     const editPayment = (payment: IPayment) => {
         setPaymentForm({ payment, payment_date: new Date, open: true });
-    }
+    };
     
     return (<>
         <Header title="PAGOS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            {editMode && <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ payment_date: new Date, open: true })}>
+            <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ payment_date: new Date, open: true })}>
                 REGISTRAR PAGO
-            </Button>}
+            </Button>
         </Header>
-        <PaymentsList paymentsData={paymentsData} isLoading={loading} removePayment={removePayment} editPayment={editPayment} editMode={editMode} />
-        {editMode && <ExpressPaymentForm {...paymentForm} contract={contract} setOpen={setPaymentForm} getPayments={getPaymentsList} />}
+        <PaymentsList paymentsData={paymentsData} isLoading={loading} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment}  />
+        <ExpressPaymentForm {...paymentForm} contract={contract} setOpen={setPaymentForm} getPayments={getPaymentsList} />
     </>);;
 };
 

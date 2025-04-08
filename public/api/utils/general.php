@@ -3,7 +3,7 @@ define('PROTOCOL', $_SERVER['SERVER_PROTOCOL']);
 define('METHOD', $_SERVER['REQUEST_METHOD']);
 define('POST', json_decode(file_get_contents('php://input'), true));
 define('ROOTPATH', $_SERVER['DOCUMENT_ROOT']);
-define('FOLDERSPATH', $_SERVER['DOCUMENT_ROOT']."/rentify/dev/assets/folders");
+define('FOLDERSPATH', $_SERVER['DOCUMENT_ROOT']."/rentify/test/assets/folders");
 define('DOMAIN', "https://agenciagelattina.com/rentify");
 
 $TIME_ZONE = new DateTimeZone("America/Mexico_City");
@@ -48,6 +48,14 @@ function getTotalDays($start_date, $end_date) {
     $interval = $date1->diff($date2);
     return $interval->d;
 };
+
+function validateDueDate($start_date_time, $due_date) {
+    $due_date_string = $start_date_time->format("Y-m")."-".$due_date;
+    if (!checkdate($start_date_time->format("m"),$due_date,$start_date_time->format("Y"))) {
+        return $start_date_time->format('Y-m-t');
+    };
+    return $due_date_string;
+}
 /*
 function getPaymentType($recurring, $express) {
     if (!is_null($recurring)) {

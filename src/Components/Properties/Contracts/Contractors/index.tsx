@@ -1,22 +1,25 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { Box, IconButton, Stack, Typography } from '@mui/material';
 import { GroupAdd, Edit, DeleteForever } from '@mui/icons-material';
 import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import ContractorForm, { IContractor, TContractorForm } from './ContractorForm';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
+import { StoreContext } from '@src/DataProvider';
 
 
 interface IContractContractorsProps {
     contract: { id: number };
-    editMode: boolean;
 }
 
-const ContractContractors: FC<IContractContractorsProps> = ({ contract, editMode }) => {
+const ContractContractors: FC<IContractContractorsProps> = ({ contract }) => {
+    const { state: { user } } = useContext(StoreContext);
     const { fetchData, loading, result, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const [contractorForm, setContractorForm] = useState<TContractorForm>({ contract_id: contract.id, open: false });
     const [contractors, setContractors] = useState<IContractor[]>([]);
+
+    const canEdit = user.role < 3;
 
     const getContractors = ( ) => {
         fetchData.get('/properties/contracts/contractors/contractors.php', { contract_id: contract.id }, (response: TCallBack) => {
@@ -85,7 +88,7 @@ const ContractContractors: FC<IContractContractorsProps> = ({ contract, editMode
                     label: "",
                 },
                 component: (contractor: IContractor) => {
-                    if (!editMode) {
+                    if (!canEdit) {
                         return null;
                     }
                     return (<Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
@@ -103,16 +106,12 @@ const ContractContractors: FC<IContractContractorsProps> = ({ contract, editMode
 
     return (<Box sx={{ border: '1px solid #ccc', padding: '1rem' }}>
         <Header title="CONTACTOS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            <ConditionalRender condition={editMode} >
-                <IconButton onClick={() => setContractorForm({ contract_id: contract.id, open: true })}>
-                    <GroupAdd fontSize="inherit" color='primary' />
-                </IconButton>
-            </ConditionalRender>
+            {canEdit && <IconButton onClick={() => setContractorForm({ contract_id: contract.id, open: true })}>
+                <GroupAdd fontSize="inherit" color='primary' />
+            </IconButton>}
         </Header>
         <DataTable columns={buildDataContent()} data={contractors} loading={loading} />
-        <ConditionalRender condition={editMode} >
-            <ContractorForm {...contractorForm} setOpen={setContractorForm} getContractors={getContractors} />
-        </ConditionalRender>
+        {canEdit && <ContractorForm {...contractorForm} setOpen={setContractorForm} getContractors={getContractors} />}
     </Box>)
 }
 

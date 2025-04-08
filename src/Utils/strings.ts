@@ -3,12 +3,12 @@ import { CURRENCY } from "@src/Constants";
 /**
  * RANDOM UNIQUE ID V1.0
 */
-type TGetUIKey = {
+interface IGetUIKey {
     removeHyphen?: boolean;
     toUpperCase?: boolean;
 }
 
-export const getUIKey = (config?: TGetUIKey): string => {
+export const getUIKey = (config?: IGetUIKey): string => {
     let randomUUID = crypto.randomUUID();
     if (config?.removeHyphen) {
         randomUUID = randomUUID.replace(/[\W]/gm,'');

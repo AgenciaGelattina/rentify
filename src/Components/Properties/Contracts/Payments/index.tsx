@@ -16,19 +16,19 @@ export interface IPayment {
     type: TPaymentType;
     recurring?: { id: number, label: string };
     express?: { id: number, label: string };
+    confirmed: boolean;
 };
 
 interface IPaymentsProps {
     contract: IContract;
-    editMode: boolean;
 }
 
-const Payments: FC<IPaymentsProps> = ({ contract, editMode = false }) => {
+const Payments: FC<IPaymentsProps> = ({ contract }) => {
     const { type } = contract;
 
     return (<Box sx={{ border: '1px solid #ccc', padding: '1rem' }}>
-        {type === "recurring" && <RecurringPayments contract={contract} editMode={editMode} />}
-        {type === "express" && <ExpressPayments contract={contract} editMode={editMode} />}
+        {type === "recurring" && <RecurringPayments contract={contract} />}
+        {type === "express" && <ExpressPayments contract={contract} />}
     </Box>)
 };
 

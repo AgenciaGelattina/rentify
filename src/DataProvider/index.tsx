@@ -1,21 +1,20 @@
 'use client';
 import { createContext, useReducer, useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { TDataProviders, IState, TStateContext, IReducerAction } from './interfaces';
+import { IDataProviders, IState, IStateContext, IStoreReducerData } from './interfaces';
 import { mainStateDefault, theme, mainStateReducer } from './state';
 
-export const StoreContext = createContext<TStateContext>({ state: mainStateDefault, setMainState: () => {} });
+export const StoreContext = createContext<IStateContext>({ state: mainStateDefault, setMainState: () => {} });
 
-const storeReducer = (state: IState, action: IReducerAction) => {
-  return mainStateReducer[action.type](state, action.data);
+const storeReducer = (state: IState, reducerData: IStoreReducerData) => {
+  return mainStateReducer[reducerData.action](state, reducerData.data);
 };
 
-const DataProviders: React.FC<TDataProviders> = ({ children }) => {
+const DataProviders: React.FC<IDataProviders> = ({ children }) => {
   const [state, dispatchState] = useReducer(storeReducer, mainStateDefault);
 
-  const setMainState = (action: string, data: any) => {
-    console.log('setMainState', action, data)
-    dispatchState({ type: action, data });
+  const setMainState = (action: string, data?: any) => {
+    dispatchState({ action, data });
   };
   
   const memoizedTheme = useMemo(()=>{

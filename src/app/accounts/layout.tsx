@@ -1,11 +1,11 @@
 import PageWrapper from "@src/Components/Wrappers/Page";
+import { FC, ReactNode } from "react";
 
 export type TAccountsLayout = {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
-const TAccountsLayout: React.FC<TAccountsLayout> = ({ children }) => {
-
+const TAccountsLayout: FC<TAccountsLayout> = ({ children }) => {
     return (<PageWrapper navigation>
         { children }
     </PageWrapper>)

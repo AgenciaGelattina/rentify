@@ -7,49 +7,19 @@ require '../../database.php';
 if (METHOD === 'GET') {
     
     $status = $DB->real_escape_string($_GET['status']);
-    $query = "SELECT id,property,type,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts";
+    $contract_query = "SELECT id,property,type,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts";
 
     if ($status === "current") {
         $property = intval($DB->real_escape_string($_GET['property_id']));
-        $query .= " WHERE property = $property AND canceled = 0 AND finalized = 0 AND end_date >= CURDATE()";
+        $contract_query .= " WHERE property = $property AND canceled = 0 AND finalized = 0 AND end_date >= CURDATE()";
     }
     if ($status === "data") {
         $contract = intval($DB->real_escape_string($_GET['contract_id']));
-        $query .= " WHERE id = $contract";
+        $contract_query .= " WHERE id = $contract";
     }
     
-    $contract_result = $DB->query($query);
-    
-    if ($contract_result->num_rows > 0) {
-        $row = $contract_result->fetch_object();
-
-        // CONTRACT
-        $contract = new stdClass();
-        $contract->id = $row->id;
-        $contract->currency = $row->currency;
-        $contract->type = $row->type;
-
-        $contract->start_date = addTMZero($row->start_date);
-        $contract_start_date_time = new DateTime($row->start_date);
-        $contract->end_date = addTMZero($row->end_date);
-        $contract_end_date_time = new DateTime($row->end_date);
-
-        $contract->in_date = addTMZero($row->in_date);
-        //$contract_in_date_time = new DateTime($row->in_date);
-        $contract->out_date = addTMZero($row->out_date);
-        //$contract_out_date_time = new DateTime($row->out_date);
-
-        $contract->expired = ($NOW->time > $contract_end_date_time) ? true : false;
-        $contract->canceled = $row->canceled == 0 ? false : true;
-        $contract->finalized = $row->finalized == 0 ? false : true;
-        
-        // add $contract data by type
-        require "contract_type.php";
-        
-        throwSuccess($contract);
-    } else {
-        throwSuccess(["id"=>0]);
-    }
+    require "contract_result.php";
+    throwSuccess($contract);
     $DB->close();
 }
 

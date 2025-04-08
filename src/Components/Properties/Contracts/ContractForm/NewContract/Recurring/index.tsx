@@ -17,7 +17,6 @@ import CurrencySelector, { ICurrency } from '@src/Components/Forms/CurrencySelec
 import DueDateSelector from '@src/Components/Forms/DueDateSelector';
 import { INewContractData } from '..';
 
-
 const defaultContractValues: INewContractData = {
     id: 0,
     type: "recurring",
@@ -60,22 +59,11 @@ const NewRecurringContract: FC<INewRecurringContractProps> = ({ property, loadin
     const startDate = watch('start_date', null);
     const endDate = watch('end_date', null);
     const inDate = watch('in_date', null);
-    const outDate = watch('out_date', null);
 
     useEffect(() => {
         setValue('property', property.id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [property]);
-
-    useEffect(() => {
-        if(isNotNil(startDate) && isNil(inDate)) {
-            setValue("in_date", startDate);
-        };
-        if(isNotNil(endDate) && isNil(outDate)) {
-            setValue("out_date", endDate);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startDate, endDate]);
 
     const onFormSubmit = (data: FieldValues) => {
         const { start_date, end_date, in_date, out_date} = clone(data);
@@ -110,7 +98,12 @@ const NewRecurringContract: FC<INewRecurringContractProps> = ({ property, loadin
                 <Controller name="start_date" control={control} render={({ field }) => {
                     return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Día de Inicio" {...field}
                         format={DATE_FORMAT.DATE}
-                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
+                        onChange={(selectedDate: Date | null) => {
+                            field.onChange(selectedDate);
+                            setValue("end_date", selectedDate ? add(new Date(selectedDate), { months: 12 }) : null);
+                            setValue("in_date", selectedDate);
+                            setValue("out_date", selectedDate ? add(new Date(selectedDate), { months: 12 }) : null);
+                        }}
                     />
                 }} />
                 <ErrorHelperText {...fieldError(errors.start_date)} />
@@ -121,7 +114,10 @@ const NewRecurringContract: FC<INewRecurringContractProps> = ({ property, loadin
                         format={DATE_FORMAT.DATE}
                         disabled={isNil(startDate)}
                         minDate={isNotNil(startDate) ? add(new Date(startDate), { months: 2 }) : undefined}
-                        onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
+                        onChange={(selectedDate: Date | null) => {
+                            setValue("out_date", selectedDate);
+                            field.onChange(selectedDate)
+                        }} 
                     />
                 }} />
                 <ErrorHelperText {...fieldError(errors.end_date)} />

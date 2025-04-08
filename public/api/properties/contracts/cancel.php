@@ -1,10 +1,11 @@
 <?php
 require '../../headers.php';
 require '../../utils/general.php';
+require '../../utils/constants.php';
 require '../../database.php';
 
 if (METHOD === 'POST') {
-    $id = intval($DB->real_escape_string(POST['contract_id']));
+    $contract_id = intval($DB->real_escape_string(POST['contract_id']));
     $cancel = intval($DB->real_escape_string(POST['cancel']));
 
     if ($cancel === 0) {
@@ -13,18 +14,21 @@ if (METHOD === 'POST') {
         $contract_result = $DB->query($query);
     
         if ($contract_result->num_rows > 0) {
-            throwError(203, "Error al re-activar contrato #$id. Ya existe un contrato activo vigente.");
+            throwError(203, "Error al re-activar contrato #$contract_id. Ya existe un contrato activo vigente.");
             $DB->close();
             exit();
         }
     }
 
-    $account = $DB->query("UPDATE property_contracts SET canceled = $cancel WHERE id=".$id);
+    $account = $DB->query("UPDATE property_contracts SET canceled = $cancel WHERE id=".$contract_id);
     if ($DB->affected_rows >= 0) {
         $msg = $cancel === 1 ? "cancelado" : "reactivado";
-        throwSuccess(true, "El contrato #$id fue $msg.");
+
+        $contract_query = "SELECT id,property,type,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts WHERE id=$contract_id";
+        require "contract_result.php";
+        throwSuccess($contract, "El contrato #$contract_id fue $msg.");
     } else {
-        throwError(203, "Error al cancelar contrato #$id");
+        throwError(203, "Error al cancelar contrato #$contract_id");
     }
     
     $DB->close();

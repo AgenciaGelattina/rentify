@@ -1,8 +1,0 @@
-
-
-
-
-- Al Editar un cotrato tener en cuenta los pagos a la hora de cambiar fechas o días de cortes.
-- Agregar al calculo de pagos recurrentes la posibilidad de sumar pagos adelantados y atrasados.
-
-- Revisar que sucede cuando la fecha de corte es mayor a la fecha de inicio de contrato y se cobra un mes despues.

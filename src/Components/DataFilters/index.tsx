@@ -66,8 +66,8 @@ const DataFilters: React.FC<TFilters> = ({ filters, onFilter, loading, formData,
             <Divider />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', padding: '.5rem .5rem 0rem .5rem' }}>
                 <ButtonGroup variant="contained" size="small">
-                    <Button color="inherit" disabled={loading} onClick={() => reset()}>CLEAR</Button>
-                    <Button color="primary" disabled={loading} onClick={handleSubmit((data) => checkFilterData(data))}>{loading? "FILTERING":"FILTER"}</Button>
+                    <Button color="inherit" disabled={loading} onClick={() => reset()}>LIMPIAR</Button>
+                    <Button color="primary" disabled={loading} onClick={handleSubmit((data) => checkFilterData(data))}>{loading? "CARGANDO..":"FILTRAR"}</Button>
                 </ButtonGroup>
             </Box>
         </AccordionDetails>

@@ -8,8 +8,8 @@ if (METHOD === 'GET') {
     $contract_id = intval($DB->real_escape_string($_GET['contract_id']));
     $property = intval($DB->real_escape_string($_GET['property_id']));
 
-    //CHECK IF CONTRACT EXIST
-    $query_check_contract = "SELECT id,property,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts WHERE property = $property AND canceled = 0 AND finalized = 0 AND end_date >= CURDATE()";
+    //CHECK IF ACTIVE CONTRACT EXIST
+    $query_check_contract = "SELECT id FROM property_contracts WHERE property = $property AND canceled = 0 AND finalized = 0 AND end_date >= CURDATE()";
     $contract_check_result = $DB->query($query_check_contract);
     
     if ($contract_check_result->num_rows === 0) {
@@ -59,6 +59,7 @@ if (METHOD === 'GET') {
 }
 
 if (METHOD === 'POST') {
+    $type = $DB->real_escape_string(POST['type']);
     $property = intval($DB->real_escape_string(POST['property']));
     $value = $DB->real_escape_string(POST['value']);
     $currency = $DB->real_escape_string(POST['currency']);
@@ -68,7 +69,7 @@ if (METHOD === 'POST') {
     $in_date = $DB->real_escape_string(POST['in_date']);
     $out_date = $DB->real_escape_string(POST['out_date']);
     
-    $query_contract_insert ="INSERT INTO property_contracts (`property`,`currency`,`due_date`,`start_date`,`end_date`,`in_date`,`out_date`) VALUES ($property,'$currency',$due_date,'$start_date','$end_date','$in_date','$out_date')";
+    $query_contract_insert ="INSERT INTO property_contracts (`property`,`type`,`currency`,`due_date`,`start_date`,`end_date`,`in_date`,`out_date`) VALUES ($property,'$type','$currency',$due_date,'$start_date','$end_date','$in_date','$out_date')";
     $DB->query($query_contract_insert);
     
     $newID = $DB->insert_id;

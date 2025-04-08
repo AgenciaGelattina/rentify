@@ -1,7 +1,6 @@
 import { FC, forwardRef, ReactNode, useMemo } from "react";
 import { MenuItem, TextField, TextFieldProps } from '@mui/material';
 import { PAYMENT_TYPE } from "@src/Constants";
-import { TContractType } from "@src/Components/Properties/Contracts/Details";
 import { TPaymentType } from "@src/Components/Properties/Contracts/Payments";
 
 interface IPaymentTypeSelectorProps {

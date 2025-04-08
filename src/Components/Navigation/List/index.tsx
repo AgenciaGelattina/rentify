@@ -25,12 +25,12 @@ const formatListDataToListStatus = (listData: IListItem[]): IListItem[] => {
 
 const List: FC<TListProps> = ({ menuListProps }) => {
     const { state: { routes }, setMainState } = useContext(StoreContext);
-    const router = useRouter();
-    const pathname = usePathname()
+    const { push } = useRouter();
+    const pathname = usePathname();
 
     const onListItemSelected = (item: IListItem) => {
         if (isNotNil(item.value)) {
-            router.push(item.value);
+            push(item.value);
         } else {
             setMainState(ROUTES_ACTIONS.UPDATE_ROUTE, item);
         }

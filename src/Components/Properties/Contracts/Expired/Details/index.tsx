@@ -122,7 +122,7 @@ const ExpiredContractDetails: FC<IExpiredContractDetails> = ({ open, contract, p
                     }}>EDITAR</Button>}
                 </Stack>
             } />}
-            {isNotNil(contractData) && <ContractTabs contract={contractData} editMode={true} /> }
+            {isNotNil(contractData) && <ContractTabs contract={contractData} /> }
 
             <AlertModal
                 open={finalizeContractModal}

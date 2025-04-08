@@ -4,6 +4,7 @@ const nextConfig = {
     reactStrictMode: false,
     compress: true,
     output: 'export',
+    trailingSlash: true
 }
 
 module.exports = nextConfig

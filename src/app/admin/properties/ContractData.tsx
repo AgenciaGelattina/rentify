@@ -123,7 +123,7 @@ const ContractData: FC<IContractDataProps> = ({ property, getProperties }) => {
                 editMode={true}
             />}
 
-            <ContractTabs contract={contractData} editMode={true} />
+            <ContractTabs contract={contractData} />
             <Divider sx={{ margin: '1rem 0 1rem 0' }} />
             
             <AlertModal

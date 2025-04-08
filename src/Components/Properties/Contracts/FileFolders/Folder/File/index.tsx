@@ -43,7 +43,7 @@ const FileStatus: FC<TFileStatus> = ({ file, filesApi, folder }) => {
 
     const deleteFile = (del: boolean) => {
       if (del) {
-        filesApi.fetchData.post('/files/delete.php', { file_id: file.id, folder: folder.name });
+        filesApi.fetchData.post('/files/delete.php', { file_id: file.id, file_type: file.type, folder: folder.name });
       }
       setDeleteDialog(messageDialogInit);
     }

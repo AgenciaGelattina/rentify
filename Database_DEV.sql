@@ -1,4 +1,4 @@
--- DESARROLLO V 1.1.8
+-- DESARROLLO V 1.2.0
 
 -- --------------------------------------------------------
 -- Table `accounts_roles`
@@ -33,7 +33,7 @@ CREATE TABLE `accounts` (
 
 INSERT INTO `accounts` (`id`, `names`, `surnames`, `email`, `password`, `role`, `active`, `created`, `updated`) VALUES
 (1, 'Romeo', 'Marquez', 'romeo@gelattina.com', '$2y$10$W3hVJv7BbaUSkMWQNTthU.5ddteLP9wGMqFD8gYETav7OAG2EDnhu', 1, 1, '2023-09-13', '2024-01-17'),
-(2, 'Carlos Roberto', 'Baglieri', 'robertob@gelattina.com', '$2y$10$EAa0aT99g8rv/LXNms837uD9iL7XpkHJFke1UgCgEnhTwv0/gAmB6', 1, 1, '2024-06-17', '2024-06-17 20:13:30');
+(2, 'Carlos Roberto', 'Baglieri', 'robertob@gelattina.com', '$2y$10$EAa0aT99g8rv/LXNms837uD9iL7XpkHJFke1UgCgEnhTwv0/gAmB6', 3, 1, '2024-06-17', '2024-06-17 20:13:30');
 
 -- --------------------------------------------------------
 -- Table `properties_types`
@@ -204,6 +204,7 @@ CREATE TABLE `contracts_payments` (
   `amount` int(10) UNSIGNED NOT NULL,
   `date` date NOT NULL,
   `clarifications` varchar(150) NOT NULL,
+  `confirmed` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`),
   KEY (`recurring`),
   KEY (`express`)

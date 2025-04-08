@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { IContract } from "@src/Components/Properties/Contracts/Details";
 import { IPayment, TPaymentType } from "../..";
 import { TCallBack, useFetchData } from "@phoxer/react-components";
@@ -17,6 +17,7 @@ import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import RecurringChargesSelector from "@src/Components/Forms/ChargesSelector/RecurringCharges";
 import ExpressChargesSelector from "@src/Components/Forms/ChargesSelector/ExpressCharges";
+import { StoreContext } from "@src/DataProvider";
 
 export interface IExpressPaymentData {
     id: number;
@@ -62,6 +63,7 @@ const defaultExpressPaymentData = (contract: IContract, payment_date: Date = new
 }
 
 const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, contract, payment_date, setOpen, getPayments }) => {
+    const { state: { user } } = useContext(StoreContext);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
     const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultExpressPaymentData(contract, payment_date), resolver: yupResolver(formValidations) });
@@ -104,6 +106,9 @@ const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, cont
         //fix date format
         data.date = formatDate(date);
 
+        //role data
+        data.confirmed = (user.role < 3) ? 1 : 0;
+
         fetchData.post('/properties/contracts/payments/express/payment.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
             if (saved) {
@@ -130,7 +135,7 @@ const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, cont
                             label="Fecha de pago" {...field}
                             format="dd/MM/yyyy"
                             minDate={new Date(contract.start_date || "")}
-                            maxDate={new Date(contract.end_date || "")}
+                            maxDate={new Date("now")}
                             onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
                         />
                     }} />

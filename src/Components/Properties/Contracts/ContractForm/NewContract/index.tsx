@@ -1,7 +1,6 @@
 import { ICurrency } from "@src/Components/Forms/CurrencySelector";
 import { IProperty } from "@src/Components/Properties/Details";
-import TabsContent from "@src/Components/TabsContent";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { TContractType } from "../../Details";
 import { clone } from "ramda";
 import ConditionalAlert from "@src/Components/ConditionalAlert";
@@ -11,6 +10,8 @@ import useDataResponse from "@src/Hooks/useDataResponse";
 import NewExpressContract from "./Express";
 import NewRecurringContract from "./Recurring";
 import { getUIKey } from "@src/Utils";
+import { Divider, FormControlLabel, Switch } from "@mui/material";
+import { CONTRACT_TYPE } from "@src/Constants";
 
 export interface INewContractData {
     id: number;
@@ -42,6 +43,7 @@ interface INewContractProps {
 
 const NewContract: FC<INewContractProps> = ({ property, onContractDataSaved }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
+    const [isExpress, setIsExpress] = useState<boolean>(false);
     const { validateResult } = useDataResponse();
 
     const saveContractData = (data: FieldValues) => {
@@ -62,20 +64,19 @@ const NewContract: FC<INewContractProps> = ({ property, onContractDataSaved }) =
     
     return (<>
         <ConditionalAlert condition={true} severity="warning" title="No hay un contrato vigente." message="Inicie un contrato nuevo." />
-        <TabsContent tabs={[
-            { 
-                tab: { label: "EXPRESS" },
-                component: () => {
-                    return <NewExpressContract property={property} loading={loading} saveContractData={saveContractData} />;
-                }
-            },
-            { 
-                tab: { label: "RECURRENTE" },
-                component: () => {
-                    return <NewRecurringContract property={property} loading={loading} saveContractData={saveContractData} />;
-                }
+        <FormControlLabel
+            control={
+                <Switch
+                    checked={isExpress}
+                    onChange={() => setIsExpress((exp:boolean) => !exp)}
+                    inputProps={{ 'aria-label': 'express' }}
+                />
             }
-        ]} />
+            label={`Contrato ${isExpress ? CONTRACT_TYPE.express : CONTRACT_TYPE.recurring}`}
+        />
+        <Divider />
+        {!isExpress && <NewRecurringContract property={property} loading={loading} saveContractData={saveContractData} />}
+        {isExpress && <NewExpressContract property={property} loading={loading} saveContractData={saveContractData} />}
     </>);
 }
 

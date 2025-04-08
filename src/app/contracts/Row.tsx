@@ -1,31 +1,33 @@
-import { Box, Button, Card, CardContent, CardHeader, Collapse, Divider, IconButton, Paper, Stack, Table, TableCell, TableRow, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2/Grid2";
+import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Collapse, Divider, IconButton, Paper, Stack, Table, TableCell, TableRow, Typography } from "@mui/material";
 import LabelStatus, { ILabelStatus } from "@src/Components/LabelStatus";
 import { IContract, TContractCharge, TContractType } from "@src/Components/Properties/Contracts/Details";
 import { IProperty } from "@src/Components/Properties/Details";
 import { CSSProperties, FC, useMemo, useState } from "react";
-import { Description, ExpandMore, ExpandLess } from "@mui/icons-material";
+import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import DataTable, { IDataTableColumn } from "@src/Components/DataTable";
 import { dateIsExpired, formatDate, formatToMoney } from "@src/Utils";
-import { DATE_FORMAT } from "@src/Constants";
+import { DATE_FORMAT, STATE_ACTIONS } from "@src/Constants";
 import { isNotNil } from "ramda";
 import ContractType from "@src/Components/ContractType";
+import SummaryDetails from "./Details";
 
-export interface IResumeData {
+interface IResumeRowProps {
     contract: IContract;
     property: IProperty;
-};
-
-interface IResumeRowProps extends IResumeData {
-    openContractGeneralView: (property: IProperty, contract: IContract) => void;
+    loading: boolean;
+    setMainState: (action: string, data?: any) => void;
 }
 
-const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGeneralView }) => {
+const ResumeRow: FC<IResumeRowProps> = ({ property, contract, loading, setMainState }) => {
     const [showChargesData, setChargesData] = useState<boolean>(false);
+    const [showContractDetails, setShowContractDetails] = useState<boolean>(false);
 
     const chargesData: TContractCharge[] = useMemo(() => {
-        return isNotNil(contract.recurring_charges) ? contract.recurring_charges : isNotNil(contract.express_charges) ? contract.express_charges : [];
-    }, [contract.express_charges, contract.recurring_charges]);
+        if (isNotNil(contract)) {
+            return isNotNil(contract.recurring_charges) ? contract.recurring_charges : isNotNil(contract.express_charges) ? contract.express_charges : [];
+        }
+        return [];
+    }, [contract]);
 
     const buildDataContent = (type: TContractType): IDataTableColumn[] => {
         return [
@@ -70,9 +72,10 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
     return (<>
         <TableRow>
             <TableCell>
-                <Stack direction="row" alignItems="center" sx={{ justifyContent: 'center' }} spacing={1}>
-                    <ContractType type={contract.type} onClick={() => openContractGeneralView(property, contract)} />
-                </Stack>
+                {loading && <CircularProgress size="small" />}
+                {!loading && <Stack direction="row" alignItems="center" sx={{ justifyContent: 'center' }} spacing={1}>
+                    <ContractType type={contract.type} onClick={() => setShowContractDetails(true)} />
+                </Stack>}
             </TableCell>
             <TableCell component="th" scope="row">
                 <Typography variant="subtitle2">{property.title}</Typography>
@@ -95,13 +98,12 @@ const ResumeRow: FC<IResumeRowProps> = ({ property, contract, openContractGenera
         <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
             <TableCell style={pd} colSpan={8}>
                 <Collapse in={showChargesData}>
-                    <DataTable columns={buildDataContent(contract.type)} data={chargesData || []} loading={false} />
+                    <DataTable columns={buildDataContent(contract.type)} data={chargesData || []} loading={loading} />
                 </Collapse>
             </TableCell>
         </TableRow>
+        <SummaryDetails property={property} contract={contract} open={showContractDetails} setClose={setShowContractDetails} />
     </>);
-
-   return null;
 };
 
 export default ResumeRow;

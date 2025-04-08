@@ -18,7 +18,7 @@ import { clone, isNil, isNotNil } from "ramda";
 import { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
 import { Controller, FieldArrayWithId, FieldValues, Resolver, useForm, useFormState } from "react-hook-form";
 import * as yup from 'yup';
-import ContractDetails, { IContract } from "../../Details";
+import ContractDetails, { IContract, TContractType } from "../../Details";
 import TextFieldMoney from "@src/Components/Forms/TextFieldMoney";
 import Folders, { IFolder } from "./Folders";
 import Contractors, { IContractor } from "./Contractors";
@@ -30,6 +30,7 @@ export interface IRenewContractModal {
 }
 
 export interface IRenewContractData {
+    type: TContractType;
     property: number;
     value: number;
     currency: ICurrency;
@@ -38,19 +39,14 @@ export interface IRenewContractData {
     end_date: Date | null;
     in_date: Date | null;
     out_date: Date | null;
-}
-/*
-interface IRecurringPayments {
-    label: string;
-    value: number;
-}
-*/
+};
 
 interface IRenewContractProps extends IRenewContractModal {
     setOpen: (renewData: IRenewContractModal) => void;
-}
+};
 
 const formValidations = yup.object().shape({
+    type: yup.string().required(),
     property: yup.number().required(),
     currency: yup.string().required(),
     value: yup.number().min(1, "Escriba un importe mayor a $1.").required("Escriba un importe."),
@@ -62,6 +58,7 @@ const formValidations = yup.object().shape({
 });
 
 export const defaultContractValues: IRenewContractData = {
+    type: "recurring",
     property: 0,
     currency: "mxn",
     value: 0,
@@ -82,7 +79,6 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
     const startDate = watch('start_date', null);
     const endDate = watch('end_date', null);
     const inDate = watch('in_date', null);
-    const outDate = watch('out_date', null);
 
     useEffect(() => {
         if (isNotNil(contract) && isNotNil(property) &&open) {
@@ -100,16 +96,6 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contract, open]);
-
-    useEffect(() => {
-        if(isNotNil(startDate) && isNil(inDate)) {
-            setValue("in_date", startDate);
-        };
-        if(isNotNil(endDate) && isNil(outDate)) {
-            setValue("out_date", endDate);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [startDate, endDate]);
 
     const onFormSubmit = (data: FieldValues) => {
         const { start_date, end_date, in_date, out_date } = data;
@@ -167,7 +153,12 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                     <Controller name="start_date" control={control} render={({ field }) => {
                         return <DatePicker sx={{ width: '100%' }} className='MuiDatePicker' label="Mes de Inicio" {...field}
                             format={DATE_FORMAT.DATE}
-                            onChange={(selectedDate: Date | null) => field.onChange(selectedDate)}
+                            onChange={(selectedDate: Date | null) => {
+                                field.onChange(selectedDate);
+                                setValue("end_date", selectedDate ? add(new Date(selectedDate), { months: 12 }) : null);
+                                setValue("in_date", selectedDate);
+                                setValue("out_date", selectedDate ? add(new Date(selectedDate), { months: 12 }) : null);
+                            }}
                         />
                     }} />
                     <ErrorHelperText {...fieldError(errors.start_date)} />
@@ -178,7 +169,10 @@ const RenewContract: FC<IRenewContractProps> = ({ contract, property, open, setO
                             format={DATE_FORMAT.DATE}
                             disabled={isNil(startDate)}
                             minDate={isNotNil(startDate) ? add(new Date(startDate), { days: 1 }) : undefined}
-                            onChange={(selectedDate: Date | null) => field.onChange(selectedDate)} 
+                            onChange={(selectedDate: Date | null) => {
+                                setValue("out_date", selectedDate);
+                                field.onChange(selectedDate)
+                            }} 
                         />
                     }} />
                     <ErrorHelperText {...fieldError(errors.end_date)} />

@@ -3,13 +3,10 @@ import DataProviders from '@src/DataProvider';
 import { SnackMessages, Dialogs } from '@phoxer/react-components';
 import AuthVerification from '@src/Components/AuthVerification';
 import { StyledEngineProvider } from '@mui/material/styles';
+import { IPageLayout } from '@src/Constants';
 import './global.css';
 
-export type TRootLayout = {
-  children: React.ReactNode;
-}
-
-const RootLayout: React.FC<TRootLayout> = ({ children }) => {
+const RootLayout: React.FC<IPageLayout> = ({ children }) => {
   return (
     <html lang="en">
       <head>

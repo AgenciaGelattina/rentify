@@ -38,7 +38,7 @@ if ($row->type === "recurring") {
     $rent_is_overdue = ($NOW->time > $overdue_date_time) ? true : false;
 
     // RECURRING CHARGES
-    $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,crp.canceled,IFNULL((SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = crp.contract AND recurring = crp.id),0) AS total_amount FROM contracts_recurring_charges AS crp WHERE crp.contract = $contract->id";
+    $query = "SELECT crp.id,crp.label,crp.value,crp.start_date,crp.end_date,crp.canceled,IFNULL((SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = crp.contract AND recurring = crp.id AND confirmed = 1),0) AS total_amount FROM contracts_recurring_charges AS crp WHERE crp.contract = $contract->id";
     $rec_charges = $DB->query($query);
 
     $recurring_charges = [];
@@ -48,7 +48,6 @@ if ($row->type === "recurring") {
     $contract_statements->required_amount = 0;
     $contract_statements->total_amount = 0;
     $contract_statements->pending_amount = 0;
-
     
     while($rec = $rec_charges->fetch_object()) {
         $recurring_charge = new stdClass();
@@ -162,7 +161,7 @@ if ($row->type === "recurring") {
     $rent_is_due = ($NOW->time > $contract_end_date_time) ? true : false;
 
     // EXPRESS CHARGES
-    $query = "SELECT cxc.id,cxc.label,cxc.value,cxc.canceled, IFNULL((SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = cxc.contract AND express = cxc.id),0) AS total_amount FROM contracts_express_charges AS cxc WHERE cxc.contract = $contract->id";
+    $query = "SELECT cxc.id,cxc.label,cxc.value,cxc.canceled, IFNULL((SELECT SUM(cp.amount) FROM contracts_payments AS cp WHERE cp.contract = cxc.contract AND express = cxc.id AND confirmed = 1),0) AS total_amount FROM contracts_express_charges AS cxc WHERE cxc.contract = $contract->id";
     $exp_charges_query = $DB->query($query);
 
     $express_charges = [];

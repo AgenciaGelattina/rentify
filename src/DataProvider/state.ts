@@ -1,10 +1,10 @@
 import { createTheme } from '@mui/material/styles';
-import { IState, IReducer, IUser } from './interfaces';
+import { IState, IReducer, IUser, IContractSummary } from './interfaces';
 import { STATE_ACTIONS, ROUTES_ACTIONS } from '@src/Constants';
 import { createRoutesItems } from './routes';
 import { IListItem } from '@src/Components/Navigation/List/ListItem/ListItem';
 import { isNotNil } from 'ramda';
-
+import { IContract } from '@src/Components/Properties/Contracts/Details';
 // route
 const expandRouter = (listItems: IListItem[], item: IListItem): IListItem[] => {
     const routes = listItems.map((itm: IListItem) => {
@@ -36,9 +36,15 @@ const activeRouter = (listItems: IListItem[], path: string): IListItem[] => {
 export const mainStateDefault: IState = {
     user: {
         id: 0,
-        token: null
+        token: null,
+        role: 0
     },
-    routes: []
+    routes: [],
+    summary: {
+        data: [],
+        updated: 0
+    },
+    contractSummary: null
 }
 
 // Main State
@@ -54,6 +60,43 @@ export const mainStateReducer: IReducer = {
     },
     [ROUTES_ACTIONS.ACTIVE_ROUTE]: (state: IState, path: string) => {
         return { ...state, routes: activeRouter(state.routes, path) };
+    },
+    [STATE_ACTIONS.SET_CONTRACT_SUMMARY]: (state: IState, { contract, property }: IContractSummary) => {
+        return {
+            ...state,
+            contractSummary: {
+                contract,
+                property,
+                updated: new Date().getTime()
+            }
+        }
+       
+    },
+    [STATE_ACTIONS.REMOVE_CONTRACT_SUMMARY]: (state: IState) => {
+        return {
+            ...state,
+            contractSummary: null
+        }
+    },
+    [STATE_ACTIONS.SET_CONTRACTS_SUMMARY]: (state: IState, summaryData: IContractSummary[]) => {
+        return { ...state, summary: {
+            data: summaryData,
+            updated: new Date().getTime()
+        } };
+    },
+    [STATE_ACTIONS.UPDATE_CONTRACT_ON_SUMMARY]: (state: IState, newContract: IContract) => {
+        const { summary } = state;
+        const newSummaryData = summary.data.map((smm : IContractSummary) => {
+            const { contract } = smm;
+            if (isNotNil(contract) && (contract.id === newContract.id)) {
+                return { ...smm, contract: newContract };
+            };
+            return smm;
+        });
+        return { ...state, summary: {
+            data: newSummaryData,
+            updated: new Date().getTime()
+        }};
     }
 };
 
