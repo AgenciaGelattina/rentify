@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material';
 import { DATE_FORMAT } from '@src/Constants';
 import { format, intervalToDuration, Duration, isBefore, isValid } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -12,8 +13,8 @@ export const strToDate = (strDate: string): Date => {
 export const formatDate = (date: TDate, outFormat: string = DATE_FORMAT.MYSQL): string => {
     if(isNotNil(date)) {
         return format(new Date(date), outFormat, { locale: es });
-    }
-    return "Fecha Inválida";
+    };
+    return "Error de formato.";
 }
 
 export const getOnlyDate = (date: Date) => {
@@ -26,4 +27,12 @@ export const diffDates = (start: TDate, end: TDate): Duration => {
 
 export const dateIsExpired = (date: TDate, ): boolean => {
     return isBefore(date, new Date());
+};
+
+// AlertColor By Date (incomplete)
+export const getColorByDateStatus = (date: TDate): AlertColor => {
+    const diff = diffDates(date, new Date());
+    console.log('DIFFF->', date, new Date(), diff);
+
+    return "success";
 };

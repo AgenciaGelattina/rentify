@@ -8,7 +8,7 @@ import { IUser } from '@src/DataProvider/interfaces';
 type TSideBar = {
     open: boolean;
     user: IUser;
-    onClose: (open: boolean) => void;
+    setOpenMenu: (open: boolean) => void;
 }
 /*
 const menuTheme = createTheme({
@@ -35,15 +35,15 @@ const menuTheme = createTheme({
     }
 });
 */
-const SideBar: React.FC<TSideBar> = ({ open, onClose, user }) => {
-    const isDesktop = useMediaQuery('(min-width:600px)');
+const SideBar: React.FC<TSideBar> = ({ open, setOpenMenu, user }) => {
+    const isDesktop = useMediaQuery('(min-width: 900px)');
     const menuWidth = 250;
 
-    return (<Box component="nav" sx={{ width: menuWidth , flexShrink: { sm: 0 }, display: { xs: 'none', sm: 'block' } }}>
+    return (<Box component="nav" sx={{ width: menuWidth, minWidth: menuWidth, display: { xs: "none", md: "block" }}}>
         <SDrawer
             variant={isDesktop? "persistent" : "temporary"}
             open={isDesktop? true : open}
-            onClose={() => onClose(false)}
+            onClose={() => setOpenMenu(false)}
             ModalProps={{
                 keepMounted: true,
             }}
@@ -53,7 +53,7 @@ const SideBar: React.FC<TSideBar> = ({ open, onClose, user }) => {
                 }
             }}
         >
-            <List />
+            <List setOpenMenu={setOpenMenu} />
         </SDrawer>
     </Box>)
 }

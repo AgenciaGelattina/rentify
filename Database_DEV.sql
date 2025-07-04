@@ -1,4 +1,4 @@
--- DESARROLLO V 1.2.0
+-- DESARROLLO V 1.2.1
 
 -- --------------------------------------------------------
 -- Table `accounts_roles`
@@ -208,4 +208,17 @@ CREATE TABLE `contracts_payments` (
   FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`),
   KEY (`recurring`),
   KEY (`express`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- Table structure for table `binncles`
+CREATE TABLE `binnacles` (
+  `id` bigint(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `account` smallint(5) UNSIGNED NOT NULL,
+  `property` smallint(5) UNSIGNED NOT NULL,
+  `contract` mediumint(8) UNSIGNED NOT NULL,
+  `text` varchar(255) NOT NULL,
+  `created` date NOT NULL,
+  FOREIGN KEY (`account`) REFERENCES accounts (`id`),
+  FOREIGN KEY (`property`) REFERENCES properties (`id`),
+  FOREIGN KEY (`contract`) REFERENCES property_contracts (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

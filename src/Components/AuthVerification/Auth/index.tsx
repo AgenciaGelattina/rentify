@@ -48,7 +48,7 @@ const AuthUser: FC = () => {
             setTokenValidation(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sessionStorage, state.user]);
+    }, [sessionStorage, state.user.id]);
 
     useEffect(() => {
         const user = validateResult(auth.result);
@@ -58,6 +58,7 @@ const AuthUser: FC = () => {
                 sessionStorage?.setItem('token', user.token);
             }
             setMainState(STATE_ACTIONS.SET_USER, userData);
+            
         } else {
             setTokenValidation(false);
         }

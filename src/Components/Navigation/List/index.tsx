@@ -10,6 +10,7 @@ import { ROUTES_ACTIONS } from '@src/Constants';
 
 type TListProps = {
     menuListProps?: MenuListProps;
+    setOpenMenu: (open: boolean) => void;
 }
 
 /*
@@ -23,7 +24,7 @@ const formatListDataToListStatus = (listData: IListItem[]): IListItem[] => {
     });
 }*/
 
-const List: FC<TListProps> = ({ menuListProps }) => {
+const List: FC<TListProps> = ({ menuListProps, setOpenMenu }) => {
     const { state: { routes }, setMainState } = useContext(StoreContext);
     const { push } = useRouter();
     const pathname = usePathname();
@@ -31,6 +32,7 @@ const List: FC<TListProps> = ({ menuListProps }) => {
     const onListItemSelected = (item: IListItem) => {
         if (isNotNil(item.value)) {
             push(item.value);
+            setOpenMenu(false);
         } else {
             setMainState(ROUTES_ACTIONS.UPDATE_ROUTE, item);
         }

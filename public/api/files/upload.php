@@ -7,7 +7,8 @@ function clean($str) {
     $str = preg_replace('/\\s+/','_', $str);
     $str = preg_replace('/[^A-Za-z0-9_]/', '', $str);
     return preg_replace('/_+/','_', $str);
-}
+};
+
 
 if (METHOD === 'POST') {
     require '../database.php';

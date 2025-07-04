@@ -15,7 +15,7 @@ if (METHOD === 'POST') {
             $msg = $confirmed === 1 ? "confirmado" : "desconfirmado";
 
             $contract_query = "SELECT id,property,type,due_date,start_date,end_date,in_date,out_date,currency,canceled,finalized FROM property_contracts WHERE id=$contract_id";
-            require "../contract_result.php";
+            require "../data/result.php";
             throwSuccess($contract, "El pago #$payment_id fue $msg.");
         } else {
             throwError(203, "Error al revisar pago #$payment_id");

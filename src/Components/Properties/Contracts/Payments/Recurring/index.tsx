@@ -1,7 +1,7 @@
 import { ILabelStatus } from "@src/Components/LabelStatus";
 import { FC, useEffect, useState } from "react";
 import { IContract } from "../../Details";
-import { Header, TCallBack, useFetchData } from "@phoxer/react-components";
+import { TCallBack, useFetchData } from "@phoxer/react-components";
 import { Box, Button, FormControlLabel, Switch } from "@mui/material";
 import { LibraryAdd } from '@mui/icons-material';
 import useDataResponse from "@src/Hooks/useDataResponse";
@@ -10,14 +10,8 @@ import RecurringPaymentForm, { IRecurringPaymentForm, recurringPaymentFormDefaul
 import { isNotNil } from "ramda";
 import PaymentMonth from "./Months";
 import PaymentsList, { IPaymentsData, paymentDataDefault } from "../List";
-
-export interface IRecurringCharge {
-    id: number;
-    label: string;
-    value: number;
-    start_date: Date;
-    end_date: Date;
-};
+import { IRecurringCharge } from "../../Charges/Recurring/Detail";
+import Header from "@src/Components/Header";
 
 export interface IPaymentMonth {
     date: IRecurringPaymentDate;
@@ -79,7 +73,7 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showMonths]);
 
-    const removePayment = (id: number) => {
+    const setDeletePayment = (id: number) => {
         fetchData.delete('/properties/contracts/payments/recurring/payment.php', { payment_id: id, contract_id: contract.id }, (response: TCallBack) => {
             const deleted = validateResult(response.result);
             if (deleted) {
@@ -97,29 +91,17 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract }) => {
         });
     };
 
-    const editPayment = (payment: IPayment) => {
-        setPaymentForm({ payment, payment_date: new Date, open: true });
+    const setEditPayment = (payment: IPayment) => {
+        setPaymentForm({ payment, open: true });
     };
-
-    const setQuickPayment = (rp: IRecurringCharge, payment_date: Date = new Date) => {
-        const { id, value, label } = rp;
-        const payment: IPayment = {
-            id: 0,
-            contract: contract.id,
-            recurring: { id, label },
-            amount: value,
-            currency: contract.currency,
-            date: payment_date,
-            clarifications: '',
-            type: "monthly",
-            confirmed: false
-        }
-        setPaymentForm({ payment, payment_date, open: true });
+    
+    const setQuickPayment = (payment: IPayment) => {
+        setPaymentForm({ payment, open: true });
     };
     
     return (<>
-        <Header title={showMonths ? "PAGOS (POR MES)" : "PAGOS"} typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
-            <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ payment_date: new Date, open: true })}>
+        <Header title="PAGOS" subTitle={showMonths ? "POR MES" : "LISTA DE PAGOS"}>
+            <Button variant="outlined" startIcon={<LibraryAdd fontSize="inherit" color='primary' />} onClick={() => setPaymentForm({ open: true })}>
                 REGISTRAR PAGO
             </Button>
         </Header>
@@ -134,9 +116,9 @@ const RecurringPayments: FC<IRecurringPaymentsProps> = ({ contract }) => {
             />
         </Box>
         {showMonths && monthlyPayments.map((payment: IPaymentMonth, ix:number) => {
-            return <PaymentMonth key={`pm${ix}`} paymentData={payment} setQuickPayment={setQuickPayment} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment} />
+            return <PaymentMonth key={`pm${ix}`} contract={contract} paymentData={payment} setQuickPayment={setQuickPayment} setDeletePayment={setDeletePayment} setEditPayment={setEditPayment} confirmPayment={confirmPayment} />
         })}
-        {!showMonths && (<PaymentsList paymentsData={paymentsData} isLoading={loading} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment} />)}
+        {!showMonths && (<PaymentsList paymentsData={paymentsData} isLoading={loading} setDeletePayment={setDeletePayment} setEditPayment={setEditPayment} confirmPayment={confirmPayment} />)}
         <RecurringPaymentForm {...paymentForm} contract={contract} setOpen={setPaymentForm} getPayments={showMonths ? getMonthlyPayments : getPaymentsList} />
     </>);
 };

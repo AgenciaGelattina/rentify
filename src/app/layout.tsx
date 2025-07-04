@@ -14,16 +14,18 @@ const RootLayout: React.FC<IPageLayout> = ({ children }) => {
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta name="description" content="Admin" />
         <link rel="icon" href="/assets/images/favicon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
         />
       </head>
       <body>
         <DataProviders>
           <StyledEngineProvider injectFirst>
             <SnackMessages>
-              <Dialogs>         
+              <Dialogs>
                   <AuthVerification>
                     {children}
                   </AuthVerification>

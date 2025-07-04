@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
 import { CardContent, IconButton, Stack, Typography } from '@mui/material';
@@ -8,6 +8,7 @@ import { AddCircle, Edit } from '@mui/icons-material';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import TypeData, { ITypeData, TTypeData, defaultTypeDataState } from './TypesData';
+import Header from '@src/Components/Header';
 
 const TypesManagement: FC = () => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -65,8 +66,8 @@ const TypesManagement: FC = () => {
         ]
     };
 
-    return (<RoleVerification role={1}>
-        <Header title="TIPOS DE GRUPO DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+    return (<RoleVerification roles={[1,2]}>
+        <Header title="TIPOS DE GRUPO DE PROPIEDADES">
             <IconButton onClick={() => setTypeData({ ...defaultTypeDataState, open: true })}>
                 <AddCircle fontSize="inherit" color='primary' />
             </IconButton>

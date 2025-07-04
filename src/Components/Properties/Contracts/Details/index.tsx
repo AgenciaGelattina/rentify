@@ -11,6 +11,8 @@ import { isNotNil } from 'ramda';
 import { ConditionalRender } from '@phoxer/react-components';
 import { ICurrency } from '@src/Components/Forms/CurrencySelector';
 import { formatDate } from '@src/Utils';
+import { IPaymentsData } from '../Payments/List';
+import { IContractor } from '../Contractors/Details';
 
 export interface IContract {
     id: number;
@@ -24,7 +26,9 @@ export interface IContract {
     status: ILabelStatus;
     recurring_charges?: IRecurringCharge[];
     express_charges?: IExpressCharge[];
+    payments?: IPaymentsData;
     statements: IContractStatements;
+    contractors?: IContractor[];
     expired: boolean;
     canceled: boolean;
     finalized: boolean;
@@ -38,7 +42,9 @@ export interface IContractDueDate {
     day: number;
     start: string | number | Date;
     end: string | number | Date;
-}
+    due: boolean;
+    overdue: boolean;
+};
 
 interface IContractDetailsPros {
     contract: IContract;
@@ -50,7 +56,7 @@ export interface IContractStatements {
     required_amount: number;
     total_amount: number;
     pending_amount: number;
-}
+};
 
 const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions, expanded }) => {
     const { id, type, start_date, end_date, due_date, in_date, out_date, currency, status, expired, canceled, finalized } = contract;
@@ -101,10 +107,10 @@ const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions, expanded
                         <LabelTextBox title="Día de Corte:" text={due_date.day} />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
-                        <LabelTextBox title="Próxima Fecha de corte:" text={formatDate(due_date.start, DATE_FORMAT.DATE_LONG)} />
+                        <LabelTextBox title="Próxima Fecha de corte:" text={formatDate(due_date.start, DATE_FORMAT.DATE_LONG)} titleTypographyProps={{ color: due_date.due ? "error" : "success" }}  />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
-                        <LabelTextBox title="Vencimiento de Corte:" text={formatDate(due_date.end, DATE_FORMAT.DATE_LONG)} />
+                        <LabelTextBox title="Vencimiento de Corte:" text={formatDate(due_date.end, DATE_FORMAT.DATE_LONG)} titleTypographyProps={{ color: due_date.overdue ? "error" : "success" }} />
                     </Grid>
                 </Grid>
                 <Divider sx={{ margin: '1rem 0 1rem 0' }} />
@@ -121,6 +127,6 @@ const ContractDetails: FC<IContractDetailsPros> = ({ contract, actions, expanded
             </ConditionalRender>
         </AccordionDetails>
     </Accordion>);
-}
+};
 
 export default ContractDetails;

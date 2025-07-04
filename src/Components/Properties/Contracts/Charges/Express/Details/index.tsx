@@ -1,14 +1,10 @@
 import { FC } from "react";
-import Grid from '@mui/material/Grid2';
-import { IContract } from "../../../Details";
-import LabelStatus, { ILabelStatus } from "@src/Components/LabelStatus";
-import { formatDate } from '@src/Utils';
-import LabelTextBox from "@src/Components/LabelTextBox";
-import { CURRENCY, DATE_FORMAT } from "@src/Constants";
-import { Divider, Typography } from "@mui/material";
+import { ILabelStatus } from "@src/Components/LabelStatus";
+import { IPaymentsData } from "../../../Payments/List";
 
 export interface IExpressCharge {
     id: number;
+    contract: number;
     label: string;
     value: number;
     start_date: Date;
@@ -18,6 +14,7 @@ export interface IExpressCharge {
     statements: IExpressStatements;
     expired: boolean;
     canceled: boolean;
+    payments?: IPaymentsData;
 }
 
 export interface IExpressStatements {
@@ -25,6 +22,7 @@ export interface IExpressStatements {
     total_amount: number;
     pending_amount: number;
     pending_days: number;
+    pending_payments: boolean;
 }
 
 interface IExpressChargeDetailProps {

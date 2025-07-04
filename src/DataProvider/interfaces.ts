@@ -39,10 +39,17 @@ export interface IStateContext {
     setMainState: (action: string, data?: any) => void;
 }
 
+export interface IRole {
+    id: number;
+    label: string;
+}
+
 export interface IUser {
     id: number;
     token: string | null;
-    name?: string;
+    names?: string;
+    surnames?: string;
+    fullName?: string;
     email?: string;
-    role: number;
+    role?: IRole;
 }

@@ -1,15 +1,22 @@
 import { IListItem } from '@src/Components/Navigation/List/ListItem/ListItem';
-import { Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage, DomainDisabled } from '@mui/icons-material';
+import { Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage, DomainDisabled, PendingActions, Payments } from '@mui/icons-material';
 import { getUIKey } from '@src/Utils';
 
 export const createRoutesItems = (roleID: number): IListItem[] =>  {
     return [
         {
             id: getUIKey(),
-            label: "Recaudaciones",
+            label: "Vencimientos",
+            value: "/contracts/expiration",
+            active: false,
+            icon: <PendingActions />
+        },
+        {
+            id: getUIKey(),
+            label: "Cobranza",
             value: "/contracts/payments",
             active: false,
-            icon: <HomeWork />
+            icon: <Payments />
         },
         {
             id: getUIKey(),

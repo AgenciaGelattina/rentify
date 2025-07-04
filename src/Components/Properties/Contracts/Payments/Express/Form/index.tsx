@@ -10,7 +10,7 @@ import { clone, isNil, isNotNil } from "ramda";
 import { Button, DialogActions, DialogContent, Divider, TextField } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import TextFieldMoney from "@src/Components/Forms/TextFieldMoney";
-import { fieldError, formatDate } from "@src/Utils";
+import { fieldError, formatDate, showOnRoles } from "@src/Utils";
 import { DatePicker } from "@mui/x-date-pickers";
 import PaymentTypeSelector from "@src/Components/Forms/PaymentType";
 import * as yup from 'yup';
@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import RecurringChargesSelector from "@src/Components/Forms/ChargesSelector/RecurringCharges";
 import ExpressChargesSelector from "@src/Components/Forms/ChargesSelector/ExpressCharges";
 import { StoreContext } from "@src/DataProvider";
+import ConfirmationAlert from "../../ConfirmationAlert/indext";
 
 export interface IExpressPaymentData {
     id: number;
@@ -29,7 +30,6 @@ export interface IExpressPaymentData {
 }
 
 export interface IExpressPaymentForm {
-    payment_date: Date;
     open: boolean;
     payment?: IPayment;
 };
@@ -40,7 +40,7 @@ interface IExpressPaymentFormProps extends IExpressPaymentForm {
     getPayments: () => void;
 };
 
-export const expressPaymentFormDefault: IExpressPaymentForm = { open: false, payment_date: new Date };
+export const expressPaymentFormDefault: IExpressPaymentForm = { open: false };
 
 const formValidations = yup.object().shape({
     id: yup.number().required(),
@@ -51,22 +51,22 @@ const formValidations = yup.object().shape({
     clarifications: yup.string(),
 });
 
-const defaultExpressPaymentData = (contract: IContract, payment_date: Date = new Date): IExpressPaymentData => {
+const defaultExpressPaymentData = (contract: IContract, payment?: IPayment): IExpressPaymentData => {
     return {
         id: 0,
         contract: contract.id,
         express: 0,
         amount: 0,
-        date: payment_date,
+        date: isNotNil(payment) ? payment.date : new Date(),
         clarifications: ""
     }
 }
 
-const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, contract, payment_date, setOpen, getPayments }) => {
+const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, contract, setOpen, getPayments }) => {
     const { state: { user } } = useContext(StoreContext);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultExpressPaymentData(contract, payment_date), resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultExpressPaymentData(contract, payment), resolver: yupResolver(formValidations) });
     const [paymentType, setPaymentType] = useState<TPaymentType>("unique");
     //const { isDirty } = useFormState({ control });
 
@@ -107,7 +107,7 @@ const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, cont
         data.date = formatDate(date);
 
         //role data
-        data.confirmed = (user.role < 3) ? 1 : 0;
+        data.confirmed = showOnRoles(user, [1,2]);
 
         fetchData.post('/properties/contracts/payments/express/payment.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
@@ -118,7 +118,33 @@ const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, cont
         });
     };
 
-    const dialogLabel = isNil(payment) ?  'REGISTRAR PAGO' :  'EDITAR PAGO';
+    const isEdition = (isNotNil(payment) && (payment.id > 0)) || false;
+    const isConfirmed = (isNotNil(payment) && payment.confirmed) || false;
+    const dialogLabel = isEdition ?  'EDITAR PAGO' : 'REGISTRAR PAGO';
+
+    const setPaymentConfirmation = () => {
+        if (isNotNil(payment)) {
+            fetchData.post('/properties/contracts/payments/confirm.php', { payment_id: payment.id, contract_id: contract.id, confirmed: isConfirmed ? 0 : 1 }, (response: TCallBack) => {
+                const confirmed = validateResult(response.result);
+                if (confirmed) {
+                    getPayments();
+                    closePaymentForm();
+                }
+            });
+        }
+    };
+
+    const setDeletePayment = () => {
+        if (isNotNil(payment)) {
+            fetchData.delete('/properties/contracts/payments/recurring/payment.php', { payment_id: payment.id, contract_id: contract.id }, (response: TCallBack) => {
+                const deleted = validateResult(response.result);
+                if (deleted) {
+                    getPayments();
+                    closePaymentForm();
+                }
+            });
+        }
+    };
 
     return (<RspDialog open={open} maxWidth="sm" onClose={closePaymentForm} >
         <RspDialogTitle title={dialogLabel} onClose={closePaymentForm} />
@@ -167,9 +193,11 @@ const ExpressPaymentForm:  FC<IExpressPaymentFormProps> = ({ payment, open, cont
                 </Grid>
             </Grid>
             <Divider />
+            <ConfirmationAlert isEdition={isEdition} isConfirmed={isConfirmed} setPaymentConfirmation={setPaymentConfirmation} />
         </DialogContent>
         <DialogActions>
-          <Button disabled={loading} onClick={handleSubmit((data) => onFormSubmit(data))}>{dialogLabel}</Button>
+            {((isEdition && !isConfirmed) || showOnRoles(user, [1,2])) && <Button disabled={loading} color="error" onClick={setDeletePayment}>BORRAR</Button>}
+            {(!isConfirmed || showOnRoles(user, [1,2])) && <Button disabled={loading} onClick={handleSubmit((data) => onFormSubmit(data))}>{dialogLabel}</Button>}
         </DialogActions>
     </RspDialog>);
 };

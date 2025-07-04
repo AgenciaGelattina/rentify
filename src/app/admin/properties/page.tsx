@@ -2,7 +2,7 @@
 import { FC, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import RoleVerification from '@src/Components/RoleVerification';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
@@ -13,6 +13,7 @@ import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
 import { Edit, Description } from '@mui/icons-material';
 import { IProperty } from '@src/Components/Properties/Details';
+import Header from '@src/Components/Header';
 
 const initialQueryParams: FieldValues = {
     group: null
@@ -119,8 +120,8 @@ const PropertiesManagement: FC = () => {
         ]
     }
 
-    return (<RoleVerification role={1}>
-        <Header title="ADMINISTRACIÓN DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+    return (<RoleVerification roles={[1,2]}>
+        <Header title="ADMINISTRACIÓN DE PROPIEDADES">
             <Button size='small' disabled={loading} onClick={() => setPropertyData({ open: true, id: 0 })}>+ NUEVA PROPIEDAD</Button>
         </Header>
         <CardBox>

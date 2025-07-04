@@ -36,8 +36,7 @@ const activeRouter = (listItems: IListItem[], path: string): IListItem[] => {
 export const mainStateDefault: IState = {
     user: {
         id: 0,
-        token: null,
-        role: 0
+        token: null
     },
     routes: [],
     summary: {
@@ -50,7 +49,10 @@ export const mainStateDefault: IState = {
 // Main State
 export const mainStateReducer: IReducer = {
     [STATE_ACTIONS.SET_USER]: (state: IState, user: IUser) => {
-        return { ...state, user, routes: createRoutesItems(user.role || 0) };
+        if (user.id > 0 && isNotNil(user.role)) {
+            return { ...state, user, routes: createRoutesItems(user.role.id) };
+        }
+        return mainStateDefault;
     },
     [STATE_ACTIONS.LOGIN_OUT]: () => {
         return mainStateDefault;
@@ -101,8 +103,30 @@ export const mainStateReducer: IReducer = {
 };
 
 // Theme
+
+declare module '@mui/material/styles' {
+  interface Palette {
+    attencion: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    attencion?: PaletteOptions['primary'];
+  }
+};
+
+declare module '@mui/material/Alert' {
+  interface AlertPropsColorOverrides {
+    attencion: true;
+  }
+};
+
 export const theme = createTheme({
     palette: {
+        attencion: {
+            main: '#ffea00',
+            dark: '#ffea00',
+            contrastText: '#FFF'
+        },
     },
     components: {
         MuiTextField: {

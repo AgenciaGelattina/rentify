@@ -59,7 +59,7 @@ if (METHOD === 'GET') {
             $contract->finalized = false;
 
             // add $contract data by type
-            require "contract_type.php";
+            require "./data/$row->type.php";
 
             // PROPERTY
             $property = new stdClass();

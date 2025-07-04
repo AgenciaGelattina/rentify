@@ -5,16 +5,17 @@ import AppBar, { AppBarOwnProps } from '@mui/material/AppBar';
 import Toolbar, { ToolbarOwnProps } from '@mui/material/Toolbar';
 import Stack from '@mui/material/Stack';
 import Typography, { TypographyOwnProps } from '@mui/material/Typography';
-import { ConditionalRender } from '@phoxer/react-components';
-import { isNotNil } from 'ramda';
+import { Box } from '@mui/material';
 
 interface IHeader {
     title: string;
+    subTitle?: string;
     icon?: JSX.Element;
     children?: React.ReactNode;
     appBarProps?: AppBarOwnProps;
     toolBarProps?: ToolbarOwnProps;
-    typographyProps?: TypographyOwnProps;
+    titleProps?: TypographyOwnProps;
+    subTitleProps?: TypographyOwnProps;
 }
 
 const SAppBar = styled(AppBar)`
@@ -23,28 +24,28 @@ const SAppBar = styled(AppBar)`
     color: #000;
     border-bottom: .1rem rgba(0, 0, 0, 0.12) solid;
     padding-bottom: 1rem;
-    width: 100%
 `
 const SToolbar = styled(Toolbar)`
     padding: 0px 8px !important;
-    width: 100%;
     min-height: 20px;
 `
-const STypography = styled(Typography)`
-    font-size: 1.2rem;
+const STitle = styled(Typography)`
     font-weight: bold;
     margin-left: 0.5rem;
-    flex-grow: 1;
-    line-height: 0rem;
+    line-height: 1rem;
+`
+const SSubTitle = styled(Typography)`
+    margin-left: 0.5rem;
 `
 
-const Header: FC<IHeader> = ({ title, icon, children, appBarProps, toolBarProps, typographyProps }) => {
+const Header: FC<IHeader> = ({ title, subTitle, icon, children, appBarProps, toolBarProps, titleProps, subTitleProps }) => {
     return (<SAppBar { ...{ position:"static", ...appBarProps } }>
         <SToolbar variant="dense" {...toolBarProps}>
-            {icon && icon}
-            <ConditionalRender condition={isNotNil(typographyProps)} showOnNoCondition={<STypography>{title}</STypography>}>
-                <Typography {...typographyProps} sx={{ flexGrow: 1 }}>{title}</Typography>
-            </ConditionalRender>
+            {icon && icon} 
+            <Box sx={{ flexGrow: 1 }}>
+                <STitle variant="h6" {...titleProps} >{title}</STitle>
+                {subTitle && <SSubTitle variant="body2" {...subTitleProps} >{subTitle}</SSubTitle>}
+            </Box>
             {children && <Stack spacing={1} direction="row">{children}</Stack>}
         </SToolbar>
     </SAppBar>)

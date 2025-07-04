@@ -15,24 +15,25 @@ import { StoreContext } from '@src/DataProvider';
 export interface IPaymentsData {
     payments: IPayment[];
     total_amount: number;
+    pending_amount: number;
 }
 
-export const paymentDataDefault: IPaymentsData = { payments: [], total_amount: 0 };
+export const paymentDataDefault: IPaymentsData = { payments: [], total_amount: 0, pending_amount: 0 };
 
 interface IPaymentsListProps {
     paymentsData: IPaymentsData;
     isLoading: boolean;
-    removePayment: (id: number) => void;
-    editPayment: (payment: IPayment) => void;
+    setDeletePayment: (id: number) => void;
+    setEditPayment: (payment: IPayment) => void;
     confirmPayment: (id: number, confirmed: number) => void;
 }
 
-const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefault, isLoading, editPayment, removePayment, confirmPayment }) => {
+const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefault, isLoading, setEditPayment, setDeletePayment, confirmPayment }) => {
     const { state: { user } } = useContext(StoreContext);
     const [clarification, setClarification] = useState<TClarificationsModal>(descriptionModalDefault);
 
-    const isAdmin = user.role < 3;
-    const isEditor = user.role > 3;
+    const isAdmin = user.role && user.role.id < 3;
+    const isEditor = user.role && user.role.id > 3;
 
     const buildDataContent = (): IDataTableColumn[] => {
         return [
@@ -46,7 +47,7 @@ const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefaul
                         {isAdmin && (<IconButton color={payment.confirmed ? 'success' : 'warning'} onClick={() => confirmPayment(payment.id, payment.confirmed ? 0 : 1)}>
                             <CheckBox fontSize="inherit" />
                         </IconButton>)}
-                        {(isAdmin || (isEditor && !payment.confirmed)) && (<IconButton onClick={() => editPayment(payment)}>
+                        {(isAdmin || (isEditor && !payment.confirmed)) && (<IconButton onClick={() => setEditPayment(payment)}>
                             <Edit fontSize="inherit" />
                         </IconButton>)}
                         {!isEmpty(payment.clarifications) && (<IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
@@ -98,7 +99,7 @@ const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefaul
                 component: (payment: IPayment) => {
                     if (isAdmin || (isEditor && !payment.confirmed)) {
                         return (<Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={1}>
-                        <IconButton onClick={() => removePayment(payment.id)}>
+                        <IconButton onClick={() => setDeletePayment(payment.id)}>
                                 <DeleteForever fontSize="inherit" color="error" />
                             </IconButton>
                         </Stack>);
@@ -113,7 +114,8 @@ const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefaul
         <DataTable columns={buildDataContent()} data={paymentsData.payments} loading={isLoading} />
         <ClarificationsModal {...clarification} onClose={setClarification} />
         <Divider />
-        <Typography variant="subtitle2" sx={{ textAlign: 'right' }}>{`Total: $${paymentsData.total_amount}`}</Typography>
+        <Typography variant="subtitle2" sx={{ textAlign: 'right' }}>{`Total Cobrado: $${paymentsData.total_amount}`}</Typography>
+        <Typography variant="caption" sx={{ textAlign: 'right' }}>{`Pendiente: $${paymentsData.pending_amount}`}</Typography>
     </Box>)
 }
 

@@ -1,12 +1,10 @@
 import { FC } from "react";
 import { ILabelStatus } from "@src/Components/LabelStatus";
-import { formatDate } from '@src/Utils';
-import LabelTextBox from "@src/Components/LabelTextBox";
-import { CURRENCY, DATE_FORMAT } from "@src/Constants";
-import { Divider, Typography } from "@mui/material";
+import { IPaymentsData } from "../../../Payments/List";
 
 export interface IRecurringCharge {
     id: number;
+    contract: number;
     label: string;
     value: number;
     start_date: Date | string;
@@ -17,11 +15,14 @@ export interface IRecurringCharge {
     statements: IRecurringStatements;
     expired: boolean;
     canceled: boolean;
+    payments?: IPaymentsData;
 }
 
 export interface IRecurringChargeDueDate {
     start: Date;
     end: Date;
+    due: boolean;
+    overdue: boolean;
 }
 
 export interface IRecurringStatements {
@@ -29,6 +30,7 @@ export interface IRecurringStatements {
     total_amount: number;
     pending_amount: number;
     pending_months: number;
+    pending_payments: boolean;
 }
 
 interface IRecurringChargeDetailProps {

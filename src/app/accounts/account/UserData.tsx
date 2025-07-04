@@ -5,11 +5,13 @@ import * as yup from 'yup';
 import { CardActions, CardContent, TextField, Button, Divider, Box } from '@mui/material';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import Grid from '@mui/material/Grid2';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import { fieldError } from '@src/Utils';
 import { IUser } from '@src/DataProvider/interfaces';
 import { useEffect } from 'react';
 import useDataResponse from '@src/Hooks/useDataResponse';
+import Header from '@src/Components/Header';
+import { ManageAccounts } from '@mui/icons-material';
 
 type TAccountData = {
     id?: number;
@@ -59,7 +61,7 @@ const UserData: React.FC<TUSerData> = ({ user }) => {
     }
 
     return (<Box sx={{ marginTop: '1rem' }}>
-        <Header title="ACCOUNT" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }} />
+        <Header title="ACCOUNT" icon={<ManageAccounts />} />
         <CardBox>
             <CardContent>
                 <Grid container spacing={2} sx={{ marginTop: '1rem' }}>

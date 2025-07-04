@@ -27,8 +27,8 @@ function getRowsArray($queryRows){
     return $rows;
 }
 
-function checkDueDateDay($due_date) {
-    return intval($due_date) < 10 ? '0'.$due_date : $due_date;
+function addZero($num) {
+    return intval($num) < 10 ? '0'.$num : $num;
 }
 
 function getTotalMonths($start_date, $end_date) {
@@ -41,6 +41,17 @@ function getTotalMonths($start_date, $end_date) {
         return ($interval->y * 12) + $interval->m;
     }
 };
+
+function getCurrentMonth($start_date) {
+    $date1 = new DateTime($start_date);
+    $now_time = new DateTime('now');
+    $interval = $date1->diff($now_time);
+    if ($interval->d > 0) {
+        return ($interval->y * 12) + ($interval->m + 1);
+    } else {
+        return ($interval->y * 12) + $interval->m;
+    }
+}
 
 function getTotalDays($start_date, $end_date) {
     $date1 = new DateTime($start_date);

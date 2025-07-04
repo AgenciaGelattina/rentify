@@ -16,7 +16,7 @@ const DataProviders: React.FC<IDataProviders> = ({ children }) => {
   const setMainState = (action: string, data?: any) => {
     dispatchState({ action, data });
   };
-  
+
   const memoizedTheme = useMemo(()=>{
     return createTheme({
       ...theme

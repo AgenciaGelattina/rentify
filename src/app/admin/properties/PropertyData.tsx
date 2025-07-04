@@ -24,7 +24,7 @@ interface IPropertyDataProps extends IPropertyData {
     getProperties: () => void;
 }
 
-export type TPropertyData = {
+export interface IPropertyFields {
     id: number;
     title: string;
     description: string;
@@ -43,7 +43,7 @@ const formValidations = yup.object().shape({
     status: yup.number().min(1,"Selecciona una opción")
 });
 
-const defaultValues: TPropertyData = {
+const defaultValues: IPropertyFields = {
     id: 0,
     title: "",
     description: "",
@@ -54,7 +54,7 @@ const defaultValues: TPropertyData = {
 
 const PropertyData: React.FC<IPropertyDataProps> = ({ id, open, setOpen, getProperties }) => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
-    const { handleSubmit, control, formState: { errors }, reset } = useForm<TPropertyData>({ defaultValues, resolver: yupResolver(formValidations) as Resolver<TPropertyData> });
+    const { handleSubmit, control, formState: { errors }, reset } = useForm<IPropertyFields>({ defaultValues, resolver: yupResolver(formValidations) as Resolver<IPropertyFields> });
     const { isDirty } = useFormState({ control });
     const { validateResult } = useDataResponse();
 

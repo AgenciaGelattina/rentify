@@ -4,7 +4,7 @@ import { StoreContext } from '@src/DataProvider';
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Header, TCallBack, useFetchData } from "@phoxer/react-components";
+import { TCallBack, useFetchData } from "@phoxer/react-components";
 import useDataResponse from "@src/Hooks/useDataResponse";
 import useSessionStorage from '@src/Hooks/useSessionStorage';
 import { CardActions, CardContent, TextField, Button, Divider, FormControlLabel, Switch, Box } from '@mui/material';
@@ -13,6 +13,7 @@ import Grid from '@mui/material/Grid2';
 import KeyIcon from '@mui/icons-material/Key';
 import { fieldError } from '@src/Utils';
 import { STATE_ACTIONS } from '@src/Constants';
+import Header from "@src/Components/Header";
 
 type TAccountData = {
     password: string;
@@ -58,7 +59,7 @@ const Password: React.FC = () => {
     const passwordType = show ? "text" : "password";
 
     return (<Box sx={{ marginTop: '2rem' }}>
-        <Header title="PASSWORD" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }} icon={<KeyIcon />}/>
+        <Header title="PASSWORD" icon={<KeyIcon />}/>
         <CardBox>
             <CardContent>
                 <Grid container spacing={2} sx={{ marginTop: '1rem' }}>

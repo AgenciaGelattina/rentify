@@ -9,7 +9,7 @@ export const LANG: Record<string, string> = {
 
 export const DATE_FORMAT: Record<string, string> = {
     MYSQL: "yyyy-MM-dd",
-    MONTH_YEAR: "LLLL yyyy",
+    MONTH_YEAR: "LLLL, yyyy",
     DATE_LONG: "PPPP",
     DATE: "dd/MM/yyyy"
 };

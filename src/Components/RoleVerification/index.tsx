@@ -1,16 +1,18 @@
-import { useContext } from "react";
+import { FC, ReactNode, useContext } from "react";
 import { StoreContext } from '@src/DataProvider';
 import { Alert } from "@mui/material";
+import { showOnRoles } from "@src/Utils";
 
 type TRoleVerification = {
-    children: React.ReactNode;
-    role: number;
-}
+    children: ReactNode;
+    roles: number[];
+};
 
-const RoleVerification: React.FC<TRoleVerification> = ({ children, role }) => {
+const RoleVerification: FC<TRoleVerification> = ({ children, roles }) => {
     const { state } = useContext(StoreContext);
     const { user } = state;
-    return (user.role && user.role <= role) ? children : <Alert color="error">NOT AUTORIZED.</Alert>;
+    
+    return showOnRoles(user, roles) ? children : <Alert color="error">NOT AUTORIZED.</Alert>;
 }
 
 export default RoleVerification;

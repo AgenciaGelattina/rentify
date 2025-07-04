@@ -6,10 +6,10 @@ import { isNil, isNotNil } from 'ramda';
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { getUIKey } from "@src/Utils";
 import DummyTextField from "../DummyTextField";
-import { TPropertyData } from "@src/app/admin/properties/PropertyData";
+import { IPropertyFields } from "@src/app/admin/properties/PropertyData";
 
 interface IPropertiesGroupsSelector {
-  field: ControllerRenderProps<FieldValues, string> | ControllerRenderProps<TPropertyData, "group">;
+  field: ControllerRenderProps<FieldValues, string> | ControllerRenderProps<IPropertyFields, "group">;
 }
 
 const PropertiesGroupsSelector: FC<IPropertiesGroupsSelector> = ({ field }) => {

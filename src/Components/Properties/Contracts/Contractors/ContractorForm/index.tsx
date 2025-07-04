@@ -10,14 +10,7 @@ import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
 import { fieldError, getUIKey } from '@src/Utils';
 import { isNil, isNotNil } from 'ramda';
-
-export interface IContractor {
-    id: number;
-    names: string;
-    surnames: string;
-    email: string;
-    phone: string;
-}
+import { IContractor } from '../Details';
 
 export type TContractorForm = {
     contractor?: IContractor;

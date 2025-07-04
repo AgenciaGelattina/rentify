@@ -1,16 +1,18 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { Box, IconButton, Stack, Typography } from '@mui/material';
 import { GroupAdd, Edit, DeleteForever } from '@mui/icons-material';
-import { ConditionalRender, Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
-import ContractorForm, { IContractor, TContractorForm } from './ContractorForm';
+import ContractorForm, { TContractorForm } from './ContractorForm';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import { StoreContext } from '@src/DataProvider';
+import { IContractor } from './Details';
+import Header from '@src/Components/Header';
 
 
 interface IContractContractorsProps {
     contract: { id: number };
-}
+};
 
 const ContractContractors: FC<IContractContractorsProps> = ({ contract }) => {
     const { state: { user } } = useContext(StoreContext);
@@ -19,7 +21,7 @@ const ContractContractors: FC<IContractContractorsProps> = ({ contract }) => {
     const [contractorForm, setContractorForm] = useState<TContractorForm>({ contract_id: contract.id, open: false });
     const [contractors, setContractors] = useState<IContractor[]>([]);
 
-    const canEdit = user.role < 3;
+    const canEdit = user.role && (user.role.id < 3);
 
     const getContractors = ( ) => {
         fetchData.get('/properties/contracts/contractors/contractors.php', { contract_id: contract.id }, (response: TCallBack) => {
@@ -105,7 +107,7 @@ const ContractContractors: FC<IContractContractorsProps> = ({ contract }) => {
     }
 
     return (<Box sx={{ border: '1px solid #ccc', padding: '1rem' }}>
-        <Header title="CONTACTOS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 25 } }}>
+        <Header title="CONTACTOS">
             {canEdit && <IconButton onClick={() => setContractorForm({ contract_id: contract.id, open: true })}>
                 <GroupAdd fontSize="inherit" color='primary' />
             </IconButton>}

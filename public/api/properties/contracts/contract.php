@@ -18,7 +18,7 @@ if (METHOD === 'GET') {
         $contract_query .= " WHERE id = $contract";
     }
     
-    require "contract_result.php";
+    require "./data/result.php";
     throwSuccess($contract);
     $DB->close();
 }
@@ -26,7 +26,6 @@ if (METHOD === 'GET') {
 if (METHOD === 'POST') {
     $id = intval($DB->real_escape_string(POST['id']));
     $property = intval($DB->real_escape_string(POST['property']));
-    $type = $DB->real_escape_string(POST['type']);
     $currency = $DB->real_escape_string(POST['currency']);
     $due_date = intval($DB->real_escape_string(POST['due_date']));
     $start_date = $DB->real_escape_string(POST['start_date']);
@@ -44,6 +43,7 @@ if (METHOD === 'POST') {
         }
     } else {
         $value = $DB->real_escape_string(POST['value']);
+        $type = $DB->real_escape_string(POST['type']);
 
         $query_contract ="INSERT INTO property_contracts (`property`,`type`,`currency`,`due_date`,`start_date`,`end_date`,`in_date`,`out_date`) VALUES ($property,'$type','$currency',$due_date,'$start_date','$end_date','$in_date','$out_date')";
         $property_result = $DB->query($query_contract);

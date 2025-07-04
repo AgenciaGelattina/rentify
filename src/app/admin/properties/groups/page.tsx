@@ -1,6 +1,6 @@
 'use client';
 import { FC, useEffect, useState } from 'react';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import RoleVerification from '@src/Components/RoleVerification';
 import { Button, CardContent, IconButton, Stack, Typography } from '@mui/material';
@@ -8,6 +8,7 @@ import { Edit } from '@mui/icons-material';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import GroupData, { IGroupData, defaultGroupDataState } from './GroupsData';
+import Header from '@src/Components/Header';
 
 type TGroupData = {
     id: number;
@@ -103,8 +104,8 @@ const GroupManagement: FC = () => {
         ]
     };
 
-    return (<RoleVerification role={1}>
-        <Header title="GRUPOS DE PROPIEDADES" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+    return (<RoleVerification roles={[1,2]}>
+        <Header title="GRUPOS DE PROPIEDADES">
             <Button size='small' disabled={loading} onClick={() => setGroupData({ ...defaultGroupDataState, open: true })}>+ NUEVO GRUPO</Button>
         </Header>
         <CardBox>

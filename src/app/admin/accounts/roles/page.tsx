@@ -1,11 +1,12 @@
 'use client';
 import { FC, useEffect } from 'react';
 import RoleVerification from '@src/Components/RoleVerification';
-import { Header, useFetchData } from '@phoxer/react-components';
+import { useFetchData } from '@phoxer/react-components';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button } from '@mui/material';
 import { PersonAdd, Edit, CheckCircle, Cancel } from '@mui/icons-material';
+import Header from '@src/Components/Header';
 
 const AccountsRoles: FC = () => {
     const { result, fetchData, error, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -46,8 +47,8 @@ const AccountsRoles: FC = () => {
         ]
     }
 
-    return (<RoleVerification role={1}>
-        <Header title="ROLES DE USUARIO" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+    return (<RoleVerification roles={[1,2]}>
+        <Header title="ROLES DE USUARIO">
             <IconButton>
                 <PersonAdd fontSize="inherit" color='primary' />
             </IconButton>

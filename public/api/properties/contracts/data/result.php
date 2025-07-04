@@ -21,11 +21,11 @@ if ($contract_result->num_rows > 0) {
     $contract->out_date = addTMZero($row->out_date);
     //$contract_out_date_time = new DateTime($row->out_date);
 
-    $contract->expired = ($NOW->time > $contract_end_date_time) ? true : false;
-    $contract->canceled = $row->canceled == 0 ? false : true;
-    $contract->finalized = $row->finalized == 0 ? false : true;
+    $contract->expired = boolval($NOW->time > $contract_end_date_time);
+    $contract->canceled = boolval($row->canceled);
+    $contract->finalized = boolval($row->finalized);
     
     // add $contract data by type
-    require "contract_type.php";
+    require $row->type.".php";
 }
 ?>

@@ -51,7 +51,7 @@ const User: React.FC<TUser> = ({ user }) => {
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                 >
-                    <Avatar sx={{ width: 32, height: 32 }}>{user.name?.charAt(0)}</Avatar>
+                    <Avatar sx={{ width: 32, height: 32 }}>{user.names?.charAt(0)}</Avatar>
                 </IconButton>
         </Tooltip>
         <Menu

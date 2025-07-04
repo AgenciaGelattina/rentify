@@ -1,5 +1,5 @@
 //** 1.0.0 | www.phoxer.com */
-import { JSXElementConstructor, ReactElement, useEffect, useState } from "react";
+import { FC, JSXElementConstructor, ReactElement, useEffect, useState } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, Divider } from "@mui/material";
 import Grid, { Grid2Props } from '@mui/material/Grid2';
 import { ExpandMore, FilterList } from '@mui/icons-material';
@@ -14,7 +14,7 @@ export interface IDataFilter {
 
 type TFilters = {
     filters: IDataFilter[];
-    formData: UseFormReturn<FieldValues, any, undefined>;
+    formData: UseFormReturn<FieldValues, any>;
     loading: boolean;
     onFilter: (data: FieldValues) => void;
     expanded?: boolean;
@@ -22,7 +22,7 @@ type TFilters = {
     gridContainerProps?: Grid2Props;
 }
 
-const DataFilters: React.FC<TFilters> = ({ filters, onFilter, loading, formData, filterOnMount = true, gridContainerProps = { spacing: 2 }, expanded = true}) => {
+const DataFilters: FC<TFilters> = ({ filters, onFilter, loading, formData, filterOnMount = true, gridContainerProps = { spacing: 2 }, expanded = true}) => {
     const [filterExpanded, setFilterExpanded] = useState(expanded);
     const { control, handleSubmit, formState, reset, getValues } = formData;
 

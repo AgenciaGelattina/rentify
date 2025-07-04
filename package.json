@@ -1,6 +1,6 @@
 {
   "name": "rentify",
-  "version": "1.2.0",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,7 +24,8 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "react-imask": "^7.6.1",
-    "react-number-format": "^5.4.3"
+    "react-number-format": "^5.4.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "22.13.10",

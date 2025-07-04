@@ -40,6 +40,7 @@ if (METHOD === 'GET') {
         while($exp=$exp_charges_query->fetch_object()) {
             $express_charge = new stdClass();
             $express_charge->id = $exp->id;
+            $express_charge->contract = $contract_id;
             $express_charge->label = $exp->label;
             $express_charge->value = $exp->value;
             $express_charge->currency = $exp->currency;

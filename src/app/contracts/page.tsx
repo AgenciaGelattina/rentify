@@ -8,16 +8,14 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from
 import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
 import PaymentsStatuSelector from '@src/Components/Forms/PaymentStatus';
-import SummaryDetails from './Details';
 import { STATE_ACTIONS } from '@src/Constants';
-import { IContract } from '@src/Components/Properties/Contracts/Details';
 import ResumeRow from './Row';
 import { mapKey } from '@src/Utils';
 import ContractTypeSelector from '@src/Components/Forms/ContractTypeSelector';
 import ContractStateSelector from '@src/Components/Forms/ContractExpiredSelector';
 import { IContractSummary } from '@src/DataProvider/interfaces';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
-import { isEmpty, isNotEmpty, isNotNil } from 'ramda';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
+import Header from '@src/Components/Header';
 
 const initialQueryParams: FieldValues = {
     group: null,
@@ -32,7 +30,6 @@ const ContractsSummary: FC = () => {
     const filterFormData = useForm({ defaultValues: initialQueryParams });
 
     const loadSummaryData = (data?: FieldValues) => {
-        console.log('FILTER-RESUME-DATA', data);
         //if (isEmpty(summary.data) || (isNotNil(data) && isNotEmpty(data))) {
             fetchData.get('/properties/contracts/summary.php', data, (response: TCallBack) => {
                 const resume = validateResult(response.result);
@@ -75,7 +72,7 @@ const ContractsSummary: FC = () => {
     }
 
     return (<>
-        <Header title="RESUMEN DE CONTRATOS ACTIVOS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }} />
+        <Header title="RESUMEN DE CONTRATOS" subTitle="CONTRATOS ACTIVOS" />
         <DataFilters filters={buildDataFilters()} formData={filterFormData} loading={loading} onFilter={loadSummaryData} expanded={false} />
         <TableContainer>
             <Table aria-label="collapsible table" size="small">

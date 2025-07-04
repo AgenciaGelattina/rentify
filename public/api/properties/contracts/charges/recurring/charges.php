@@ -42,6 +42,7 @@ if (METHOD === 'GET') {
         while($rec = $rec_charges_result->fetch_object()) {
             $recurring_charge = new stdClass();
             $recurring_charge->id = $rec->id;
+            $recurring_charge->contract = $contract_id;
             $recurring_charge->label = $rec->label;
             $recurring_charge->value = $rec->value;
             $recurring_charge->currency = $rec->currency;

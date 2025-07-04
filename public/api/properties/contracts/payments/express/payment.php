@@ -14,7 +14,7 @@ if (METHOD === 'POST') {
 
     if ($payment_id > 0) {
         $payment = $DB->query("UPDATE contracts_payments SET express=$express,amount=$amount,date='$date',clarifications='$clarifications' WHERE id = $payment_id");
-        if ($DB->affected_rows >= 0) {
+        if ($DB->affected_rows > 0) {
             throwSuccess(true);
         } else {
             throwError(203, "No se pudo guardar el pago #$payment_id");
@@ -35,12 +35,12 @@ if (METHOD === 'POST') {
 
 if (METHOD === 'DELETE') {
     require_once '../../../../database.php';
-    $id = intval($DB->real_escape_string(POST['id']));
-    $payment = $DB->query("DELETE FROM contracts_payments WHERE id = $id");
-    if ($DB->affected_rows >= 0) {
+    $payment_id = intval($DB->real_escape_string(POST['payment_id']));
+    $payment = $DB->query("DELETE FROM contracts_payments WHERE id = $payment_id");
+    if ($DB->affected_rows > 0) {
         throwSuccess(true);
     } else {
-        throwError(203, "No se pudo borrar el pago #$id");
+        throwError(203, "No se pudo borrar el pago #$payment_id");
     }
     $DB->close();
 }

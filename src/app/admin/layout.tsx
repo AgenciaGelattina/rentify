@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import { IPageLayout } from "@src/Constants";
 
-const TAdminLayout: FC<IPageLayout> = ({ children }) => {
+const PageLayout: FC<IPageLayout> = ({ children }) => {
     return (<PageWrapper navigation>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             { children }
@@ -13,4 +13,4 @@ const TAdminLayout: FC<IPageLayout> = ({ children }) => {
     </PageWrapper>)
 }
 
-export default TAdminLayout;
+export default PageLayout;

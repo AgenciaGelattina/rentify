@@ -1,41 +1,43 @@
 'use client';
-import { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
 import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import useDataResponse from '@src/Hooks/useDataResponse';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import PaymentCollectionRow from './Row';
-import { mapKey } from '@src/Utils';
-import ContractTypeSelector from '@src/Components/Forms/ContractTypeSelector';
-import ContractStateSelector from '@src/Components/Forms/ContractExpiredSelector';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Event } from '@mui/icons-material';
+import { formatDate, mapKey, TDate } from '@src/Utils';
 import { StoreContext } from '@src/DataProvider';
-import { STATE_ACTIONS } from '@src/Constants';
-import { IContractSummary } from '@src/DataProvider/interfaces';
-import { isEmpty, isNotEmpty, isNotNil } from 'ramda';
+import { DATE_FORMAT, STATE_ACTIONS } from '@src/Constants';
+import { isNotEmpty, isNotNil } from 'ramda';
+import MonthYearSelector from '@src/Components/Forms/MonthYearSelector';
+import PaymentCollectionRow from './Row';
+import { IPaymentCollection } from './Details';
+import Header from '@src/Components/Header';
 
 const initialQueryParams: FieldValues = {
     group: null,
-    contract_type: null,
-    contract_state: null
-}
+    date: new Date()
+};
 
 const PaymentCollection: FC = () => {
-    const { state, setMainState } = useContext(StoreContext);
-    const { summary } = state;
+    const { state } = useContext(StoreContext);
+    const { user } = state;
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const filterFormData = useForm({ defaultValues: initialQueryParams });
+    const filterFormData = useForm<FieldValues>({ defaultValues: initialQueryParams });
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date);
+    const [paymentCollections, setPaymentCollections] = useState<IPaymentCollection[]>([]);
 
     const getPaymentCollectionData = (data?: FieldValues) => {
-        console.log('FILTER-COLLECTION-DATA', data, summary);
-        if (isEmpty(summary.data) || summary.updated || (isNotNil(data) && isNotEmpty(data))) {
-            fetchData.get('/properties/contracts/summary.php', data, (response: TCallBack) => {
-                const resume = validateResult(response.result);
-                setMainState(STATE_ACTIONS.SET_CONTRACTS_SUMMARY, resume);
-            });
-        };
+        const paramsData = (isNotNil(data) && isNotEmpty(data)) ? data : filterFormData.getValues();
+        const params = { group: paramsData.group, year: paramsData.date.getFullYear(), month: paramsData.date.getMonth() + 1 };
+        setSelectedDate(paramsData.date);
+        fetchData.get('/properties/contracts/payments/collection/summary.php', params, (response: TCallBack) => {
+            const paymentColection = validateResult(response.result);
+            setPaymentCollections(paymentColection);
+        });
     };
 
     const buildDataFilters = (): IDataFilter[] => {
@@ -48,48 +50,34 @@ const PaymentCollection: FC = () => {
                 }
             },
             {
-                dataKey: 'contract_type',
-                gridItemProps: { size: { xs: 12, sm: 6 } },
-                component: (field) => {
-                    return <ContractTypeSelector field={field} />
-                }
-            },
-            {
-                dataKey: 'contract_state',
-                gridItemProps: { size: { xs: 12, sm: 6 } },
-                component: (field) => {
-                    return <ContractStateSelector field={field} />
-                }
-            }/*,
-            {
                 dataKey: 'date',
                 gridItemProps: { size: { xs: 12, sm: 6 } },
                 component: (field) => {
                     return <MonthYearSelector field={field} />
                 }
-            }*/
-        ]
+            }
+        ];
     };
 
     return (<>
-        <Header title="COBRANZA" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }} />
+        <Header title="COBRANZA" subTitle={`${user?.role?.label}: ${user.fullName}`}/>
         <DataFilters filters={buildDataFilters()} formData={filterFormData} loading={loading} onFilter={getPaymentCollectionData} expanded={false} />
-        <TableContainer>
-            <Table aria-label="collapsible table" size="small">
+
+        <TableContainer sx={{ paddingTop: '.5rem' }}>
+            <Box sx={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                <Event />
+                <Typography sx={{ marginLeft: '.5rem' }} variant="h6">{`${formatDate(selectedDate, DATE_FORMAT.MONTH_YEAR)}`}</Typography>
+            </Box>
+            <Table sx={{ minWidth: 650 }} aria-label="collapsible table" size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell />
                         <TableCell>Propiedad</TableCell>
-                        <TableCell>Estado</TableCell>
-                        <TableCell>Deuda</TableCell>
-                        <TableCell>Fechas de Corte</TableCell>
-                        <TableCell>Fecha de Finalización</TableCell>
+                        <TableCell>Cargos</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {summary.data.map((data: IContractSummary, ix:number) => {
-                        const { contract, property } = data;
-                        return <PaymentCollectionRow key={mapKey("cnt", ix)} contract={contract} property={property} loading={loading} />;
+                    {paymentCollections.map((pc: IPaymentCollection, ix: number) => {
+                        return <PaymentCollectionRow key={mapKey("pc", ix)} paymentCollection={pc} selectedDate={selectedDate} getPaymentCollectionData={getPaymentCollectionData} />;
                     })}
                 </TableBody>
             </Table>

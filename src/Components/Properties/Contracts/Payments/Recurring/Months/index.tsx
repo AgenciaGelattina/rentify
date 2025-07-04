@@ -2,25 +2,29 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography }
 import { ExpandMore, CheckCircle, Report } from '@mui/icons-material';
 import { Dispatch, FC, SetStateAction, useMemo  } from 'react';
 import { DATE_FORMAT } from '@src/Constants';
-import { capitalize, formatDate } from '@src/Utils';
-import { ConditionalRender } from '@phoxer/react-components';
-import QuickPayments from './QuickPayment';
-import { IPaymentMonth, IRecurringCharge } from '..';
+import { capitalize, formatDate, mapKey } from '@src/Utils';
+//--------------> import QuickPayments from './QuickPayment';
+import { IPaymentMonth } from '..';
 import { IPayment } from '../..';
 import PaymentsList from '../../List';
+import { IRecurringCharge } from '../../../Charges/Recurring/Detail';
+import QuickPayments from '@src/Components/QuickPayments';
+import { IContract } from '../../../Details';
+import ChargeButton from '@src/Components/QuickPayments/ChargeBox';
 
 interface IPaymentMonthProps {
+    contract: IContract;
     paymentData: IPaymentMonth;
     editMode?: boolean;
-    removePayment: (id: number) => void;
+    setDeletePayment: (id: number) => void;
     confirmPayment: (id: number, confirmed: number) => void;
-    editPayment: (payment: IPayment) => void;
-    setQuickPayment: (recurring_charge: IRecurringCharge, due_date: Date) => void;
+    setEditPayment: (payment: IPayment) => void;
+    setQuickPayment: (payment: IPayment) => void;
 }
 
-const PaymentMonth: FC<IPaymentMonthProps> = ({ paymentData, setQuickPayment, removePayment, editPayment, confirmPayment }) => {
-    const { due_date, status, is_current, payments, total_amount, recurring_charges } = paymentData;
-    const { year_month } = paymentData.date;
+const PaymentMonth: FC<IPaymentMonthProps> = ({ contract, paymentData, setQuickPayment, setDeletePayment, setEditPayment, confirmPayment }) => {
+    const { due_date, status, is_current, payments, total_amount, recurring_charges, required_amount } = paymentData;
+    const { year_month, year, month } = paymentData.date;
     
     const monthDate: String = useMemo(() => {
         return capitalize(formatDate(due_date, DATE_FORMAT.MONTH_YEAR));
@@ -47,8 +51,12 @@ const PaymentMonth: FC<IPaymentMonthProps> = ({ paymentData, setQuickPayment, re
             </Box>
         </AccordionSummary>
         <AccordionDetails>
-            <PaymentsList paymentsData={{ payments, total_amount }} isLoading={false} removePayment={removePayment} editPayment={editPayment} confirmPayment={confirmPayment}  />
-            <QuickPayments recurring_charges={recurring_charges} setQuickPayment={setQuickPayment} due_date={due_date} />
+            <PaymentsList paymentsData={{ payments, total_amount, pending_amount: required_amount }} isLoading={false} setDeletePayment={setDeletePayment} setEditPayment={setEditPayment} confirmPayment={confirmPayment}  />
+            <Stack spacing={1} direction="row">
+            {recurring_charges.map((charge: IRecurringCharge, ix: number) => {
+                return <ChargeButton key={mapKey('cb', ix)} contract={contract} charge={charge} selectedDate={new Date(due_date)} loading={false} setQuickPayment={setQuickPayment} setEditPayment={setEditPayment} />
+            })}
+            </Stack>
         </AccordionDetails>
     </Accordion>)
 }

@@ -1,4 +1,5 @@
 import { CURRENCY } from "@src/Constants";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * RANDOM UNIQUE ID V1.0
@@ -9,15 +10,17 @@ interface IGetUIKey {
 }
 
 export const getUIKey = (config?: IGetUIKey): string => {
-    let randomUUID = crypto.randomUUID();
+    //const cryptoApi: Crypto | null = crypto || window.crypto;
+    //cryptoApi ? cryptoApi.randomUUID() : 
+    let randomUUID: string = uuidv4();
     if (config?.removeHyphen) {
         randomUUID = randomUUID.replace(/[\W]/gm,'');
     }
     if (config?.toUpperCase) {
         randomUUID = randomUUID.toUpperCase();
-    }
+    };
     return randomUUID;
-}
+};
 
 /**
  * MAP KEYS GENERATOR 

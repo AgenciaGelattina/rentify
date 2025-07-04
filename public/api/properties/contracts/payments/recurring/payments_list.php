@@ -13,22 +13,24 @@ if (METHOD === 'GET') {
     $payments_data = new stdClass();
     $payments_data->payments = [];
     $payments_data->total_amount = 0;
+    $payments_data->pending_amount = 0;
     if ($payments_query && $payments_query->num_rows > 0) {
         while($row = $payments_query->fetch_object()) {
-            if ($row->confirmed === 1) {
+            if ($row->confirmed == 1) {
                 $payments_data->total_amount += $row->amount;
-            }
+            };
             if(is_null($row->recurring)) {
                 $row->type = "extraordinary";
             } else {
                 $row->recurring = json_decode($row->recurring, true);
                 $row->type = "monthly";
-            }
+            };
             $row->date = addTMZero($row->date);
-            $row->confirmed = $row->confirmed === 1 ? true : false;
+            $row->confirmed = $row->confirmed == 1 ? true : false;
             array_push($payments_data->payments, $row);
         };
-    }
+    };
+    
 
     throwSuccess($payments_data);
     $DB->close();

@@ -9,6 +9,11 @@ import { isNotNil } from 'ramda';
 import { Dispatch, FC, SetStateAction, useContext } from 'react';
 import { STATE_ACTIONS } from '@src/Constants';
 
+export interface IPaymentCollection {
+    contract: IContract;
+    property: IProperty;
+}
+
 interface IPaymentCollectionDetailsProps {
     property: IProperty;
     contract: IContract;

@@ -7,16 +7,17 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 import RspDialog from "@src/Components/RspDialog";
 import RspDialogTitle from "@src/Components/RspDialog/RspDialogTitle";
 import { clone, isNil, isNotNil } from "ramda";
-import { Button, DialogActions, DialogContent, Divider, TextField } from "@mui/material";
+import { Alert, Box, Button, DialogActions, DialogContent, Divider, TextField, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import TextFieldMoney from "@src/Components/Forms/TextFieldMoney";
-import { fieldError, formatDate } from "@src/Utils";
+import { fieldError, formatDate, showOnRoles } from "@src/Utils";
 import { DatePicker } from "@mui/x-date-pickers";
 import PaymentTypeSelector from "@src/Components/Forms/PaymentType";
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import RecurringChargesSelector from "@src/Components/Forms/ChargesSelector/RecurringCharges";
 import { StoreContext } from "@src/DataProvider";
+import ConfirmationAlert from "../../ConfirmationAlert/indext";
 
 export interface IRecurringPaymentData {
     id: number;
@@ -28,7 +29,6 @@ export interface IRecurringPaymentData {
 }
 
 export interface IRecurringPaymentForm {
-    payment_date: Date;
     open: boolean;
     payment?: IPayment;
 };
@@ -39,7 +39,7 @@ interface IRecurringPaymentFormProps extends IRecurringPaymentForm {
     getPayments: () => void;
 };
 
-export const recurringPaymentFormDefault: IRecurringPaymentForm = { open: false, payment_date: new Date };
+export const recurringPaymentFormDefault: IRecurringPaymentForm = { open: false };
 
 const formValidations = yup.object().shape({
     id: yup.number().required(),
@@ -50,22 +50,22 @@ const formValidations = yup.object().shape({
     clarifications: yup.string(),
 });
 
-const defaultRecurringPaymentData = (contract: IContract, payment_date: Date = new Date): IRecurringPaymentData => {
+const defaultRecurringPaymentData = (contract: IContract, payment?: IPayment): IRecurringPaymentData => {
     return {
         id: 0,
         contract: contract.id,
         recurring: 0,
         amount: 0,
-        date: payment_date,
+        date: isNotNil(payment) ? payment.date : new Date(),
         clarifications: ""
     }
 }
 
-const RecurringPaymentForm:  FC<IRecurringPaymentFormProps> = ({ payment, open, contract, payment_date, setOpen, getPayments }) => {
+const RecurringPaymentForm:  FC<IRecurringPaymentFormProps> = ({ payment, open, contract, setOpen, getPayments }) => {
     const { state: { user } } = useContext(StoreContext);
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
-    const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultRecurringPaymentData(contract, payment_date), resolver: yupResolver(formValidations) });
+    const { handleSubmit, control, setError, watch, setValue, formState: { errors }, reset } = useForm({ defaultValues: defaultRecurringPaymentData(contract, payment), resolver: yupResolver(formValidations) });
     const [paymentType, setPaymentType] = useState<TPaymentType>("monthly");
     //const { isDirty } = useFormState({ control });
     const paymentDate = watch('date');
@@ -107,7 +107,7 @@ const RecurringPaymentForm:  FC<IRecurringPaymentFormProps> = ({ payment, open, 
         data.date = formatDate(date);
 
         //role data
-        data.confirmed = (user.role < 3) ? 1 : 0;
+        data.confirmed = showOnRoles(user, [1,2]) ? 1 : 0;
 
         fetchData.post('/properties/contracts/payments/recurring/payment.php', data, (response: TCallBack) => {
             const saved = validateResult(response.result);
@@ -118,8 +118,36 @@ const RecurringPaymentForm:  FC<IRecurringPaymentFormProps> = ({ payment, open, 
         });
     };
 
+    const isEdition = (isNotNil(payment) && (payment.id > 0)) || false;
+    const isConfirmed = isEdition && (isNotNil(payment) && payment.confirmed) || false;
+    const dialogLabel = isEdition ?  'EDITAR PAGO' : 'REGISTRAR PAGO';
+
+    const setPaymentConfirmation = () => {
+        if (isNotNil(payment)) {
+            fetchData.post('/properties/contracts/payments/confirm.php', { payment_id: payment.id, contract_id: contract.id, confirmed: isConfirmed ? 0 : 1 }, (response: TCallBack) => {
+                const confirmed = validateResult(response.result);
+                if (confirmed) {
+                    getPayments();
+                    closePaymentForm();
+                }
+            });
+        }
+    };
+
+    const setDeletePayment = () => {
+        if (isNotNil(payment)) {
+            fetchData.delete('/properties/contracts/payments/recurring/payment.php', { payment_id: payment.id, contract_id: contract.id }, (response: TCallBack) => {
+                const deleted = validateResult(response.result);
+                if (deleted) {
+                    getPayments();
+                    closePaymentForm();
+                }
+            });
+        }
+    };
+
     return (<RspDialog open={open} maxWidth="sm" onClose={closePaymentForm} >
-        <RspDialogTitle title={isNil(payment) ?  'REGISTRAR PAGO' :  'EDITAR PAGO'} onClose={closePaymentForm} />
+        <RspDialogTitle title={dialogLabel} onClose={closePaymentForm} />
         <DialogContent>
             <Grid container spacing={2} sx={{ marginTop: '1rem' }}>
                 <Grid size={{ xs: 12, md: 6 }}>
@@ -165,9 +193,11 @@ const RecurringPaymentForm:  FC<IRecurringPaymentFormProps> = ({ payment, open, 
                 </Grid>
             </Grid>
             <Divider />
+            <ConfirmationAlert isAdmin={showOnRoles(user, [1,2])} isConfirmed={isConfirmed} isEdition={isEdition} setPaymentConfirmation={setPaymentConfirmation} />
         </DialogContent>
         <DialogActions>
-          <Button disabled={loading} onClick={handleSubmit((data) => onFormSubmit(data))}>GUARDAR</Button>
+            {((isEdition && !isConfirmed) || showOnRoles(user, [1,2])) && <Button disabled={loading} color="error" onClick={setDeletePayment}>BORRAR</Button>}
+            {(!isConfirmed || showOnRoles(user, [1,2])) && <Button disabled={loading} onClick={handleSubmit((data) => onFormSubmit(data))}>{dialogLabel}</Button>}
         </DialogActions>
     </RspDialog>);
 };

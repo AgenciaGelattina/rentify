@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import RecurringChargeForm, { IRecurringChargeForm } from "./Form";
-import { Header, TCallBack, useFetchData } from "@phoxer/react-components";
+import { TCallBack, useFetchData } from "@phoxer/react-components";
+import Header from '@src/Components/Header';
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import useDataResponse from "@src/Hooks/useDataResponse";
@@ -44,7 +45,7 @@ const RecurringCharges: FC<IRecurringChargesProps> = ({ editMode = false, contra
     }, [contract.id]);
 
     return (<>
-        <Header title="CARGOS MENSUALES:" typographyProps={{ variant: "subtitle2"} }>
+        <Header title="CARGOS MENSUALES" titleProps={{ variant: "subtitle2" }}>
             <Button size='small' disabled={loading} onClick={() => setRecurringChargeForm({ open: true, recurringCharge: null })}>+ CARGO MENSUAL</Button>
         </Header>
         <Stack spacing={1} sx={{ marginBottom: '1rem', padding: '.5rem'}}>

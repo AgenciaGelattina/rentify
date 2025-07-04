@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import RoleVerification from '@src/Components/RoleVerification';
-import { Header, TCallBack, useFetchData } from '@phoxer/react-components';
+import { TCallBack, useFetchData } from '@phoxer/react-components';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
 import { CardContent, IconButton, Typography, Button } from '@mui/material';
@@ -9,6 +9,7 @@ import UserForm, { TUserForm } from './UserForm';
 import { PersonAdd, Edit, CheckCircle, Cancel } from '@mui/icons-material';
 import { IRole } from '@src/Components/Forms/RolesSelector';
 import useDataResponse from '@src/Hooks/useDataResponse';
+import Header from '@src/Components/Header';
 
 const AccountsManagement: React.FC = () => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -101,8 +102,8 @@ const AccountsManagement: React.FC = () => {
         ]
     }
 
-    return (<RoleVerification role={1}>
-        <Header title="ADMINISTRACIÓN DE CUENTAS" typographyProps={{ variant: "h6" }} toolBarProps={{ style: { minHeight: 35 } }}>
+    return (<RoleVerification roles={[1,2]}>
+        <Header title="ADMINISTRACIÓN DE CUENTAS" >
             <IconButton onClick={() => setUserForm({ open: true, id: 0 })}>
                 <PersonAdd fontSize="inherit" color='primary' />
             </IconButton>
@@ -113,7 +114,7 @@ const AccountsManagement: React.FC = () => {
             </CardContent>
         </CardBox>
         <UserForm {...userForm} setOpen={setUserForm} getUsers={getUsers} />
-    </RoleVerification>)
+    </RoleVerification>);
 };
 
 export default AccountsManagement;

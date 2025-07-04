@@ -15,7 +15,7 @@ if (METHOD === 'GET') {
     $payments_data->total_amount = 0;
     if($payments_query && $payments_query->num_rows > 0) {
         while ($row = $payments_query->fetch_object()) {
-            if ($row->confirmed === 1) {
+            if ($row->confirmed == 1) {
                 $payments_data->total_amount += $row->amount;
             }
             if (is_null($row->express)) {
@@ -25,7 +25,7 @@ if (METHOD === 'GET') {
                 $row->express = json_decode($row->express, true);
             };
             $row->date = addTMZero($row->date);
-            $row->confirmed = $row->confirmed === 1 ? true : false;
+            $row->confirmed = $row->confirmed == 1 ? true : false;
             array_push($payments_data->payments, $row);
         };
     }

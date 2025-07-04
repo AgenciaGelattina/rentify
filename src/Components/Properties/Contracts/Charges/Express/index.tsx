@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import { Header, TCallBack, useFetchData } from "@phoxer/react-components";
+import { TCallBack, useFetchData } from "@phoxer/react-components";
+import Header from '@src/Components/Header';
 import { Box, Button, Divider, IconButton, Stack, Typography } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import useDataResponse from "@src/Hooks/useDataResponse";
@@ -44,7 +45,7 @@ const ExpressCharges: FC<IExpressChargesProps> = ({ editMode = false, contract }
     }, [contract.id]);
 
     return (<>
-        <Header title="CARGOS:" typographyProps={{ variant: "subtitle2"} }>
+        <Header title="CARGOS" titleProps={{ variant: "subtitle2" }}>
             <Button size='small' disabled={loading} onClick={() => setExpressChargeForm({ open: true, expressCharge: null })}>+ CARGO</Button>
         </Header>
         <Stack spacing={1} sx={{ marginBottom: '1rem', padding: '.5rem'}}>
