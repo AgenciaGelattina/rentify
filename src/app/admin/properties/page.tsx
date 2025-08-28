@@ -1,23 +1,24 @@
 'use client';
-import { FC, useState } from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import RoleVerification from '@src/Components/RoleVerification';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
-import { CardContent, IconButton, Typography, Button, Stack } from '@mui/material';
+import { CardContent, IconButton, Typography, Button, Stack, Menu, MenuItem } from '@mui/material';
 import PropertyData, { IPropertyData } from './PropertyData';
 import PropertyContract, { IPropertyContract } from './PropertyContract';
 import DataFilters, { IDataFilter } from '@src/Components/DataFilters';
 import PropertiesGroupsSelector from '@src/Components/Forms/PropertiesGroups';
-import { Edit, Description } from '@mui/icons-material';
+import { Edit, Description, Assignment, MoreVert } from '@mui/icons-material';
 import { IProperty } from '@src/Components/Properties/Details';
 import Header from '@src/Components/Header';
+import AccountAssignment from './AccountAssignment';
 
 const initialQueryParams: FieldValues = {
     group: null
-}
+};
 
 const PropertiesManagement: FC = () => {
     const { fetchData, loading } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
@@ -25,6 +26,7 @@ const PropertiesManagement: FC = () => {
     const [propertyData, setPropertyData] = useState<IPropertyData>({ open: false, id: 0 });
     const [properties, setProperties] = useState<IProperty[]>([]);
     const [propertyContract, setPropertyContract] = useState<IPropertyContract>({ open: false });
+    const [accountAssignment, setAccountAssignment] = useState<IPropertyContract>({ open: false });
     const { validateResult } = useDataResponse();
 
     const getProperties = () => {
@@ -51,26 +53,17 @@ const PropertiesManagement: FC = () => {
         return [
             {
                 head: {
-                    label: "",
-                },
-                component: (rowData: IProperty) => {
-                    return (<Stack direction="row" alignItems="center" spacing={1}>
-                        <IconButton onClick={() => setPropertyData({ open: true, id: rowData.id })}>
-                            <Edit fontSize="inherit" />
-                        </IconButton>
-                        <IconButton color={ rowData.active_contract ? 'info' : 'warning' } onClick={() => setPropertyContract({ open: true, property: rowData })}>
-                            <Description fontSize="inherit" />
-                        </IconButton>
-                    </Stack>);
-                }
-            },
-            {
-                dataKey: "title",
-                head: {
                     label: "Propiedad",
                 },
-                component: (title: string) => {
-                    return <Typography variant='subtitle2'>{`${title}`}</Typography>;
+                component: (rowData: IProperty) => {
+                    const { title, assignment, active_contract } = rowData;
+                    return (<Stack direction="column" alignItems="start">
+                        <Button variant="text" sx={{color: '#000'}} startIcon={<Edit color='primary' fontSize="inherit" />} onClick={() => setPropertyData({ open: true, id: rowData.id })}>{title}</Button>
+                        <Button size='small' variant="text" sx={{fontSize: '10px'}} startIcon={<Description fontSize="inherit" />} color={active_contract ? 'info' : 'warning' } onClick={() => setPropertyContract({ open: true, property: rowData })}>
+                           {active_contract ? "Contrato Activo" : "Sin Contrato"}
+                        </Button>
+                        <Button size='small' variant="text" sx={{fontSize: '10px'}} color={assignment ? 'info' : 'warning' } startIcon={<Assignment fontSize="inherit" />} onClick={() => setAccountAssignment({ open: true, property: rowData })}>{assignment ? `${assignment?.role.label}: ${assignment.name} ${assignment.surname}` : "Sin Asignación"}</Button>
+                    </Stack>);
                 }
             },
             {
@@ -132,6 +125,7 @@ const PropertiesManagement: FC = () => {
         </CardBox>
         <PropertyData {...propertyData} setOpen={setPropertyData} getProperties={getProperties} />
         <PropertyContract {...propertyContract} setOpen={setPropertyContract} getProperties={getProperties} />
+        <AccountAssignment {...accountAssignment} setOpen={setAccountAssignment} getProperties={getProperties} />
     </RoleVerification>)
 };
 

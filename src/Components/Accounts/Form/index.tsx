@@ -61,6 +61,7 @@ const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, get
     const { validateResult } = useDataResponse();
     const { handleSubmit, control, formState: { errors }, reset, register } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
     const { isDirty } = useFormState({ control });
+    const isEdit = id > 0;
 
     useEffect(() => {
         if (open && id > 0) {
@@ -111,14 +112,12 @@ const UserForm: React.FC<TUserForm & IUserFormProps> = ({ id, open, setOpen, get
                         return <RolesSelector {...field} />;
                     }} />
                 </Grid>
-                {id === 0 && (<>
-                    <Divider />
-                    <Grid size={{ xs: 12, md: 6 }}>
-                        <Controller name="password" control={control} render={({ field }) => {
-                            return <TextField id="password" label="Temporal Password" type="text" {...field} {...fieldError(errors.password)} onChange={(e) => field.onChange(e)} fullWidth />
-                        }} />
-                    </Grid>
-                </>)}
+                <Divider />
+                {!isEdit &&<Grid size={{ xs: 12, md: 6 }}>
+                    <Controller name="password" control={control} render={({ field }) => {
+                        return <TextField id="password" label="Password" type="text" {...field} {...fieldError(errors.password)} onChange={(e) => field.onChange(e)} fullWidth />
+                    }} />
+                </Grid>}
             </Grid>
         </DialogContent>
         <DialogActions>

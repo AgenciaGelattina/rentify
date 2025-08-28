@@ -71,9 +71,13 @@ const ChargeBox: FC<IChargeBoxProps> = ({ charge, selectedDate, contract, loadin
     
 
     if (pending_payments) {
+        const showPending = (pending_amount > 0);
         return (<Paper elevation={1} sx={{ minWidth: 200, padding: '.4rem .6rem', backgroundColor: `${status.severity}.main`, color: `${status.severity}.contrastText` }}>
             <Box sx={{ cursor: 'pointer', display:'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={handleQuickPayment}>
-                <Typography sx={{ marginLeft: '.3rem' }} variant="subtitle2">{label}</Typography>
+                <Box>
+                    <Typography sx={{ marginLeft: '.3rem', marginBottom: showPending ? '-0.5rem' : '0' }} variant="subtitle2">{label}</Typography>
+                    {showPending && <Typography sx={{ marginLeft: '.3rem' }} variant="caption">{formatToMoney(pending_amount, currency)}</Typography>}
+                </Box>
                 <AddCard sx={{ marginLeft: '.3rem' }} fontSize="medium"  />
             </Box>
             <Divider sx={{ margin: '.2rem 0' }} />
@@ -83,7 +87,7 @@ const ChargeBox: FC<IChargeBoxProps> = ({ charge, selectedDate, contract, loadin
 
     return (<Paper elevation={1} sx={{ minWidth: 200, cursor: 'pointer', padding: '.4rem .6rem', backgroundColor: `success.main`, color: `success.contrastText` }} >
         <Typography sx={{ marginLeft: '.3rem' }} variant="subtitle2">{label}</Typography>
-        <Divider sx={{ margin: '.2rem 0' }} />
+        <Divider sx={{ marginTop: '.5rem' }} />
         {showPaymentsList && <ChargePayments paymentsData={payments} currency={currency} setEditPayment={handleEditPayment} />}
         {!showPaymentsList && <Button variant="text" color="inherit" onClick={() => setShowPaymentList(true)} fullWidth>{totalPaymentsLabel}</Button>}
     </Paper>);

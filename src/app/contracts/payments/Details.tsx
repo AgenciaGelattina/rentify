@@ -1,35 +1,35 @@
 import { DialogContent } from '@mui/material';
+import ContractComments from '@src/Components/Properties/Contracts/Comments';
 import ContractDetails, { IContract } from '@src/Components/Properties/Contracts/Details';
 import PropertyDetails, { IProperty } from '@src/Components/Properties/Details';
 import RspDialog from '@src/Components/RspDialog';
 import RspDialogTitle from '@src/Components/RspDialog/RspDialogTitle';
-import Payments from '@src/Components/Properties/Contracts/Payments';
-import { StoreContext } from '@src/DataProvider';
-import { isNotNil } from 'ramda';
 import { Dispatch, FC, SetStateAction, useContext } from 'react';
-import { STATE_ACTIONS } from '@src/Constants';
 
 export interface IPaymentCollection {
     contract: IContract;
     property: IProperty;
 }
 
-interface IPaymentCollectionDetailsProps {
-    property: IProperty;
-    contract: IContract;
+export interface IContractPaymentDetails {
     open: boolean;
-    setClose: Dispatch<SetStateAction<boolean>>
 }
 
-const PaymentCollectionDetails: FC<IPaymentCollectionDetailsProps> = ({ property, contract, open, setClose }) => {
-    return (<RspDialog open={open} onClose={() => setClose(false)}>
-        <RspDialogTitle title="" onClose={() => setClose(false)} />
+interface IContractPaymentDetailsProps extends IContractPaymentDetails {
+    contract: IContract;
+    property: IProperty;
+    setShowContractDetails: Dispatch<SetStateAction<IContractPaymentDetails>>
+}
+
+const ContractPaymentDetails: FC<IContractPaymentDetailsProps> = ({ property, contract, open, setShowContractDetails }) => {
+    return (<RspDialog open={open} onClose={() => setShowContractDetails({ open: false })}>
+        <RspDialogTitle title="DETALLES DE CONTRATO" onClose={() => setShowContractDetails({ open: false })} />
         <DialogContent>
             <PropertyDetails property={property} />
             <ContractDetails contract={contract} expanded={true} />
-            <Payments contract={contract}  />
+            <ContractComments property={property} contract={contract} />
         </DialogContent>
     </RspDialog>);
 };
 
-export default PaymentCollectionDetails;
+export default ContractPaymentDetails;

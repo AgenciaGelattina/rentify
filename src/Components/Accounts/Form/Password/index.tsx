@@ -1,5 +1,5 @@
 'use client';
-import { useState, useContext } from "react";
+import { useState, useContext, FC } from "react";
 import { StoreContext } from '@src/DataProvider';
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -15,7 +15,7 @@ import { fieldError } from '@src/Utils';
 import { STATE_ACTIONS } from '@src/Constants';
 import Header from "@src/Components/Header";
 
-type TAccountData = {
+interface IAccountData {
     password: string;
     passwordA: string;
     passwordB: string;
@@ -32,13 +32,13 @@ const formValidations = yup.object().shape({
       .oneOf([yup.ref("passwordA")], "El password ingresado no coincide.")
 });
 
-const defaultValues: TAccountData = {
+const defaultValues: IAccountData = {
     password: "",
     passwordA: "",
     passwordB: ""
-}
+};
 
-const Password: React.FC = () => {
+const Password: FC = () => {
     const { state, setMainState } = useContext(StoreContext);
     const { fetchData, loading, error } = useFetchData(`${process.env.NEXT_PUBLIC_API_URL!}`);
     const { validateResult } = useDataResponse();
@@ -46,7 +46,7 @@ const Password: React.FC = () => {
     const [show, setShow] = useState<boolean>(false);
     const { handleSubmit, control, formState: { errors } } = useForm({ defaultValues, resolver: yupResolver(formValidations) });
 
-    const onFormSubmit = (data: TAccountData) => {
+    const onFormSubmit = (data: IAccountData) => {
         fetchData.post(`/accounts/account/password.php?token=${state.user.token}`, { password: data.passwordA }, (response: TCallBack) => {
             const saved = validateResult(response.result);
             if (saved) {

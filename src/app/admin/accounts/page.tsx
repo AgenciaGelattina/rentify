@@ -4,9 +4,9 @@ import RoleVerification from '@src/Components/RoleVerification';
 import { TCallBack, useFetchData } from '@phoxer/react-components';
 import DataTable, { IDataTableColumn } from '@src/Components/DataTable';
 import CardBox from '@src/Components/Wrappers/CardBox';
-import { CardContent, IconButton, Typography, Button } from '@mui/material';
-import UserForm, { TUserForm } from './UserForm';
-import { PersonAdd, Edit, CheckCircle, Cancel } from '@mui/icons-material';
+import { CardContent, IconButton, Typography, Button, Stack } from '@mui/material';
+import UserForm, { TUserForm } from '@src/Components/Accounts/Form';
+import { PersonAdd, Edit, CheckCircle, Cancel, Key } from '@mui/icons-material';
 import { IRole } from '@src/Components/Forms/RolesSelector';
 import useDataResponse from '@src/Hooks/useDataResponse';
 import Header from '@src/Components/Header';
@@ -16,6 +16,7 @@ const AccountsManagement: React.FC = () => {
     const [users, setUsers] = useState<any>([]); 
     const { validateResult } = useDataResponse();
     const [userForm, setUserForm] = useState<TUserForm>({ open: false, id: 0 });
+    const [userPassword, setUserPassword] = useState<TUserForm>({ open: false, id: 0 });
 
     const getUsers = () => {
         fetchData.get('/accounts/users.php', null, (response: TCallBack) => {
@@ -38,9 +39,7 @@ const AccountsManagement: React.FC = () => {
                 setUsers(users);
             }
         });
-    }
-
-    console.log('RENDER')
+    };
 
     const buildDataContent = (): IDataTableColumn[] => {
         return [
@@ -53,6 +52,23 @@ const AccountsManagement: React.FC = () => {
                 },
                 component: (id: number) => {
                     return <Typography variant="subtitle2">{`#${id}`}</Typography>;
+                }
+            },
+            {
+                head: {
+                    label: "",
+                    width: '50px'
+                },
+                component: (data: any) => {
+                    const { id, active } = data;
+                    return (<Stack direction="row" spacing={2}>
+                        <IconButton size="small" onClick={() => toggleUserActive({ id, active })}>
+                            {(active === 1) ? <CheckCircle color='success' /> : <Cancel color='error' />}
+                        </IconButton>
+                        <IconButton size="small" onClick={() => setUserPassword({ open: true, id })}>
+                            <Key />
+                        </IconButton>
+                    </Stack>);
                 }
             },
             {

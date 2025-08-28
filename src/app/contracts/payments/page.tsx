@@ -32,7 +32,7 @@ const PaymentCollection: FC = () => {
 
     const getPaymentCollectionData = (data?: FieldValues) => {
         const paramsData = (isNotNil(data) && isNotEmpty(data)) ? data : filterFormData.getValues();
-        const params = { group: paramsData.group, year: paramsData.date.getFullYear(), month: paramsData.date.getMonth() + 1 };
+        const params = { account:user.id, group: paramsData.group, year: paramsData.date.getFullYear(), month: paramsData.date.getMonth() + 1 };
         setSelectedDate(paramsData.date);
         fetchData.get('/properties/contracts/payments/collection/summary.php', params, (response: TCallBack) => {
             const paymentColection = validateResult(response.result);

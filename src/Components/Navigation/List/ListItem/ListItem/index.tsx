@@ -1,4 +1,4 @@
-/** 2.0.2 | www.phoxer.com */
+/** 2.0.3 | www.phoxer.com */
 import { FC, JSX } from 'react';
 import MenuList from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -35,20 +35,20 @@ const ExpandList: FC<TExpandList> = ({ open }) => {
 }
 
 const ListItem: FC<IListItemProps> = ({ listItem, onItemSelected }) => {
-    const { label, value = null, icon, listItems, expanded, active } = listItem;
+    const { label, value = null, visible = true, icon, listItems, expanded, active } = listItem;
     const isHeader = isNil(value) && isNotNil(listItems);
     const showLabel = !isNil(label) || !isNil(icon);
     const isExpanded = isNil(expanded) ? true : expanded;
 
-    if (listItem.visible === false) {
+    if (visible === false) {
         return null;
     }
 
     return (<MenuList component="div" dense disablePadding>
         {showLabel && (<ListItemButton onClick ={() => onItemSelected(listItem)} selected={active}>
-            {icon && <ListItemIcon sx={{ minWidth: 30 }}>{icon}</ListItemIcon>}
-            {label && <ListItemText primary={label} primaryTypographyProps={{ variant: isHeader ? 'h6' : 'subtitle1' }} />}
-            {isHeader && <ExpandList open={isExpanded} />}
+        {icon && <ListItemIcon sx={{ minWidth: 30 }}>{icon}</ListItemIcon>}
+        {label && <ListItemText primary={label} slotProps={{ primary:{variant: isHeader ? 'h6' : 'subtitle1' }}} />}
+        {isHeader && <ExpandList open={isExpanded} />}
         </ListItemButton>)}
         {isHeader && <Divider />}
         {isNotNil(listItems) && (<Collapse in={isExpanded} timeout="auto">

@@ -14,7 +14,7 @@ if (METHOD === 'GET') {
     } else {
         throwError(404, "No property found");
     }
-}
+};
 
 if (METHOD === 'POST') {
     require_once '../database.php';

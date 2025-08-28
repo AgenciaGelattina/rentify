@@ -78,7 +78,7 @@ const FinalizedContractDetails: FC<IFinalizedContractDetails> = ({ open, contrac
                     }}>REACTIVAR</Button>
                 </Stack>
             } />}
-            {isNotNil(contractData) && <ContractTabs contract={contractData} /> }
+            {(isNotNil(property) && isNotNil(contractData)) && <ContractTabs contract={contractData} property={property} /> }
 
             <AlertModal
                 open={finalizeContractModal}

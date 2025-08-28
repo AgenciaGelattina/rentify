@@ -19,7 +19,7 @@ const SummaryDetails: FC<ISummaryDetailsProps> = ({ property, contract, open, se
         <DialogContent>
             <PropertyDetails property={property} />
             <ContractDetails contract={contract} expanded={true} />
-            <ContractTabs contract={contract}  />
+            <ContractTabs contract={contract} property={property}  />
         </DialogContent>
     </RspDialog>);
 }

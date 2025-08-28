@@ -8,7 +8,6 @@ import { DATE_FORMAT, PAYMENT_TYPE } from '@src/Constants';
 import ClarificationsModal,{ TClarificationsModal, descriptionModalDefault } from './Clarifications';
 import { isEmpty, isNotNil } from 'ramda';
 import { NumericFormat } from 'react-number-format';
-import { ConditionalRender, TCallBack, useFetchData } from '@phoxer/react-components';
 import { IPayment } from '..';
 import { StoreContext } from '@src/DataProvider';
 
@@ -53,7 +52,6 @@ const PaymentsList: FC<IPaymentsListProps> = ({ paymentsData = paymentDataDefaul
                         {!isEmpty(payment.clarifications) && (<IconButton onClick={() => setClarification({ open: true, clarification: payment.clarifications })}>
                             <Description fontSize="inherit" />
                         </IconButton>)}
-                        
                     </Stack>);
                 }
             },

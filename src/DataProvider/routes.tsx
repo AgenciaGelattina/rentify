@@ -1,5 +1,5 @@
 import { IListItem } from '@src/Components/Navigation/List/ListItem/ListItem';
-import { Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage, DomainDisabled, PendingActions, Payments } from '@mui/icons-material';
+import { Group, ManageAccounts, HomeWork, Apartment, AddHomeWork, HolidayVillage, DomainDisabled, PendingActions, Payments, Assignment } from '@mui/icons-material';
 import { getUIKey } from '@src/Utils';
 
 export const createRoutesItems = (roleID: number): IListItem[] =>  {
@@ -62,6 +62,14 @@ export const createRoutesItems = (roleID: number): IListItem[] =>  {
                             active: false,
                             visible: (roleID === 1),
                             icon: <Apartment />
+                        },
+                        {
+                            id: getUIKey(),
+                            label: "Asignaciones",
+                            value: "/admin/properties/assignments",
+                            active: false,
+                            visible: (roleID === 1),
+                            icon: <Assignment />
                         },
                     ]
                 },

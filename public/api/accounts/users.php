@@ -4,10 +4,7 @@ require '../utils/general.php';
 
 if (METHOD === 'GET') {
     require '../database.php';
-    $query = "SELECT ac.id,ac.names,ac.surnames,CONCAT(ac.names,' ',ac.surnames) AS full_name,ac.email,ac.role AS role_id,rl.label AS role_label,ac.active ";
-    $query .= "FROM accounts AS ac ";
-    $query .= "LEFT JOIN accounts_roles as rl ON ac.role=rl.id ";
-    $query .= "ORDER BY ac.id DESC";
+    $query = "SELECT ac.id,ac.names,ac.surnames,CONCAT(ac.names,' ',ac.surnames) AS full_name,ac.email,ac.role AS role_id,rl.label AS role_label,ac.active FROM accounts AS ac LEFT JOIN accounts_roles as rl ON ac.role=rl.id ORDER BY ac.id DESC";
     $accounts = $DB->query($query);
     if ($accounts->num_rows > 0) {
         $rows=[];

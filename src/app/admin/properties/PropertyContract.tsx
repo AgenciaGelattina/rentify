@@ -14,12 +14,12 @@ export interface IPropertyContract {
     property?: IProperty;
 }
 
-type TPropertyContractProps = {
+interface IPropertyContractProps extends IPropertyContract {
     setOpen: (propertyContract: IPropertyContract) => void;
     getProperties: () => void;
 }
 
-const PropertyContract: FC<TPropertyContractProps & IPropertyContract> = ({ property, open, setOpen, getProperties }) => {
+const PropertyContract: FC<IPropertyContractProps> = ({ property, open, setOpen, getProperties }) => {
     return (<RspDialog open={open} onClose={() => setOpen({ open: false })}>
         <RspDialogTitle title="CONTRATOS" onClose={() => setOpen({ open: false })} />
         <DialogContent>
